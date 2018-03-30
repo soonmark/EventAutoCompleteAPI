@@ -6,7 +6,6 @@ import java.util.List;
 
 public class DateListVO {
 	List<DateVO> vos;
-	
 
 	public DateListVO() {
 		vos = new ArrayList<DateVO>();

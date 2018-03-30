@@ -1,5 +1,8 @@
 package com.soonmark.myapp;
 
+import java.time.DateTimeException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class MyCalendar {
@@ -113,6 +116,39 @@ public class MyCalendar {
 		timePoint = timePoint.withMinute(val);
 	}
 
+	public void setCloseDateOfTheDay(String val) {
+		DayOfWeek d = DayOfWeek.SUNDAY;
+		
+		if(val == "일") {
+			d = DayOfWeek.SUNDAY;
+		}else if(val == "월") {
+			d = DayOfWeek.MONDAY;
+		}else if(val == "화") {
+			d = DayOfWeek.TUESDAY;
+		}else if(val == "수") {
+			d = DayOfWeek.WEDNESDAY;
+		}else if(val == "목") {
+			d = DayOfWeek.THURSDAY;
+		}else if(val == "금") {
+			d = DayOfWeek.FRIDAY;
+		}else if(val == "토") {
+			d = DayOfWeek.SATURDAY;
+		}
+		
+		LocalDate tmpDate = LocalDate.now();
+		
+		// 일
+		int diff = d.getValue()- tmpDate.getDayOfWeek().getValue();
+		if(diff > 0 ) {
+			diff = 7 - diff;
+		}else {
+			diff *= -1;
+		}
+		
+		// 현재 시간의 요일과 비교해서 그 차이를 현재에 더해준 날짜로 세팅.
+		timePoint = timePoint.plusDays(diff);
+	}
+	
 	public void setCloseDate(MyCalendar cal) {
 		if (isHalfTime) {
 			LocalDateTime tmpTime = timePoint;

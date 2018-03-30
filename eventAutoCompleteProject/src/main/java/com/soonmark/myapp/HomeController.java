@@ -1,5 +1,6 @@
 package com.soonmark.myapp;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -95,7 +96,6 @@ public class HomeController {
 		// 패턴 초기 세팅
 		initPatterns(datePatterns, daysPatterns, specialDatePatterns, timePatterns);
 
-
 		// 날짜 매칭
 		Iterator<String> iter = datePatterns.iterator();
 		while (iter.hasNext()) {
@@ -123,7 +123,7 @@ public class HomeController {
 				dateVos.insertVOs(vo);
 			}
 		}
-		
+
 		// 요일 매칭
 		Iterator<String> dayIter = daysPatterns.iterator();
 		while (dayIter.hasNext()) {
@@ -181,47 +181,61 @@ public class HomeController {
 		dateVos.insertVOs(new DateVO());
 		// 요일도 날짜와 크로스시켜야하므로 빈 객체 삽입.
 		dayVos.insertVOs(new DateVO());
-		
+
 		// 우선, 요일과 날짜 크로스
 		// 날짜가 있고 요일이 없는 경우나 - clear
 		// 요일이 있는데 날짜가 없는 경우
 		// 요일과 날짜가 있지만 서로 안 맞는 경우
 		// 요일과 날짜가 있고 둘이 맞는 경우
 		// 위 4가지 경우에 대해 코딩.
-		for(int i = 0 ; i < dateVos.getVos().size() ; i++) {
-			for(int j = 0 ; j < dayVos.getVos().size() ; j++) {
+		for (int i = 0; i < dateVos.getVos().size(); i++) {
+			for (int j = 0; j < dayVos.getVos().size(); j++) {
 				// 요일 정보 없으면 그냥 나가기
 				// 요일 정보가 있을 때는 요일 빈 객체 스킵
 				// 날짜 정보가 있을 때는 날짜 빈 객체 스킵
 				// 날짜 없고 요일있는건 처리해야하니까 if문 처리 안 함.
-				if(dayVos.getVos().size() == 1
-					|| (dateVos.getVos().size() > 1 && i == dateVos.getVos().size() - 1)
-					|| (dayVos.getVos().size() > 1 && j == dayVos.getVos().size() - 1)) {
+				if (dayVos.getVos().size() == 1) {
+					dateVos.clearVOs();
 					continue;
 				}
-				
+				if ((dateVos.getVos().size() > 1 && i == dateVos.getVos().size() - 1)
+						|| (dayVos.getVos().size() > 1 && j == dayVos.getVos().size() - 1)) {
+					continue;
+				}
+
+				MyCalendar tmpCal = new MyCalendar();
 				DateVO vo = new DateVO();
-				
+
+				// 날짜 없고 요일만 있을 때는
+				if (dateVos.getVos().size() == 1) {
+					// 가까운 미래시 날짜 찾아 tmpCal에 세팅.
+					tmpCal.setCloseDateOfTheDay(dayVos.getElement(j).getDay());
+					vo.setFocusOnDay(true);
+
+				} else { // 요일 정보와 날짜 정보가 있을 때는 요일 정보를 무시
+					tmpCal.setYear(Integer.parseInt(dateVos.getElement(i).getYear()));
+					tmpCal.setMonth(Integer.parseInt(dateVos.getElement(i).getMonth()));
+					tmpCal.setDate(Integer.parseInt(dateVos.getElement(i).getDate()));
+					vo.setFocusOnDay(false);
+				}
+
 				// 요일 세팅
-				vo.setDay(dayVos.getElement(j).getDay());
+				vo.setDay(tmpCal.getDay());
 				// 날짜 세팅
-				vo.setYear(dateVos.getElement(i).getYear());
-				vo.setMonth(dateVos.getElement(i).getMonth());
-				vo.setDate(dateVos.getElement(i).getDate());
-				
-				logger.info("날/요일 변경 전 : " + dateVos.getElement(i).getDay());
+				vo.setYear(tmpCal.getYear());
+				vo.setMonth(tmpCal.getMonth());
+				vo.setDate(tmpCal.getDate());
+
+				dateVos.getElement(i).setYear(vo.getYear());
+				dateVos.getElement(i).setMonth(vo.getMonth());
+				dateVos.getElement(i).setDate(vo.getDate());
 				dateVos.getElement(i).setDay(vo.getDay());
-				
-				logger.info("날/요일 변경 후 : " + dateVos.getElement(i).getDay());
+				dateVos.getElement(i).setFocusOnDay(vo.isFocusOnDay());
 			}
 		}
-		
-		
-		
-		
-		
-		
-		
+
+		// 요일이 없으면 dateVos에 추가했던 element 를 삭제했으므로 다시 하나 만들어줌.
+		dateVos.insertVOs(new DateVO());
 
 		for (int i = 0; i < timeVos.getVos().size(); i++) {
 			for (int j = 0; j < dateVos.getVos().size(); j++) {
@@ -246,6 +260,7 @@ public class HomeController {
 				String m = dateVos.getElement(j).getMonth();
 				String dt = dateVos.getElement(j).getDate();
 				String day = dateVos.getElement(j).getDay();
+				boolean isFocusOnDay = dateVos.getElement(j).isFocusOnDay();
 
 				String h = timeVos.getElement(i).getHour();
 				String min = timeVos.getElement(i).getMinute();
@@ -303,6 +318,7 @@ public class HomeController {
 						vo.setMonth(m);
 						vo.setDate(dt);
 						vo.setDay(day);
+						vo.setFocusOnDay(isFocusOnDay);
 
 						if (y == "-1") {
 							vo.setYear(now.getYear());
@@ -331,19 +347,39 @@ public class HomeController {
 						} else {
 							vo.setHour(h);
 						}
-						if (k == 0) {
-							vo.setYear("매년");
-							vo.setDay("-1");
+
+						// 이전에는 요일 정보를 안 받았기 때문에 이렇게 짰는데 갈아 엎자.
+						if (vo.isFocusOnDay == true) {
+							if (k == 0) {
+								vo.setDate("매주");
+								vo.setYear("-1");
+								vo.setMonth("-1");
+							} else {
+								// 요일에 맞는 날짜만 뽑도록 구하는 로직
+								LocalDate tmpDate = LocalDate.of(Integer.parseInt(vo.getYear()),
+																Integer.parseInt(vo.getMonth()),
+																Integer.parseInt(vo.getDate()));
+								
+								tmpDate.plusWeeks(k - 1);
+								vo.setDate(tmpDate.getDayOfMonth() + "");
+								vo.setYear(tmpDate.getYear() + "");
+								vo.setMonth(tmpDate.getMonth() + "");
+							}
 						} else {
-							vo.setYear((Integer.parseInt(vo.getYear()) + k - 1) + "");
+							if (k == 0) {
+								vo.setYear("매년");
+								vo.setDay("-1");
+							} else {
+								vo.setYear((Integer.parseInt(vo.getYear()) + k - 1) + "");
 
-							// 날짜에 맞는 요일 구하는 로직
-							MyCalendar tmpCal = new MyCalendar();
-							tmpCal.setYear(Integer.parseInt(vo.getYear()));
-							tmpCal.setMonth(Integer.parseInt(vo.getMonth()));
-							tmpCal.setDate(Integer.parseInt(vo.getDate()));
+								// 날짜에 맞는 요일 구하는 로직
+								MyCalendar tmpCal = new MyCalendar();
+								tmpCal.setYear(Integer.parseInt(vo.getYear()));
+								tmpCal.setMonth(Integer.parseInt(vo.getMonth()));
+								tmpCal.setDate(Integer.parseInt(vo.getDate()));
 
-							vo.setDay(tmpCal.getDay());
+								vo.setDay(tmpCal.getDay());
+							}
 						}
 						vo.setMinute(min);
 
@@ -357,9 +393,9 @@ public class HomeController {
 		return vos.toJsonString();
 	}
 
-	void initPatterns(List<String> datePatterns, List<String> daysPatterns,
-			List<String> specialDatePatterns, List<String> timePatterns) {
-		
+	void initPatterns(List<String> datePatterns, List<String> daysPatterns, List<String> specialDatePatterns,
+			List<String> timePatterns) {
+
 		// datePatterns.add("^(.*)([0-9]{4})-(0?[1-9]|1[0-2])-([0-9]{1,2})((.*))$"); //
 		// 2018-3-19
 		// datePatterns.add("^(.*)([0-9]{4})/(0?[1-9]|1[0-2])/([0-9]{1,2})((.*))$"); //

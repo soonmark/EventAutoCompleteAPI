@@ -7,6 +7,7 @@ public class DateVO {
 	String day;
 	String hour;
 	String minute;
+	boolean isFocusOnDay;
 
 	DateVO() {
 		this.year = "-1";
@@ -15,6 +16,7 @@ public class DateVO {
 		this.day = "-1";
 		this.hour = "-1";
 		this.minute = "-1";
+		this.isFocusOnDay = false;
 	}
 
 	DateVO(String year, String month, String date, String day, String hour, String minute) {
@@ -24,6 +26,15 @@ public class DateVO {
 		this.day = day;
 		this.hour = hour;
 		this.minute = minute;
+		this.isFocusOnDay = false;
+	}
+	
+	public boolean isFocusOnDay() {
+		return isFocusOnDay;
+	}
+	
+	public void setFocusOnDay(boolean isFocusOnDay) {
+		this.isFocusOnDay = isFocusOnDay;
 	}
 	
 	public void set(int idx, String val) {
@@ -79,6 +90,10 @@ public class DateVO {
 		return day;
 	}
 
+	public String getIntDay() {
+		return day;
+	}
+	
 	public void setDay(String day) {
 		this.day = day;
 	}
