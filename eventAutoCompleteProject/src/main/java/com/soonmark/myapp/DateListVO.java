@@ -40,6 +40,10 @@ public class DateListVO {
 		return null;
 	}
 	
+	public void setDayToElement(int index, String val) {
+		vos.get(index).setDay(val);
+	}
+	
 	public String toJsonString() {
 		String jsonStr = "[";
 		

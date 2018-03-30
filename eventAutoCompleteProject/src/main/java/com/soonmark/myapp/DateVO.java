@@ -1,8 +1,5 @@
 package com.soonmark.myapp;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 public class DateVO {
 	String year;
 	String month;
@@ -99,7 +96,13 @@ public class DateVO {
 	}
 
 	public void setMinute(String minute) {
-		this.minute = minute;
+		// 0분, 1분 등이면 00분, 01분 으로 세팅
+		if(minute.length() == 1) {
+			this.minute = "0" +  minute;
+		}
+		else {
+			this.minute = minute;
+		}
 	}
 
 	public String toString() {
