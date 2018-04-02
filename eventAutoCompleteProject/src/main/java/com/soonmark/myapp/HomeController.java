@@ -376,7 +376,8 @@ public class HomeController {
 		// 일만 입력받기
 //		datePatterns.add("^([^월]*)(?<date>[1-2][0-9]|3[0-1])일(.*)$"); // 19일
 //		datePatterns.add("^(.*)(?<date>[1-2][0-9]|3[0-1])일(.*)$"); // 19일
-//		datePatterns.add("^(|[^월]*[^1-3])(?<date>[1-9])일(.*)$"); // 1일
+//		datePatterns.add("^(|[^월]*[^1-3])(?<date>[1-9])일(.*)$");
+		// 1일
 //		datePatterns.add("^(|.*[^1-3])(?<date>[1-9])일(.*)$"); // 1일
 		// 월만 입력받기
 //		datePatterns.add("^(.*)(?<month>1[0-2])월([^일]*)$"); // 12월
