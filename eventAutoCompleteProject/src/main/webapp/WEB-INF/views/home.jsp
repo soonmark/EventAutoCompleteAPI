@@ -87,6 +87,10 @@ body {
 				<span class="glyphicon glyphicon-chevron-right"></span>
 				<span class="inputText">입력한 일정 : ${message}</span>
 			</div>
+			<div class="panel-body font-bording display-right">
+				<span class="glyphicon glyphicon-chevron-right"></span>
+				<span class="changedText">선택한 일정 : </span>
+			</div>
 		</div>
 <%-- 		<p class="result">입력한 일정 : ${message}</p> --%>
 		</div>

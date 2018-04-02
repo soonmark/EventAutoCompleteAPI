@@ -97,9 +97,9 @@ public class HomeController {
 		initPatterns(datePatterns, daysPatterns, specialDatePatterns, timePatterns);
 		
 		// 날짜 매칭	 / 요일 매칭 / 시간 매칭
-		matchingProcess(inputEvent, datePatterns, "date", dateVos);
-		matchingProcess(inputEvent, daysPatterns, "day", dayVos);
-		matchingProcess(inputEvent, timePatterns, "time", timeVos);
+		matchingProcess(inputEvent, datePatterns, TokenType.dates, dateVos);
+		matchingProcess(inputEvent, daysPatterns, TokenType.days, dayVos);
+		matchingProcess(inputEvent, timePatterns, TokenType.times, timeVos);
 
 		
 		// 날짜, 시간 두개의 값이 없을 때도 크로스시켜야 하므로 빈 객체 삽입.
@@ -117,18 +117,19 @@ public class HomeController {
 		for (int i = 0; i < dateVos.getVos().size(); i++) {
 			for (int j = 0; j < dayVos.getVos().size(); j++) {
 				// 요일 정보 없으면 그냥 나가기
-				// 요일 정보가 있을 때는 요일 빈 객체 스킵
 				// 날짜 정보가 있을 때는 날짜 빈 객체 스킵
-				// 날짜 없고 요일있는건 처리해야하니까 if문 처리 안 함.
-				if (dayVos.getVos().size() == 1) {
+				// 이 2가지 경우에는 dateVos의 마지막 element 삭제.
+				if (dayVos.getVos().size() == 1
+						|| (dateVos.getVos().size() > 1 && i == dateVos.getVos().size() - 1)) {
 					dateVos.deleteVOs(dateVos.getVos().size() - 1);;
 					continue;
 				}
-				if ((dateVos.getVos().size() > 1 && i == dateVos.getVos().size() - 1)
-						|| (dayVos.getVos().size() > 1 && j == dayVos.getVos().size() - 1)) {
+				// 요일 정보가 있을 때는 요일 빈 객체 스킵
+				if(dayVos.getVos().size() > 1 && j == dayVos.getVos().size() - 1) {
 					continue;
 				}
 
+				// 날짜 없고 요일있는건 처리해야하니까 if문 처리 안 함.
 				MyCalendar tmpCal = new MyCalendar();
 				DateVO vo = new DateVO();
 
@@ -139,9 +140,16 @@ public class HomeController {
 					vo.setFocusOnDay(true);
 
 				} else { // 요일 정보와 날짜 정보가 있을 때는 요일 정보를 무시
-					tmpCal.setYear(Integer.parseInt(dateVos.getElement(i).getYear()));
-					tmpCal.setMonth(Integer.parseInt(dateVos.getElement(i).getMonth()));
-					tmpCal.setDate(Integer.parseInt(dateVos.getElement(i).getDate()));
+					String binary = dateVos.getElement(i).compareBinaryInfo(TokenType.dates);
+					if((Character.getNumericValue(binary.charAt(DateTimeEn.year.getInteger())) | 0) == 1) {
+						tmpCal.setYear(Integer.parseInt(dateVos.getElement(i).getYear()));
+					}
+					if((Character.getNumericValue(binary.charAt(DateTimeEn.month.getInteger())) | 0) == 1) {
+						tmpCal.setMonth(Integer.parseInt(dateVos.getElement(i).getMonth()));
+					}
+					if((Character.getNumericValue(binary.charAt(DateTimeEn.date.getInteger())) | 0) == 1) {
+						tmpCal.setDate(Integer.parseInt(dateVos.getElement(i).getDate()));
+					}
 					vo.setFocusOnDay(false);
 				}
 
@@ -157,10 +165,11 @@ public class HomeController {
 				dateVos.getElement(i).setDate(vo.getDate());
 				dateVos.getElement(i).setDay(vo.getDay());
 				dateVos.getElement(i).setFocusOnDay(vo.isFocusOnDay());
+				dateVos.getElement(i).setBinaryDTInfo(DateTimeEn.day);
 			}
 		}
 
-		// 요일이 없으면 dateVos에 추가했던 element 를 삭제했으므로 다시 하나 만들어줌.
+		// dateVos에 추가했던 element를 삭제했으므로 다시 하나 만들어줌.
 		dateVos.insertVOs(new DateVO());
 
 		for (int i = 0; i < timeVos.getVos().size(); i++) {
@@ -181,6 +190,9 @@ public class HomeController {
 				}
 
 				logger.info("여1");
+				
+				// binary string
+				String infoFromText = dateVos.getElement(j).getBinaryDTInfo();
 
 				String y = dateVos.getElement(j).getYear();
 				String m = dateVos.getElement(j).getMonth();
@@ -199,7 +211,7 @@ public class HomeController {
 					break;
 				}
 
-				// 날짜 정보가 없으면 현재 시스템 날짜를 넣어서 '오늘' 일정으로 만들기
+				// 날짜 정보가 없으면 매일 일정 or 가장 근접한 미래날짜로 세팅.
 				if (dateVos.getVos().size() == 1) {
 					logger.info("여2");
 
@@ -220,17 +232,25 @@ public class HomeController {
 
 					for (int k = 0; k < recomNum; k++) {
 						DateVO vo = new DateVO();
-						tmpCal.setCloseDate(comparedCal);
-						comparedCal.setTimePoint(tmpCal.getTimePoint());
 
-						vo.setHour(tmpCal.getHour());
+						if(k == 0) {
+							vo.setDate("매일");
+							vo.setHour(tmpCal.getHour());
+							vo.setMinute(tmpCal.getMinute());
+						}
+						else {
+							tmpCal.setCloseDateOfTime(comparedCal);
+							comparedCal.setTimePoint(tmpCal.getTimePoint());
 
-						// 현재 시스템 날짜
-						vo.setYear(tmpCal.getYear());
-						vo.setMonth(tmpCal.getMonth());
-						vo.setDate(tmpCal.getDate());
-						vo.setDay(tmpCal.getDay());
-						vo.setMinute(tmpCal.getMinute());
+							vo.setHour(tmpCal.getHour());
+
+							// 현재 시스템 날짜
+							vo.setYear(tmpCal.getYear());
+							vo.setMonth(tmpCal.getMonth());
+							vo.setDate(tmpCal.getDate());
+							vo.setDay(tmpCal.getDay());
+							vo.setMinute(tmpCal.getMinute());
+						}
 
 						vos.insertVOs(vo);
 					}
@@ -246,16 +266,16 @@ public class HomeController {
 						vo.setDay(day);
 						vo.setFocusOnDay(isFocusOnDay);
 
-						if (y == "-1") {
+						if (y.equals("-1")) {
 							vo.setYear(now.getYear());
 						}
-						if (m == "-1") {
+						if (m.equals("-1")) {
 							vo.setMonth(now.getMonth());
 						}
-						if (dt == "-1") {
+						if (dt.equals("-1")) {
 							vo.setDate(now.getDate());
 						}
-						if (day == "-1") {
+						if (day.equals("-1")) {
 
 							// 날짜에 맞는 요일 구하는 로직
 							MyCalendar tmpCal = new MyCalendar();
@@ -273,6 +293,7 @@ public class HomeController {
 						} else {
 							vo.setHour(h);
 						}
+						vo.setMinute(min);
 
 						// 이전에는 요일 정보를 안 받았기 때문에 이렇게 짰는데 갈아 엎자.
 						if (vo.isFocusOnDay == true) {
@@ -286,16 +307,24 @@ public class HomeController {
 																Integer.parseInt(vo.getMonth()),
 																Integer.parseInt(vo.getDate()));
 								
-								tmpDate.plusWeeks(k - 1);
+								tmpDate = tmpDate.plusWeeks(k - 1);
 								vo.setDate(tmpDate.getDayOfMonth() + "");
 								vo.setYear(tmpDate.getYear() + "");
-								vo.setMonth(tmpDate.getMonth() + "");
+								vo.setMonth(tmpDate.getMonthValue() + "");
 							}
 						} else {
 							if (k == 0) {
 								vo.setYear("매년");
 								vo.setDay("-1");
 							} else {
+								// 오늘과 비교해서 미래날짜 구하기...
+								char getBit = vo.getBinaryDTInfo().charAt(DateTimeEn.year.getInteger());
+//								if(getBit)
+								
+								vo.getBinaryDTInfo();
+								
+								
+								
 								vo.setYear((Integer.parseInt(vo.getYear()) + k - 1) + "");
 
 								// 날짜에 맞는 요일 구하는 로직
@@ -307,7 +336,6 @@ public class HomeController {
 								vo.setDay(tmpCal.getDay());
 							}
 						}
-						vo.setMinute(min);
 
 						vos.insertVOs(vo);
 					}
@@ -330,8 +358,8 @@ public class HomeController {
 		// // 2018.3.19
 		// datePatterns.add("^(.*)([0-9]{4})년 (0?[1-9]|1[0-2])월 ([0-9]{1,2})일((.*))$");
 		// // 2018년 3월 19일
-		datePatterns.add("^(.*)(?<month>1[0-2])월 (?<date>[1-9]|[1-2][0-9]|3[0-1])일(.*)$"); // 11월 19일
-		datePatterns.add("^(|.*[^1])(?<month>[1-9])월 (?<date>[1-9]|[1-2][0-9]|3[0-1])일(.*)$"); // 3월 19일
+//		datePatterns.add("^(.*)(?<month>1[0-2])월 (?<date>[1-9]|[1-2][0-9]|3[0-1])일(.*)$"); // 11월 19일
+//		datePatterns.add("^(|.*[^1])(?<month>[1-9])월 (?<date>[1-9]|[1-2][0-9]|3[0-1])일(.*)$"); // 3월 19일
 		datePatterns.add("^(.*)(?<month>1[0-2])-(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 11-19
 		datePatterns.add("^(|.*[^1])(?<month>[1-9])-(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 3-19
 		datePatterns.add("^(.*)(?<month>1[0-2])\\.(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 11.19
@@ -339,11 +367,15 @@ public class HomeController {
 		datePatterns.add("^(.*)(?<month>1[0-2])/(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 11/19
 		datePatterns.add("^(|.*[^1])(?<month>[1-9])/(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 3/19
 		// 일만 입력받기
-		datePatterns.add("^([^월]*)(?<date>[1-2][0-9]|3[0-1])일(.*)$"); // 19일
-		datePatterns.add("^(|[^월]*[^1-3])(?<date>[1-9])일(.*)$"); // 1일
-		// 일만 입력받기
-		datePatterns.add("^(.*)(?<month>1[0-2])월([^일]*)$"); // 12월
-		datePatterns.add("^(|.*[^1])(?<month>[1-9])월([^일]*)$"); // 1월
+//		datePatterns.add("^([^월]*)(?<date>[1-2][0-9]|3[0-1])일(.*)$"); // 19일
+		datePatterns.add("^(.*)(?<date>[1-2][0-9]|3[0-1])일(.*)$"); // 19일
+//		datePatterns.add("^(|[^월]*[^1-3])(?<date>[1-9])일(.*)$"); // 1일
+		datePatterns.add("^(|.*[^1-3])(?<date>[1-9])일(.*)$"); // 1일
+		// 월만 입력받기
+//		datePatterns.add("^(.*)(?<month>1[0-2])월([^일]*)$"); // 12월
+		datePatterns.add("^(.*)(?<month>1[0-2])월(.*)$"); // 12월
+//		datePatterns.add("^(|.*[^1])(?<month>[1-9])월([^일]*)$"); // 1월
+		datePatterns.add("^(|.*[^1])(?<month>[1-9])월(.*)$"); // 1월
 		// 20180319
 
 		// 요일 패턴
@@ -360,6 +392,7 @@ public class HomeController {
 
 		specialDatePatterns.add("^(.*)(매일)(.*)$"); // 매일
 
+		
 		// 시간 패턴
 		timePatterns.add("^(.*)(?<hour>1[0-9]|2[0-3]):(?<minute>[0-5][0-9])(.*)$"); // 12:01 // 12:1은 안 됨
 		timePatterns.add("^(|.*[^1-2])(?<hour>[1-9]):(?<minute>[0-5][0-9])(.*)$"); // 2:01 // 2:1은 안 됨
@@ -371,56 +404,26 @@ public class HomeController {
 		timePatterns.add("^(.*)(?<hour>1[0-9]|2[0-3])시([^분]*)$"); // 12시
 		timePatterns.add("^(|.*[^1-2])(?<hour>[1-9])시([^분]*)$"); // 7시
 	}
-	
-	void matchingProcess(String inputEv, List<String> patterns, String type, DateListVO targetVos) {
+		
+	void matchingProcess(String inputEv, List<String> patterns, TokenType tokenType, DateListVO targetVos) {
 		// 요일 매칭
 		Iterator<String> iter = patterns.iterator();
 		while (iter.hasNext()) {
 			String pattern = iter.next();
 			Pattern inputPattern = Pattern.compile(pattern);
 			Matcher matcher = inputPattern.matcher(inputEv);
-
+			
 			if (matcher.matches()) {
-				logger.info("날짜 패턴 : " + pattern);
+				logger.info("패턴 : " + pattern);
 				logger.info("패턴 만족 : " + matcher.group(0));
-
-				DateVO vo = new DateVO();
-
 				
-				if(type == "date") {
-					try {
-						vo.setMonth(matcher.group("month"));
-					} catch (IllegalArgumentException e) {
-						vo.setMonth("-1");
-					}
-					try {
-						vo.setDate(matcher.group("date"));
-					} catch (IllegalArgumentException e) {
-						vo.setDate("-1");
-					}
-				}
-				else if(type == "day") {
-					// month와 date 에 해당하는 group 만 따로 읽어 저장
-					try {
-						vo.setDay(matcher.group("day"));
-					} catch (IllegalArgumentException e) {
-						vo.setDay("-1");
-					}
-				}
-				else if(type == "time") {
-					vo.setHour(matcher.group("hour"));
-					try {
-						// 시간 중에 group 명이 minute 이 없는 경우 0으로 세팅
-						vo.setMinute(matcher.group("minute"));
-
-					} catch (IllegalArgumentException e) {
-						vo.setMinute("0");
-					}
-				}
+				DateVO vo = new DateVO();
+				
+				// enum의 추상메소드로 바로 감.
+				tokenType.setVoInfo(vo, matcher);
 				
 				targetVos.insertVOs(vo);
 			}
 		}
 	}
-
 }

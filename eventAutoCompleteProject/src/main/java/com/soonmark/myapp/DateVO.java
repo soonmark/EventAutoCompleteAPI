@@ -1,5 +1,8 @@
 package com.soonmark.myapp;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 public class DateVO {
 	String year;
 	String month;
@@ -8,6 +11,7 @@ public class DateVO {
 	String hour;
 	String minute;
 	boolean isFocusOnDay;
+	String binaryDTInfo;
 
 	DateVO() {
 		this.year = "-1";
@@ -17,6 +21,7 @@ public class DateVO {
 		this.hour = "-1";
 		this.minute = "-1";
 		this.isFocusOnDay = false;
+		binaryDTInfo = "000000";
 	}
 
 	DateVO(String year, String month, String date, String day, String hour, String minute) {
@@ -27,6 +32,19 @@ public class DateVO {
 		this.hour = hour;
 		this.minute = minute;
 		this.isFocusOnDay = false;
+		binaryDTInfo = "000000";
+	}
+	
+	public String getBinaryDTInfo() {
+		return binaryDTInfo;
+	}
+	
+	public void setBinaryDTInfo(DateTimeEn dateTimeEn) {
+		int numericDateTime = dateTimeEn.getInteger();
+		char tmpBit = this.binaryDTInfo.charAt(numericDateTime);
+		int newInfo = Character.getNumericValue(tmpBit) | 1;
+		binaryDTInfo = binaryDTInfo.substring(0,numericDateTime)
+					+ newInfo + binaryDTInfo.substring(numericDateTime + 1);
 	}
 	
 	public boolean isFocusOnDay() {
@@ -117,6 +135,49 @@ public class DateVO {
 		}
 		else {
 			this.minute = minute;
+		}
+	}
+	
+	public String compareBinaryInfo(TokenType tokenType) {
+		String result = "";
+		switch(tokenType) {
+		case dates:
+			for(int i = DateTimeEn.year.getInteger() ; i < DateTimeEn.day.getInteger() ; i++) {
+				result += binaryDTInfo.charAt(i);
+			}
+			break;
+		case days:
+			for(int i = DateTimeEn.day.getInteger() ; i < DateTimeEn.hour.getInteger() ; i++) {
+				result += binaryDTInfo.charAt(i);
+			}
+			break;
+		case times:
+			for(int i = DateTimeEn.hour.getInteger() ; i < DateTimeEn.minute.getInteger() ; i++) {
+				result += binaryDTInfo.charAt(i);
+			}
+			break;
+		}
+		return result;
+	}
+	
+	public boolean isDateInfoFull() {
+		boolean tmp = false;
+		if(compareBinaryInfo(TokenType.dates).equals("111")) {
+			tmp = true;
+		}
+		else {
+			tmp = false;
+		}
+		return tmp;
+	}
+	
+	public void adjustDay() {
+		if(isDateInfoFull()) {
+			MyCalendar cal = new MyCalendar();
+			cal.setYear(Integer.parseInt(year));
+			cal.setMonth(Integer.parseInt(month));
+			cal.setDate(Integer.parseInt(date));
+			day = cal.getDay();
 		}
 	}
 

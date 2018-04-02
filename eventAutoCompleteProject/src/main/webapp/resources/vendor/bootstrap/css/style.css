@@ -45,6 +45,9 @@ html, body {
 .topConts{
 	background-image: url('../../../scheduler.jpg');
 	background-size: cover;
+	padding-top: 48px;
+	padding-bottom: 48px;
+	margin-top: 30px;
 }
 
 .myPanelMargin{
@@ -59,3 +62,4 @@ html, body {
 .display-right{
 	text-align: left;
 }
+
