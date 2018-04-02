@@ -1,7 +1,8 @@
 html, body {
-	pading: 10px;
-	margin: 10px;
-	font-family: "나눔고딕", san-serif, "굴림", arial;
+/* 	pading: 10px;
+	margin: 10px; */
+	font-family: "나눔고딕", "맑은 고딕", san-serif, "굴림", arial;
+	background-color:#343434;
 }
 
 .recommendations {
@@ -14,32 +15,21 @@ html, body {
 	text-align: center;
 	padding-top: 10px;
 	padding-bottom: 10px;
+	margin : 0 20% 0 20% ;
 }
 
 .recTitle {
 	font-size: 20px;
 	font-weight: bold;
-	color: #fff;
+	color: #000;
 	padding-bottom: 15px;
 	text-align: center;
 }
 
 .recWrapper {
-	width: 400px;
 	padding: 10px;
-	margin: 0 auto;
-	background-color: #000;
-}
-
-.result {
-	width: 400px;
-	margin: 0 auto;
-	font-size: 20px;
-	color: #333;
-	background-color: #ddd;
-	font-weight: bold;
-	padding: 10px;
-	border: 1px solid;
+	margin: 0 20% 0 20%;
+	background:#fff;
 }
 
 .recListElement{
@@ -50,4 +40,22 @@ html, body {
 	font-size: 15px;
 	margin: 5px;
 	color: #fff;
+}
+
+.topConts{
+	background-image: url('../../../scheduler.jpg');
+	background-size: cover;
+}
+
+.myPanelMargin{
+	margin: 0 20% 20px 20%;
+}
+
+.font-bording{
+	font-weight: bold;
+	font-size: 18px;
+}
+
+.display-right{
+	text-align: left;
 }

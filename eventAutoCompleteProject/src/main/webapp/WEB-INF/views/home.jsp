@@ -14,17 +14,26 @@
 <title>>일정 입력 페이지</title>
 
 <!-- Bootstrap core CSS -->
-<link type="text/css"
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<%-- <link type="text/css"
 	href="${pageContext.request.contextPath}/resources/vendor/bootstrap/css/bootstrap.min.css"
-	rel="stylesheet">
+	rel="stylesheet"> --%>
 
 <!-- Custom CSS -->
 <link type="text/css"
 	href="${pageContext.request.contextPath}/resources/vendor/bootstrap/css/style.css"
 	rel="stylesheet">
 
+
+<!-- Jquery -->
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/lib/jquery-3.3.1.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
 <!-- Custom styles for this template -->
-<style>
+<!-- <style>
 body {
 	padding-top: 54px;
 }
@@ -34,35 +43,26 @@ body {
 		padding-top: 56px;
 	}
 }
-</style>
+</style> -->
 
-
-<!-- Jquery -->
-<script type="text/javascript"
-	src="${pageContext.request.contextPath}/resources/lib/jquery-3.3.1.min.js"></script>
 
 </head>
 <body>
 
 	<!-- Navigation -->
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-		<div class="container">
-			<a class="navbar-brand" href="#">Schedules</a>
-			<button class="navbar-toggler" type="button" data-toggle="collapse"
-				data-target="#navbarResponsive" aria-controls="navbarResponsive"
-				aria-expanded="false" aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
-			<div class="collapse navbar-collapse" id="navbarResponsive">
-				<ul class="navbar-nav ml-auto">
-					<li class="nav-item active"><a class="nav-link" href="#">Home
-							<span class="sr-only">(current)</span>
-					</a></li>
-					<li class="nav-item"><a class="nav-link" href="#">About</a></li>
-					<li class="nav-item"><a class="nav-link" href="#">Services</a>
-					</li>
-					<li class="nav-item"><a class="nav-link" href="#">Contact</a>
-					</li>
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse"
+					data-target="#myNavbar">
+					<span class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#">Schedules</a>
+			</div>
+			<div class="collapse navbar-collapse" id="myNavbar">
+				<ul class="nav navbar-nav">
+					<li class="active"><a href="#">Home</a></li>
 				</ul>
 			</div>
 		</div>
@@ -70,32 +70,32 @@ body {
 
 
 
+
 	<!-- Page Content -->
-	<div class="container">
-		<div class="row">
-			<div class="col-lg-12 text-center">
-<!-- 				<h1 class="mt-5">문장에서 일정을 자동 추출합니다.</h1> -->
-				<p class="lead">일정 관리</p>
-<!-- 				<ul class="list-unstyled">
-					<li>Bootstrap 4.0.0</li>
-					<li>jQuery 3.3.0</li>
-				</ul> -->
+		<div class="jumbotron text-center topConts">
+			<h2>일정 추가</h2>
+			<form>
+				<div class="formEvent form-group">
+					<!-- <label for="inputEvent">일정</label> -->
+					<input type="text"
+						id="inputEvent" name="inputEvent" class="form-control input-lg"
+						placeholder="일정을 입력하세요.">
+				</div>
+			</form>
+		<div class="panel panel-default myPanelMargin">
+			<div class="panel-heading font-bording display-right">
+				<span class="glyphicon glyphicon-chevron-right"></span>
+				<span class="inputText">입력한 일정 : ${message}</span>
 			</div>
 		</div>
+<%-- 		<p class="result">입력한 일정 : ${message}</p> --%>
+		</div>
+	<div class="container">
 	</div>
 
 
 
-	<!-- 	<form action="recommendations" method="post"> -->
 
-	<form>
-		<div class="formEvent">
-			일정 <input type="text" id="inputEvent" name="inputEvent"
-				placeholder="일정을 입력하세요.">
-		</div>
-	</form>
-
-	<p class="result">입력한 일정 : ${message}</p>
 	<p></p>
 
 
@@ -164,9 +164,9 @@ body {
 							if (dataEach.year == "-2") {
 								alert("한글, 숫자, 영어 외의 기호는 입력이 불가능합니다.");
 							} else {
-								str += "<div class='recListElement'>";
+								str += "<div class=\"list-group-item\">";
 								if (dataEach.year != "-1") {
-									str += dataEach.year ;
+									str += dataEach.year;
 								}
 								if (dataEach.month != "-1") {
 									str += "/" + dataEach.month + "/";
@@ -187,8 +187,8 @@ body {
 							}
 						});
 
-						$(".recommendations").html(str);
-						$('.result').text("입력한 일정 : " + tmpStr);
+						$(".list-group").html(str);
+						$('.inputText').text("입력한 일정 : " + tmpStr);
 						console.log("성공");
 					}
 				}
@@ -200,19 +200,18 @@ body {
 	</script>
 
 
-	<div class="recWrapper">
-		<div class="recTitle">날짜/시간 자동 완성</div>
-		<div class="recommendations"></div>
+	<div class="panel panel-default myPanelMargin">
+		<div class="panel-heading font-bording">날짜/시간 자동 완성</div>
+		<div class="list-group panel-body"></div>
 	</div>
 
 
 
 
 	<!-- Bootstrap core JavaScript -->
-
-	<script src="<c:url value="/resources/vendor/jquery/jquery.min.js" />"></script>
+	<%-- 
 	<script
 		src="<c:url value="/resources/vendor/bootstrap/js/bootstrap.bundle.min.js" />"></script>
-
+ --%>
 </body>
 </html>
