@@ -1,17 +1,17 @@
 package com.soonmark.myapp;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 public class DateVO {
 	String year;
 	String month;
 	String date;
+	String specialDate;
 	String day;
 	String hour;
 	String minute;
 	boolean isFocusOnDay;
-	String binaryDTInfo;
+	boolean ignoreDay;
+//	String binaryDTInfo;
+	boolean[] hasInfo;
 
 	DateVO() {
 		this.year = "-1";
@@ -21,7 +21,9 @@ public class DateVO {
 		this.hour = "-1";
 		this.minute = "-1";
 		this.isFocusOnDay = false;
-		binaryDTInfo = "000000";
+		this.ignoreDay = false;
+//		binaryDTInfo = "000000";
+		hasInfo = new boolean[] {false, false, false, false, false, false};
 	}
 
 	DateVO(String year, String month, String date, String day, String hour, String minute) {
@@ -32,20 +34,61 @@ public class DateVO {
 		this.hour = hour;
 		this.minute = minute;
 		this.isFocusOnDay = false;
-		binaryDTInfo = "000000";
+		this.ignoreDay = false;
+//		binaryDTInfo = "000000";
+		hasInfo = new boolean[] {false, false, false, false, false, false};
 	}
 	
-	public String getBinaryDTInfo() {
-		return binaryDTInfo;
+	public void setAllDate(MyCalendar cal) {
+		setDay(cal.getDay());
+		setYear(cal.getYear());
+		setMonth(cal.getMonth());
+		setDate(cal.getDate());
 	}
 	
-	public void setBinaryDTInfo(DateTimeEn dateTimeEn) {
-		int numericDateTime = dateTimeEn.getInteger();
-		char tmpBit = this.binaryDTInfo.charAt(numericDateTime);
-		int newInfo = Character.getNumericValue(tmpBit) | 1;
-		binaryDTInfo = binaryDTInfo.substring(0,numericDateTime)
-					+ newInfo + binaryDTInfo.substring(numericDateTime + 1);
+	public void setProperDay() {
+		MyCalendar tmpCal = new MyCalendar();
+		tmpCal.setYear(Integer.parseInt(this.getYear()));
+		tmpCal.setMonth(Integer.parseInt(this.getMonth()));
+		tmpCal.setDate(Integer.parseInt(this.getDate()));
+
+		setDay(tmpCal.getDay());
 	}
+
+	public void setAllDate(DateVO vo) {
+		setDay(vo.getDay());
+		setYear(vo.getYear());
+		setMonth(vo.getMonth());
+		setDate(vo.getDate());
+	}
+	
+	public String getSpecialDate() {
+		return specialDate;
+	}
+	
+	public void setSpecialDate(String specialDate) {
+		this.specialDate = specialDate;
+	}
+
+	public boolean hasInfo(int idx) {
+		return hasInfo[idx];
+	}
+	
+	public void setHasInfo(int idx, boolean flag) {
+		hasInfo[idx] = flag;
+	}
+	
+//	public String getBinaryDTInfo() {
+//		return binaryDTInfo;
+//	}
+//	
+//	public void setBinaryDTInfo(DateTimeEn dateTimeEn) {
+//		int numericDateTime = dateTimeEn.getInteger();
+//		char tmpBit = this.binaryDTInfo.charAt(numericDateTime);
+//		int newInfo = Character.getNumericValue(tmpBit) | 1;
+//		binaryDTInfo = binaryDTInfo.substring(0,numericDateTime)
+//					+ newInfo + binaryDTInfo.substring(numericDateTime + 1);
+//	}
 	
 	public boolean isFocusOnDay() {
 		return isFocusOnDay;
@@ -138,35 +181,41 @@ public class DateVO {
 		}
 	}
 	
-	public String compareBinaryInfo(TokenType tokenType) {
-		String result = "";
-		switch(tokenType) {
-		case dates:
-			for(int i = DateTimeEn.year.getInteger() ; i < DateTimeEn.day.getInteger() ; i++) {
-				result += binaryDTInfo.charAt(i);
-			}
-			break;
-		case days:
-			for(int i = DateTimeEn.day.getInteger() ; i < DateTimeEn.hour.getInteger() ; i++) {
-				result += binaryDTInfo.charAt(i);
-			}
-			break;
-		case times:
-			for(int i = DateTimeEn.hour.getInteger() ; i < DateTimeEn.minute.getInteger() ; i++) {
-				result += binaryDTInfo.charAt(i);
-			}
-			break;
-		}
-		return result;
-	}
+//	public String compareBinaryInfo(TokenType tokenType) {
+//		String result = "";
+//		switch(tokenType) {
+//		case dates:
+//			for(int i = DateTimeEn.year.getInteger() ; i < DateTimeEn.day.getInteger() ; i++) {
+//				result += binaryDTInfo.charAt(i);
+//			}
+//			break;
+//		case days:
+//			for(int i = DateTimeEn.day.getInteger() ; i < DateTimeEn.hour.getInteger() ; i++) {
+//				result += binaryDTInfo.charAt(i);
+//			}
+//			break;
+//		case times:
+//			for(int i = DateTimeEn.hour.getInteger() ; i < DateTimeEn.minute.getInteger() ; i++) {
+//				result += binaryDTInfo.charAt(i);
+//			}
+//			break;
+//		}
+//		return result;
+//	}
 	
 	public boolean isDateInfoFull() {
 		boolean tmp = false;
-		if(compareBinaryInfo(TokenType.dates).equals("111")) {
+//		if(compareBinaryInfo(TokenType.dates).equals("111")) {
+//			tmp = true;
+//		}
+//		else {
+//			tmp = false;
+//		}
+		
+		if(hasInfo[DateTimeEn.year.ordinal()]
+			&& hasInfo[DateTimeEn.month.ordinal()]
+			&& hasInfo[DateTimeEn.date.ordinal()]) {
 			tmp = true;
-		}
-		else {
-			tmp = false;
 		}
 		return tmp;
 	}

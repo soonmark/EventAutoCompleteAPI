@@ -167,27 +167,29 @@ public class MyCalendar {
 		}
 	}
 
-	public void setCloseDate(MyCalendar cal, String type) {
+	public void setCloseDate(MyCalendar cal, int idx) {
 		// 세팅된 날짜가 기준 날짜 전의 날짜면
-		if (!(timePoint.isAfter(cal.getTimePoint()))) {
-			if (type.equals("year")) {
+		if (!(timePoint.toLocalDate().isAfter(cal.getTimePoint().toLocalDate()))) {
+			if (idx == DateTimeEn.year.ordinal()) {
 				long diff = cal.getTimePoint().getYear() - timePoint.getYear();
 				timePoint = timePoint.plusYears(diff);
 				// 차이만큼 더했는데도 이전이면, 월이나 일을 계산했을 때 이전인 것이므로 한번더 1년을 더해줌.
-				if(!(timePoint.isAfter(cal.getTimePoint()))) {
+				if(!(timePoint.toLocalDate().isAfter(cal.getTimePoint().toLocalDate()))) {
 					timePoint = timePoint.plusYears(1);
 				}
-			} else if (type.equals("month")) {
-				long diff = cal.getTimePoint().getMonthValue() - timePoint.getMonthValue();
-				timePoint = timePoint.plusMonths(diff);
-				// 차이만큼 더했는데도 이전이면, 일을 계산했을 때 이전인 것이므로 한번더 1월을 더해줌.
-				if(!(timePoint.isAfter(cal.getTimePoint()))) {
-					timePoint = timePoint.plusMonths(1);
-				}
-			} else if (type.equals("date")) {
-				long diff = cal.getTimePoint().getDayOfMonth() - timePoint.getDayOfMonth();
-				timePoint = timePoint.plusMonths(diff);
 			}
+			// year 는 검증 완료, month, date은 아직 검토 필요
+//			else if (idx == DateTimeEn.month.ordinal()) {
+//				long diff = cal.getTimePoint().getMonthValue() - timePoint.getMonthValue();
+//				timePoint = timePoint.plusMonths(diff);
+//				// 차이만큼 더했는데도 이전이면, 일을 계산했을 때 이전인 것이므로 한번더 1월을 더해줌.
+//				if(!(timePoint.toLocalDate().isAfter(cal.getTimePoint().toLocalDate()))) {
+//					timePoint = timePoint.plusMonths(1);
+//				}
+//			} else if (idx == DateTimeEn.date.ordinal()) {
+//				long diff = cal.getTimePoint().getDayOfMonth() - timePoint.getDayOfMonth();
+//				timePoint = timePoint.plusMonths(diff);
+//			}
 		}
 
 	}

@@ -22,43 +22,56 @@ public class DateListVO {
 	public void insertVOs(DateVO vo) {
 		vos.add(vo);
 	}
-	
+
 	public void deleteVOs(int index) {
 		vos.remove(index);
 	}
-	
+
 	public void clearVOs() {
 		vos.clear();
 	}
-	
+
 	public DateVO getElement(int index) {
 		return vos.get(index);
 	}
-	
+
 	public Iterator<DateVO> getIter() {
 		return null;
 	}
-	
+
 	public void setDayToElement(int index, String val) {
 		vos.get(index).setDay(val);
 	}
-	
+
 	public String toJsonString() {
+
+		int recomNum = 10; // 추천할 개수를 10개로 한정
 		String jsonStr = "[";
-		
-		for(int i = 0 ; i < vos.size() ; i++) {
-			jsonStr += vos.get(i).toString();
-			
-			if( i == vos.size() - 1) {
-				break;
+
+		if (vos.size() > recomNum) {
+			for (int i = 0; i < recomNum; i++) {
+				jsonStr += vos.get(i).toString();
+
+				if (i == recomNum - 1) {
+					break;
+				} else {
+					jsonStr += ",";
+				}
 			}
-			else {
-				jsonStr += ",";
+		} else {
+
+			for (int i = 0; i < vos.size(); i++) {
+				jsonStr += vos.get(i).toString();
+
+				if (i == vos.size() - 1) {
+					break;
+				} else {
+					jsonStr += ",";
+				}
 			}
 		}
-		
 		jsonStr += "]";
-		
+
 		return jsonStr;
 	}
 }
