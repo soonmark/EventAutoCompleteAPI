@@ -229,6 +229,7 @@ public class HomeController {
 
 					for (int k = 0; k < recomNum; k++) {
 						DateVO vo = new DateVO();
+						DateVO secVo = new DateVO();
 
 						if(k == 0) {
 							vo.setDate("매일");
@@ -246,6 +247,12 @@ public class HomeController {
 						}
 
 						vos.insertVOs(vo);
+						if(k == 0 && Integer.parseInt(tmpCal.getHour()) <= 12) {
+							secVo.setHour(((Integer.parseInt(tmpCal.getHour()) + 12)%24) + "");
+							secVo.setMinute(tmpCal.getMinute());
+							secVo.setDate("매일");
+							vos.insertVOs(secVo);
+						}
 					}
 				}
 
