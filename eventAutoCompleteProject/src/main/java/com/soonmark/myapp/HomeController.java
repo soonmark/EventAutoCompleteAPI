@@ -41,7 +41,7 @@ public class HomeController {
 	@RequestMapping(value = "refresh", method = RequestMethod.POST, produces = "application/json; charset=utf8")
 	public @ResponseBody String inputProcess(HttpServletRequest httpServletRequest) {
 
-		int recomNum = 10; // 추천할 개수를 10개로 한정
+		int recomNum = 2; // 추천할 개수를 10개로 한정
 
 		// 현재 시스템 날짜 // 여기서 수정하자.
 		MyCalendar now = new MyCalendar();
@@ -105,9 +105,10 @@ public class HomeController {
 		matchingProcess(inputEvent, daysPatterns, TokenType.days, dayVos);
 		matchingProcess(inputEvent, timePatterns, TokenType.times, timeVos);
 		
-		
-		merge(dateVos);
-
+		// 기본 날짜 병합
+//		mergeItself(dateVos);
+		// special 날짜와 기본 날짜 병합
+//		merge(dateVos, specialDateVos);
 		
 		// 날짜, 시간 두개의 값이 없을 때도 크로스시켜야 하므로 빈 객체 삽입.
 		timeVos.insertVOs(new DateVO());
@@ -179,13 +180,7 @@ public class HomeController {
 				// 시간만 있을 때는 -> 날짜 빈거랑 매칭하고 시간 여분 빼기
 				// 날짜만 있을 때는 -> 시간 빈거랑 매칭하고 날짜 여분 빼기
 				// 둘 다 비어있을 때도 안 해줘도 됨.
-				if ((timeVos.getVos().size() > 1 && dateVos.getVos().size() > 1
-						&& (i == timeVos.getVos().size() - 1 || j == dateVos.getVos().size() - 1))
-						|| ((timeVos.getVos().size() > 1 && dateVos.getVos().size() == 1)
-								&& (i == timeVos.getVos().size() - 1))
-						|| ((timeVos.getVos().size() == 1 && dateVos.getVos().size() > 1)
-								&& (j == dateVos.getVos().size() - 1))
-						|| (timeVos.getVos().size() == 1 && dateVos.getVos().size() == 1)) {
+				if (i == timeVos.getVos().size() - 1 && j == dateVos.getVos().size() - 1) {
 					continue;
 				}
 
@@ -208,7 +203,7 @@ public class HomeController {
 					break;
 				}
 
-				// 날짜 정보가 없으면 매일 일정 or 가장 근접한 미래날짜로 세팅.
+				// 날짜 정보가 없으면 가장 근접한 미래날짜로 세팅.
 				if (dateVos.getVos().size() == 1) {
 					logger.info("여2");
 
@@ -231,12 +226,12 @@ public class HomeController {
 						DateVO vo = new DateVO();
 						DateVO secVo = new DateVO();
 
-						if(k == 0) {
-							vo.setDate("매일");
-							vo.setHour(tmpCal.getHour());
-							vo.setMinute(tmpCal.getMinute());
-						}
-						else {
+//						if(k == 0) {
+//							vo.setDate("매일");
+//							vo.setHour(tmpCal.getHour());
+//							vo.setMinute(tmpCal.getMinute());
+//						}
+//						else {
 							tmpCal.setCloseDateOfTime(comparedCal);
 							comparedCal.setTimePoint(tmpCal.getTimePoint());
 
@@ -244,15 +239,15 @@ public class HomeController {
 							vo.setAllDate(tmpCal);
 							vo.setHour(tmpCal.getHour());
 							vo.setMinute(tmpCal.getMinute());
-						}
+//						}
 
 						vos.insertVOs(vo);
-						if(k == 0 && Integer.parseInt(tmpCal.getHour()) <= 12) {
-							secVo.setHour(((Integer.parseInt(tmpCal.getHour()) + 12)%24) + "");
-							secVo.setMinute(tmpCal.getMinute());
-							secVo.setDate("매일");
-							vos.insertVOs(secVo);
-						}
+//						if(k == 0 && Integer.parseInt(tmpCal.getHour()) <= 12) {
+//							secVo.setHour(((Integer.parseInt(tmpCal.getHour()) + 12)%24) + "");
+//							secVo.setMinute(tmpCal.getMinute());
+//							secVo.setDate("매일");
+//							vos.insertVOs(secVo);
+//						}
 					}
 				}
 
@@ -297,27 +292,27 @@ public class HomeController {
 
 						// 이전에는 요일 정보를 안 받았기 때문에 이렇게 짰는데 다시 짜자.
 						if (vo.isFocusOnDay == true) {
-							if (k == 0) {
-								vo.setDate("매주");
-								vo.setYear("-1");
-								vo.setMonth("-1");
-							} else {
+//							if (k == 0) {
+//								vo.setDate("매주");
+//								vo.setYear("-1");
+//								vo.setMonth("-1");
+//							} else {
 								// 요일에 맞는 날짜만 뽑도록 구하는 로직
 								LocalDate tmpDate = LocalDate.of(Integer.parseInt(vo.getYear()),
 																Integer.parseInt(vo.getMonth()),
 																Integer.parseInt(vo.getDate()));
 								
 								
-								tmpDate = tmpDate.plusWeeks(k - 1);
+								tmpDate = tmpDate.plusWeeks(k);
 								vo.setDate(tmpDate.getDayOfMonth() + "");
 								vo.setYear(tmpDate.getYear() + "");
 								vo.setMonth(tmpDate.getMonthValue() + "");
-							}
+//							}
 						} else {
-							if (k == 0) {
-								vo.setYear("매년");
-								vo.setDay("-1");
-							} else {
+//							if (k == 0) {
+//								vo.setYear("매년");
+//								vo.setDay("-1");
+//							} else {
 								// 빈 값 중에 가장 큰 위치값의 인덱스 년 < 월 < 일 < 요일
 								int emptyInfoIdx = DateTimeEn.day.ordinal();
 								// 월과 요일 정보가 있으면 일 정보가 될 것이고...
@@ -337,11 +332,11 @@ public class HomeController {
 								// 해당 정보를 기준으로 더해주기.
 								tmpCal2.setCloseDate(now, emptyInfoIdx);
 								
-								vo.setYear((Integer.parseInt(tmpCal2.getYear()) + k - 1) + "");
+								vo.setYear((Integer.parseInt(tmpCal2.getYear()) + k) + "");
 
 								// 날짜에 맞는 요일 구하는 로직
 								vo.setProperDay();
-							}
+//							}
 						}
 
 						vos.insertVOs(vo);
@@ -401,12 +396,10 @@ public class HomeController {
 		specialDatePatterns.add("^(.*)(?<dateWithoutDays>내일)(.*)$"); // 내일
 		specialDatePatterns.add("^(.*)(?<dateWithoutDays>오늘)(.*)$"); // 오늘
 		specialDatePatterns.add("^(.*)(?<dateWithoutDays>모레)(.*)$"); // 모레
-		specialDatePatterns.add("^(.*)(?<dateWithoutDays>매일)(.*)$"); // 매일
-
-		specialDatePatterns.add("^(.*)(?<dateWithDays>이번주)(.*)$"); // 이번주
-		specialDatePatterns.add("^(.*)(?<dateWithDays>다음주)(.*)$"); // 다음주
-		specialDatePatterns.add("^(.*)(?<dateWithDays>다다음주)(.*)$"); // 다다음주
-		specialDatePatterns.add("^(.*)(?<dateWithDays>매주)(.*)$"); // 매주
+		
+		specialDatePatterns.add("^(.*)(?<thisWeek>이번주)(.*)$"); // 이번주
+		specialDatePatterns.add("^(.*)(?<nextWeek>다음주)(.*)$"); // 다음주
+		specialDatePatterns.add("^(.*)(?<weekAfterNext>다다음주)(.*)$"); // 다다음주
 
 
 		
@@ -444,7 +437,36 @@ public class HomeController {
 		}
 	}
 	
-	void merge(DateListVO targetVos) {
+	// 년, 월, 일을 각각 받게 되면 여기서 merge 할 것.
+	void mergeItself(DateListVO targetVos) {
 		
 	}
+
+	// specialDate은 여기서 merge.
+	void merge(DateListVO targetVos, DateListVO secVos) {
+		// 아예 값이 없으면 빈 객체 하나 넣어주기
+		targetVos.insertVOs(new DateVO());
+		secVos.insertVOs(new DateVO());
+		
+		for (int i = 0; i < targetVos.getVos().size(); i++) {
+			for (int j = 0; j < secVos.getVos().size(); j++) {
+				DateVO vo = new DateVO();
+				
+				if (i == targetVos.getVos().size() - 1 && j == secVos.getVos().size() - 1){
+					continue;
+				}
+				else {
+					// vo 초기화 : secVos로 세팅
+					vo.setAllDate(secVos.getElement(j));
+					if(vo.getSpecialDate().equals("-1")) {
+					}
+					else {
+						vo.setDate(vo.getSpecialDate());
+//						vo.set
+					}
+				}
+			}
+		}
+	}
+	
 }

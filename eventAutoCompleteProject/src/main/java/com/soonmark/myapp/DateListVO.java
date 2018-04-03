@@ -45,7 +45,7 @@ public class DateListVO {
 
 	public String toJsonString() {
 
-		int recomNum = 10; // 추천할 개수를 10개로 한정
+		int recomNum = 2; // 추천할 개수를 10개로 한정
 		String jsonStr = "[";
 
 		if (vos.size() > recomNum) {

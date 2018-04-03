@@ -60,6 +60,7 @@ public class DateVO {
 		setYear(vo.getYear());
 		setMonth(vo.getMonth());
 		setDate(vo.getDate());
+		setSpecialDate(vo.getSpecialDate());
 	}
 	
 	public String getSpecialDate() {
