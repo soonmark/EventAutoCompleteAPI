@@ -140,7 +140,7 @@ public class HomeController {
 				MyCalendar tmpCal = new MyCalendar();
 				DateVO vo = new DateVO();
 
-				// 날짜 없고 요일만 있을 때는
+				// 날짜 없고 요일만 있을 때
 				if (dateVos.getVos().size() == 1) {
 					// 가까운 미래시 날짜 찾아 tmpCal에 세팅.
 					tmpCal.setCloseDateOfTheDay(dayVos.getElement(j).getDay());
@@ -299,6 +299,7 @@ public class HomeController {
 								LocalDate tmpDate = LocalDate.of(Integer.parseInt(vo.getYear()),
 																Integer.parseInt(vo.getMonth()),
 																Integer.parseInt(vo.getDate()));
+								
 								
 								tmpDate = tmpDate.plusWeeks(k - 1);
 								vo.setDate(tmpDate.getDayOfMonth() + "");

@@ -72,30 +72,28 @@ body {
 
 
 	<!-- Page Content -->
-		<div class="jumbotron text-center topConts">
-			<h2>일정 추가</h2>
-			<form>
-				<div class="formEvent form-group">
-					<!-- <label for="inputEvent">일정</label> -->
-					<input type="text"
-						id="inputEvent" name="inputEvent" class="form-control input-lg"
-						placeholder="일정을 입력하세요.">
-				</div>
-			</form>
+	<div class="jumbotron text-center topConts">
+		<h2>일정 추가</h2>
+		<form>
+			<div class="formEvent form-group">
+				<!-- <label for="inputEvent">일정</label> -->
+				<input type="text" id="inputEvent" name="inputEvent"
+					class="form-control input-lg" placeholder="일정을 입력하세요.">
+			</div>
+		</form>
 		<div class="panel panel-default myPanelMargin">
 			<div class="panel-heading font-bording display-right">
-				<span class="glyphicon glyphicon-chevron-right"></span>
-				<span class="inputText">입력한 일정 : ${message}</span>
+				<span class="glyphicon glyphicon-chevron-right"></span> <span
+					class="inputText">입력한 일정 : ${message}</span>
 			</div>
 			<div class="panel-body font-bording display-right">
-				<span class="glyphicon glyphicon-chevron-right"></span>
-				<span class="changedText">선택한 일정 : </span>
+				<span class="glyphicon glyphicon-chevron-right"></span> <span
+					class="changedText">선택한 날짜 : </span>
 			</div>
 		</div>
-<%-- 		<p class="result">입력한 일정 : ${message}</p> --%>
-		</div>
-	<div class="container">
+		<%-- 		<p class="result">입력한 일정 : ${message}</p> --%>
 	</div>
+	<div class="container"></div>
 
 
 
@@ -165,7 +163,7 @@ body {
 							console.log("data " + idx + ": " + dataEach.year);
 
 							if (dataEach.year == "-2") {
-								alert("한글, 숫자, 영어 외의 기호는 입력이 불가능합니다.");
+								alert("., /, -, : 외의 기호는 입력이 불가능합니다.");
 							} else {
 								str += "<div class=\"list-group-item\">";
 								if (dataEach.year != "-1") {
@@ -193,12 +191,26 @@ body {
 						$(".list-group").html(str);
 						$('.inputText').text("입력한 일정 : " + tmpStr);
 						console.log("성공");
+						
+						$(document).on({
+							click:function(){ 
+								$('.changedText').text("선택한 날짜 : " + $(this).text());
+							},
+							mouseenter: function () {
+								$(this).addClass("active");
+						    },
+						    mouseleave: function () {
+						    	$(this).removeClass("active");
+						    }
+						}, '.list-group-item');
+						
+
 					}
 				}
 
 				$.ajax(settings);
-			}
-			;
+			};
+			
 		});
 	</script>
 

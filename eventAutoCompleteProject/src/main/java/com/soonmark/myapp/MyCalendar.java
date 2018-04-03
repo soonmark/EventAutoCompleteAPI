@@ -139,7 +139,7 @@ public class MyCalendar {
 		// 일
 		int diff = d.getValue() - tmpDate.getDayOfWeek().getValue();
 		if (diff < 0) {
-			diff = 7 - diff;
+			diff = 7 + diff;
 		} else {
 		}
 
@@ -165,16 +165,27 @@ public class MyCalendar {
 				}
 			}
 		}
+		else {
+			// halfTime 이 아니고, 13:30 가 들어왔을 때
+			// 13:30 < 기준 시간
+			if (!(timePoint.toLocalTime().isAfter(cal.getTimePoint().toLocalTime()))) {
+				plusDate(1);
+			}
+			// 기준 시간 < 13:30
+//			else {
+//				// 오늘 오후로 해야함.
+//			}
+		}
 	}
 
 	public void setCloseDate(MyCalendar cal, int idx) {
 		// 세팅된 날짜가 기준 날짜 전의 날짜면
-		if (!(timePoint.toLocalDate().isAfter(cal.getTimePoint().toLocalDate()))) {
+		if (timePoint.toLocalDate().isBefore(cal.getTimePoint().toLocalDate())) {
 			if (idx == DateTimeEn.year.ordinal()) {
 				long diff = cal.getTimePoint().getYear() - timePoint.getYear();
 				timePoint = timePoint.plusYears(diff);
 				// 차이만큼 더했는데도 이전이면, 월이나 일을 계산했을 때 이전인 것이므로 한번더 1년을 더해줌.
-				if(!(timePoint.toLocalDate().isAfter(cal.getTimePoint().toLocalDate()))) {
+				if(timePoint.toLocalDate().isBefore(cal.getTimePoint().toLocalDate())) {
 					timePoint = timePoint.plusYears(1);
 				}
 			}
