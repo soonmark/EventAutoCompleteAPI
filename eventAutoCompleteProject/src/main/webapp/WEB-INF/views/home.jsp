@@ -73,7 +73,7 @@ body {
 
 	<!-- Page Content -->
 	<div class="jumbotron text-center topConts">
-		<h2>일정 추가</h2>
+		<h2>일정</h2>
 		<form>
 			<div class="formEvent form-group">
 				<!-- <label for="inputEvent">일정</label> -->
@@ -91,7 +91,8 @@ body {
 					class="changedText">선택한 날짜 : </span>
 			</div>
 		</div>
-		<%-- 		<p class="result">입력한 일정 : ${message}</p> --%>
+		
+		<button type="button" class="btn btn-success wider-width btn-lg disabled">추가</button>
 	</div>
 	<div class="container"></div>
 
