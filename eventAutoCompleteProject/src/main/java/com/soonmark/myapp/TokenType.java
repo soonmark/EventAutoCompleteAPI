@@ -6,6 +6,12 @@ public enum TokenType {
 	dates(0){
 		void setVoInfo(DateVO vo, Matcher matcher) {
 			try {
+				vo.setYear(matcher.group("year"));
+				vo.setHasInfo(DateTimeEn.year.ordinal(), true);
+			} catch (IllegalArgumentException e) {
+				vo.setYear("-1");
+			}
+			try {
 				vo.setMonth(matcher.group("month"));
 				vo.setHasInfo(DateTimeEn.month.ordinal(), true);
 			} catch (IllegalArgumentException e) {

@@ -106,7 +106,7 @@ public class HomeController {
 		matchingProcess(inputEvent, timePatterns, TokenType.times, timeVos);
 		
 		// 기본 날짜 병합
-//		mergeItself(dateVos);
+		mergeItself(dateVos);
 		// special 날짜와 기본 날짜 병합
 //		merge(dateVos, specialDateVos);
 		
@@ -224,14 +224,7 @@ public class HomeController {
 
 					for (int k = 0; k < recomNum; k++) {
 						DateVO vo = new DateVO();
-						DateVO secVo = new DateVO();
 
-//						if(k == 0) {
-//							vo.setDate("매일");
-//							vo.setHour(tmpCal.getHour());
-//							vo.setMinute(tmpCal.getMinute());
-//						}
-//						else {
 							tmpCal.setCloseDateOfTime(comparedCal);
 							comparedCal.setTimePoint(tmpCal.getTimePoint());
 
@@ -239,15 +232,8 @@ public class HomeController {
 							vo.setAllDate(tmpCal);
 							vo.setHour(tmpCal.getHour());
 							vo.setMinute(tmpCal.getMinute());
-//						}
 
 						vos.insertVOs(vo);
-//						if(k == 0 && Integer.parseInt(tmpCal.getHour()) <= 12) {
-//							secVo.setHour(((Integer.parseInt(tmpCal.getHour()) + 12)%24) + "");
-//							secVo.setMinute(tmpCal.getMinute());
-//							secVo.setDate("매일");
-//							vos.insertVOs(secVo);
-//						}
 					}
 				}
 
@@ -256,7 +242,6 @@ public class HomeController {
 						DateVO vo = new DateVO();
 						DateVO secVo = new DateVO();
 						
-						logger.info("여3");
 						vo.setAllDate(dateVos.getElement(j));
 						vo.setFocusOnDay(isFocusOnDay);
 						
@@ -292,11 +277,6 @@ public class HomeController {
 
 						// 이전에는 요일 정보를 안 받았기 때문에 이렇게 짰는데 다시 짜자.
 						if (vo.isFocusOnDay == true) {
-//							if (k == 0) {
-//								vo.setDate("매주");
-//								vo.setYear("-1");
-//								vo.setMonth("-1");
-//							} else {
 								// 요일에 맞는 날짜만 뽑도록 구하는 로직
 								LocalDate tmpDate = LocalDate.of(Integer.parseInt(vo.getYear()),
 																Integer.parseInt(vo.getMonth()),
@@ -307,12 +287,7 @@ public class HomeController {
 								vo.setDate(tmpDate.getDayOfMonth() + "");
 								vo.setYear(tmpDate.getYear() + "");
 								vo.setMonth(tmpDate.getMonthValue() + "");
-//							}
 						} else {
-//							if (k == 0) {
-//								vo.setYear("매년");
-//								vo.setDay("-1");
-//							} else {
 								// 빈 값 중에 가장 큰 위치값의 인덱스 년 < 월 < 일 < 요일
 								int emptyInfoIdx = DateTimeEn.day.ordinal();
 								// 월과 요일 정보가 있으면 일 정보가 될 것이고...
@@ -330,13 +305,12 @@ public class HomeController {
 								tmpCal2.setMonth(Integer.parseInt(vo.getMonth()));
 								tmpCal2.setDate(Integer.parseInt(vo.getDate()));
 								// 해당 정보를 기준으로 더해주기.
-								tmpCal2.setCloseDate(now, emptyInfoIdx);
+//								tmpCal2.setCloseDate(now, emptyInfoIdx);
 								
 								vo.setYear((Integer.parseInt(tmpCal2.getYear()) + k) + "");
 
 								// 날짜에 맞는 요일 구하는 로직
 								vo.setProperDay();
-//							}
 						}
 
 						vos.insertVOs(vo);
@@ -365,29 +339,28 @@ public class HomeController {
 		// datePatterns.add("^(.*)([0-9]{4})/(0?[1-9]|1[0-2])/([0-9]{1,2})((.*))$"); //
 		// 2018/3/19
 		// datePatterns.add("^(.*)([0-9]{4})\\.(0?[1-9]|1[0-2])\\.([0-9]{1,2})((.*))$");
-		// // 2018.3.19
+		// 2018.3.19
 		// datePatterns.add("^(.*)([0-9]{4})년 (0?[1-9]|1[0-2])월 ([0-9]{1,2})일((.*))$");
-		// // 2018년 3월 19일
-		datePatterns.add("^(.*)(?<month>1[0-2])월 (?<date>[1-9]|[1-2][0-9]|3[0-1])일(.*)$"); // 11월 19일
-		datePatterns.add("^(|.*[^1])(?<month>[1-9])월 (?<date>[1-9]|[1-2][0-9]|3[0-1])일(.*)$"); // 3월 19일
+		// 2018년 3월 19일
+		
+		// 20180319
+
 		datePatterns.add("^(.*)(?<month>1[0-2])-(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 11-19
 		datePatterns.add("^(|.*[^1])(?<month>[1-9])-(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 3-19
 		datePatterns.add("^(.*)(?<month>1[0-2])\\.(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 11.19
 		datePatterns.add("^(|.*[^1])(?<month>[1-9])\\.(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 3.19
 		datePatterns.add("^(.*)(?<month>1[0-2])/(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 11/19
 		datePatterns.add("^(|.*[^1])(?<month>[1-9])/(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 3/19
+
+		
+		datePatterns.add("^(.*)(?<year>[1-2][0-9][0-9][0-9])년(.*)$"); // 2018년
+		datePatterns.add("^(|.*[^0-9])(?<year>[0-9][0-9])년(.*)$"); // 94년, 18년
 		// 일만 입력받기
-//		datePatterns.add("^([^월]*)(?<date>[1-2][0-9]|3[0-1])일(.*)$"); // 19일
-//		datePatterns.add("^(.*)(?<date>[1-2][0-9]|3[0-1])일(.*)$"); // 19일
-//		datePatterns.add("^(|[^월]*[^1-3])(?<date>[1-9])일(.*)$");
-		// 1일
-//		datePatterns.add("^(|.*[^1-3])(?<date>[1-9])일(.*)$"); // 1일
+		datePatterns.add("^(.*)(?<date>[1-2][0-9]|3[0-1])일(.*)$"); // 19일
+		datePatterns.add("^(|.*[^1-3])(?<date>[1-9])일(.*)$"); // 1일
 		// 월만 입력받기
-//		datePatterns.add("^(.*)(?<month>1[0-2])월([^일]*)$"); // 12월
-//		datePatterns.add("^(.*)(?<month>1[0-2])월(.*)$"); // 12월
-//		datePatterns.add("^(|.*[^1])(?<month>[1-9])월([^일]*)$"); // 1월
-//		datePatterns.add("^(|.*[^1])(?<month>[1-9])월(.*)$"); // 1월
-		// 20180319
+		datePatterns.add("^(.*)(?<month>1[0-2])월(.*)$"); // 12월
+		datePatterns.add("^(|.*[^1])(?<month>[1-9])월(.*)$"); // 1월
 
 		// 요일 패턴
 		daysPatterns.add("^(.*)(?<day>월|화|수|목|금|토|일)요일(.*)$"); // 월요일
@@ -439,7 +412,48 @@ public class HomeController {
 	
 	// 년, 월, 일을 각각 받게 되면 여기서 merge 할 것.
 	void mergeItself(DateListVO targetVos) {
+		DateListVO vos = new DateListVO();
+		vos.insertVOs(new DateVO());
 		
+		for (int i = 0; i < targetVos.getVos().size(); i++) {
+			for(int j = 0 ; j < vos.getVos().size() ; j++) {
+				// target 의 원소 중 존재하는 값들이 모두 vos 에 없으면 추가
+				boolean ableToPut = true;
+				for(DateTimeEn d: DateTimeEn.values()) {
+					if(targetVos.getElement(i).hasInfo(d.ordinal())
+							&& vos.getElement(j).hasInfo(d.ordinal())) {
+						ableToPut = false;
+						break;
+					}
+				}
+				if(ableToPut) {
+					for(DateTimeEn d: DateTimeEn.values()) {
+						if(vos.getElement(j).hasInfo(d.ordinal())) {
+							vos.insertVOs(new DateVO());
+							break;
+						}
+					}
+					if(!targetVos.getElement(i).getYear().equals("-1")) {
+						vos.getElement(j).setYear(targetVos.getElement(i).getYear());
+						vos.getElement(j).setHasInfo(0, true);
+					}
+					if(!targetVos.getElement(i).getMonth().equals("-1")) {
+						vos.getElement(j).setMonth(targetVos.getElement(i).getMonth());
+						vos.getElement(j).setHasInfo(1, true);
+					}
+					if(!targetVos.getElement(i).getDate().equals("-1")) {
+						vos.getElement(j).setDate(targetVos.getElement(i).getDate());
+						vos.getElement(j).setHasInfo(2, true);
+					}
+					break;
+				}
+			}
+		}
+		
+		targetVos.clearVOs();
+		for(int j = 0 ; j < vos.getVos().size() - 1 ; j++) {
+			targetVos.insertVOs(vos.getElement(j));
+		}
 	}
 
 	// specialDate은 여기서 merge.
@@ -462,7 +476,6 @@ public class HomeController {
 					}
 					else {
 						vo.setDate(vo.getSpecialDate());
-//						vo.set
 					}
 				}
 			}

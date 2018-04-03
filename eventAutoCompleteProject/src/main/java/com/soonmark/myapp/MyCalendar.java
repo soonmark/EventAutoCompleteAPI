@@ -171,10 +171,6 @@ public class MyCalendar {
 			if (!(timePoint.toLocalTime().isAfter(cal.getTimePoint().toLocalTime()))) {
 				plusDate(1);
 			}
-			// 기준 시간 < 13:30
-//			else {
-//				// 오늘 오후로 해야함.
-//			}
 		}
 	}
 
