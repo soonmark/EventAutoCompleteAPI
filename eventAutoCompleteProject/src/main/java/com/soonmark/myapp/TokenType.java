@@ -1,5 +1,6 @@
 package com.soonmark.myapp;
 
+import java.time.LocalDate;
 import java.util.regex.Matcher;
 
 public enum TokenType {
@@ -7,6 +8,19 @@ public enum TokenType {
 		void setVoInfo(DateVO vo, Matcher matcher) {
 			try {
 				vo.setYear(matcher.group("year"));
+				String year = vo.getYear();
+				int yearInt = Integer.parseInt(year);
+				if(year.length() == 2) {
+					// 받은 년도가 2자리수면 처리해줘야함.
+					// 일단 90년 전까지는 19로, 그 전은 20으로 해놓자.
+					if(LocalDate.now().getYear()-(yearInt + 2000) < 90
+							&& LocalDate.now().getYear()-(yearInt + 2000) > -10) {
+						yearInt += 2000;
+					}else {
+						yearInt += 1900;
+					}
+					vo.setYear("" + yearInt);
+				}
 				vo.setHasInfo(DateTimeEn.year.ordinal(), true);
 			} catch (IllegalArgumentException e) {
 				vo.setYear("-1");
@@ -50,14 +64,28 @@ public enum TokenType {
 	}, special(3){
 		void setVoInfo(DateVO vo, Matcher matcher) {
 			//enum 
-			for(specialDateType sdt : specialDateType.values()) {
+			for(specialDateTypeNeedsDay sdt : specialDateTypeNeedsDay.values()) {
 				try {
 					vo.setSpecialDate(matcher.group(sdt.name()));
+					
+					// date 로 해두면 이상해질 것 같지만 일단...
 					vo.setHasInfo(DateTimeEn.date.ordinal(), true);
 					vo.isFocusOnDay = false;
 					break;
 				} catch (IllegalArgumentException e) {
-					vo.setSpecialDate("-1");
+					//enum 
+					for(specialDateTypeWithoutDay sdtwd : specialDateTypeWithoutDay.values()) {
+						try {
+							vo.setSpecialDate(matcher.group(sdtwd.name()));
+							
+							// date 로 해두면 이상해질 것 같지만 일단...
+							vo.setHasInfo(DateTimeEn.date.ordinal(), true);
+							vo.isFocusOnDay = false;
+							break;
+						} catch (IllegalArgumentException event) {
+							vo.setSpecialDate("-1");
+						}
+					}
 				}
 			}
 //			try {

@@ -1,0 +1,13 @@
+package com.soonmark.myapp;
+
+public enum specialDateTypeNeedsDay {
+	thisWeek("이번주"), nextWeek("다음주"), weekAfterNext("다다음주");
+
+	String title;
+	specialDateTypeNeedsDay(String title){
+		this.title = title;
+	}
+	String getTitle() {
+		return title;
+	}
+}

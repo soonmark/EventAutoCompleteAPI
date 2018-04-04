@@ -1,5 +1,7 @@
 package com.soonmark.myapp;
 
+import java.time.DayOfWeek;
+
 public class DateVO {
 	String year;
 	String month;
@@ -152,8 +154,25 @@ public class DateVO {
 		return day;
 	}
 
-	public String getIntDay() {
-		return day;
+	public DayOfWeek getDayOfWeekDay() {
+		DayOfWeek iDay = DayOfWeek.MONDAY;;
+		if(day.equals("월")) {
+			iDay = DayOfWeek.MONDAY;
+		} else if(day.equals("화")) {
+			iDay = DayOfWeek.TUESDAY;
+		} else if(day.equals("수")) {
+			iDay = DayOfWeek.WEDNESDAY;
+		} else if(day.equals("목")) {
+			iDay = DayOfWeek.THURSDAY;
+		} else if(day.equals("금")) {
+			iDay = DayOfWeek.FRIDAY;
+		}else if(day.equals("토")) {
+			iDay = DayOfWeek.SATURDAY;
+		}else if(day.equals("일")) {
+			iDay = DayOfWeek.SUNDAY;
+		}
+		
+		return iDay;
 	}
 	
 	public void setDay(String day) {
