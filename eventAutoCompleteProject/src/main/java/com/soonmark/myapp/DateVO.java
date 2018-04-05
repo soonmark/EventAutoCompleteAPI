@@ -15,8 +15,8 @@ public class DateVO {
 	boolean isFocusOnDay;
 	boolean ignoreDay;
 	boolean[] hasInfo;
-	String formattedDateTime;
 	boolean isAllDayEvent;
+	DateTimeEn focusToRepeat;
 
 	DateVO() {
 		this.year = -1;
@@ -28,6 +28,7 @@ public class DateVO {
 		this.isFocusOnDay = false;
 		this.ignoreDay = false;
 		this.isAllDayEvent = false;
+		this.focusToRepeat = null;
 		hasInfo = new boolean[] {false, false, false, false, false, false};
 	}
 
@@ -41,9 +42,18 @@ public class DateVO {
 		this.isFocusOnDay = false;
 		this.ignoreDay = false;
 		this.isAllDayEvent = false;
+		this.focusToRepeat = null;
 		hasInfo = new boolean[] {false, false, false, false, false, false};
 	}
 	
+	public DateTimeEn getFocusToRepeat() {
+		return focusToRepeat;
+	}
+
+	public void setFocusToRepeat(DateTimeEn focusToRepeat) {
+		this.focusToRepeat = focusToRepeat;
+	}
+
 	public boolean isAllDayEvent() {
 		return isAllDayEvent;
 	}
@@ -153,27 +163,6 @@ public class DateVO {
 		return day;
 	}
 
-//	public DayOfWeek getDayOfWeekDay() {
-//		DayOfWeek iDay = DayOfWeek.MONDAY;;
-//		if(day.equals("월")) {
-//			iDay = DayOfWeek.MONDAY;
-//		} else if(day.equals("화")) {
-//			iDay = DayOfWeek.TUESDAY;
-//		} else if(day.equals("수")) {
-//			iDay = DayOfWeek.WEDNESDAY;
-//		} else if(day.equals("목")) {
-//			iDay = DayOfWeek.THURSDAY;
-//		} else if(day.equals("금")) {
-//			iDay = DayOfWeek.FRIDAY;
-//		}else if(day.equals("토")) {
-//			iDay = DayOfWeek.SATURDAY;
-//		}else if(day.equals("일")) {
-//			iDay = DayOfWeek.SUNDAY;
-//		}
-//		
-//		return iDay;
-//	}
-	
 	public void setDay(DayOfWeek day) {
 		this.day = day;
 	}
@@ -213,10 +202,6 @@ public class DateVO {
 	public void adjustDay() {
 		if(isDateInfoFull()) {
 			MyLocalDateTime cal = new MyLocalDateTime();
-//			cal.setYear(Integer.parseInt(year));
-//			cal.setMonth(Integer.parseInt(month));
-//			cal.setDate(Integer.parseInt(date));
-//			day = cal.getDay();
 			cal.setYear(year);
 			cal.setMonth(month);
 			cal.setDate(date);
@@ -233,16 +218,10 @@ public class DateVO {
         return null;
     }
 
-	
-	public void formatDateTime() {
-		
-		
-	}
-
 	public String toString() {
-		String jsonString = "{\"year\":\"" + this.year
-				+ "\", \"month\":\"" + this.month
-				+ "\", \"date\":\"" + this.date
+		String jsonString = "{\"year\":\"" + String.format("%04d", this.year)
+				+ "\", \"month\":\"" + String.format("%02d", this.month)
+				+ "\", \"date\":\"" + String.format("%02d", this.date)
 				+ "\", \"day\":\"" + this.day.getDisplayName(TextStyle.FULL, Locale.KOREA)
 				+ "\", \"isAllDayEvent\":\"" + this.isAllDayEvent
 				+ "\", \"hour\":\"" + String.format("%02d", this.hour)

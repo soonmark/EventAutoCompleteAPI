@@ -120,24 +120,6 @@ public class MyLocalDateTime {
 	}
 
 	public void setCloseDateOfTheDay(DayOfWeek val) {
-		// DayOfWeek d = DayOfWeek.SUNDAY;
-		//
-		// if (val.equals("일")) {
-		// d = DayOfWeek.SUNDAY; // 6
-		// } else if (val.equals("월")) {
-		// d = DayOfWeek.MONDAY; // 0
-		// } else if (val.equals("화")) {
-		// d = DayOfWeek.TUESDAY; // 1
-		// } else if (val.equals("수")) {
-		// d = DayOfWeek.WEDNESDAY; // 2
-		// } else if (val.equals("목")) {
-		// d = DayOfWeek.THURSDAY; // 3
-		// } else if (val.equals("금")) {
-		// d = DayOfWeek.FRIDAY; // 4
-		// } else if (val.equals("토")) {
-		// d = DayOfWeek.SATURDAY; // 5
-		// }
-
 		if (val != null) {
 
 			LocalDate tmpDate = LocalDate.now();
@@ -180,15 +162,55 @@ public class MyLocalDateTime {
 			}
 		}
 	}
-	/*
-	 * public void setCloseDate(MyCalendar cal, int idx) { // 세팅된 날짜가 기준 날짜 전의 날짜면
-	 * if (timePoint.toLocalDate().isBefore(cal.getTimePoint().toLocalDate())) { if
-	 * (idx == DateTimeEn.year.ordinal()) { long diff = cal.getTimePoint().getYear()
-	 * - timePoint.getYear(); timePoint = timePoint.plusYears(diff); // 차이만큼 더했는데도
-	 * 이전이면, 월이나 일을 계산했을 때 이전인 것이므로 한번더 1년을 더해줌.
-	 * if(timePoint.toLocalDate().isBefore(cal.getTimePoint().toLocalDate())) {
-	 * timePoint = timePoint.plusYears(1); } } }
-	 * 
-	 * }
-	 */
+
+	public void setCloseDate(MyLocalDateTime cal, DateTimeEn focus, int plus) {
+		// 세팅된 날짜가 기준 날짜 전의 날짜면
+//		if (!timePoint.toLocalDate().isAfter(cal.getTimePoint().toLocalDate())) {
+//			if (focus == DateTimeEn.year) {
+//				long diff = cal.getTimePoint().getYear() - timePoint.getYear();
+//				timePoint = timePoint.plusYears(diff + plus);
+//				// 차이만큼 더했는데도 이전이면, 월이나 일을 계산했을 때 이전인 것이므로 한번더 1년을 더해줌.
+//				if (!timePoint.toLocalDate().isAfter(cal.getTimePoint().toLocalDate())) {
+//					timePoint = timePoint.plusYears(1);
+//				}
+//			}
+//			else if (focus == DateTimeEn.month) {
+//				long diff = cal.getTimePoint().getMonthValue() - timePoint.getMonthValue();
+//				timePoint = timePoint.plusMonths(diff + plus);
+//				// 차이만큼 더했는데도 이전이면, 일을 계산했을 때 이전인 것이므로 한번더 1월을 더해줌.
+//				if (!timePoint.toLocalDate().isAfter(cal.getTimePoint().toLocalDate())) {
+//					timePoint = timePoint.plusMonths(1);
+//				}
+//			}
+//			else if (focus == DateTimeEn.date) {
+//				long diff = cal.getTimePoint().getDayOfMonth() - timePoint.getDayOfMonth();
+//				timePoint = timePoint.plusDays(diff + plus);
+//			}
+//		}
+		if (focus == DateTimeEn.year) {
+			long diff = cal.getTimePoint().getYear() - timePoint.getYear();
+			timePoint = timePoint.plusYears(diff + plus);
+			// 차이만큼 더했는데도 이전이면, 월이나 일을 계산했을 때 이전인 것이므로 한번더 1년을 더해줌.
+			if (!timePoint.toLocalDate().isAfter(cal.getTimePoint().toLocalDate())) {
+				timePoint = timePoint.plusYears(1);
+			}
+		}
+		else if (focus == DateTimeEn.month) {
+			long diff = cal.getTimePoint().getMonthValue() - timePoint.getMonthValue();
+			timePoint = timePoint.plusMonths(diff + plus);
+		}
+		else if (focus == DateTimeEn.date) {
+			long diff = cal.getTimePoint().getDayOfMonth() - timePoint.getDayOfMonth();
+			timePoint = timePoint.plusDays(diff + plus);
+		}
+//		
+//		if (!timePoint.toLocalDate().isAfter(cal.getTimePoint().toLocalDate().pl)) {
+//
+//			
+//		}
+	}
+	
+	
+	
+	
 }

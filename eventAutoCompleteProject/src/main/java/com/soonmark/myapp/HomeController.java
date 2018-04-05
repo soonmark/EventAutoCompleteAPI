@@ -191,10 +191,10 @@ public class HomeController {
 
 				logger.info("여1");
 
-//				String y = dateVos.getElement(j).getYear();
-//				String m = dateVos.getElement(j).getMonth();
-//				String dt = dateVos.getElement(j).getDate();
-//				String day = dateVos.getElement(j).getDay();
+				// String y = dateVos.getElement(j).getYear();
+				// String m = dateVos.getElement(j).getMonth();
+				// String dt = dateVos.getElement(j).getDate();
+				// String day = dateVos.getElement(j).getDay();
 				int y = dateVos.getElement(j).getYear();
 				int m = dateVos.getElement(j).getMonth();
 				int dt = dateVos.getElement(j).getDate();
@@ -205,9 +205,7 @@ public class HomeController {
 				int min = timeVos.getElement(i).getMinute();
 
 				// 월간 일수 차이에 대한 예외처리
-				if ((m == 2 && dt > 28)
-					|| (m < 8 && m % 2 == 0 && dt > 30)
-					|| (m > 7 && m % 2 == 1 && dt > 30)) {
+				if ((m == 2 && dt > 28) || (m < 8 && m % 2 == 0 && dt > 30) || (m > 7 && m % 2 == 1 && dt > 30)) {
 
 					break;
 				}
@@ -253,6 +251,7 @@ public class HomeController {
 
 						vo.setAllDate(dateVos.getElement(j));
 						vo.setFocusOnDay(isFocusOnDay);
+						vo.setFocusToRepeat(dateVos.getElement(j).getFocusToRepeat());
 
 						// 무슨 정보가 있는지 담겨있음
 						vo.setHasInfo(DateTimeEn.year.ordinal(),
@@ -263,64 +262,73 @@ public class HomeController {
 								dateVos.getElement(j).hasInfo(DateTimeEn.date.ordinal()));
 						vo.setHasInfo(DateTimeEn.day.ordinal(),
 								dateVos.getElement(j).hasInfo(DateTimeEn.day.ordinal()));
-
-						if (y == -1) {
-							vo.setYear(now.getYear());
-						}
-						if (m == -1) {
-							vo.setMonth(now.getMonth());
-						}
-						if (dt == -1) {
-							vo.setDate(now.getDate());
-						}
-						if (day == null) {
-							// 날짜에 맞는 요일 구하는 메소드
-							vo.setProperDay();
-						}
-
+						
+						
 						// 시간정보 없을 땐, 종일 로 나타내기
 						if (timeVos.getVos().size() == 1) {
-//							vo.setHour("종일");
 							vo.setAllDayEvent(true);
-
+							
 						} else { // 날짜와 시간 정보 있을 때
 							vo.setHour(h);
 							vo.setMinute(min);
 						}
 
-						// 이전에는 요일 정보를 안 받았기 때문에 이렇게 짰는데 다시 짜자.
-						if (vo.isFocusOnDay == true) {
-							// 요일에 맞는 날짜만 뽑도록 구하는 로직
-							LocalDate tmpDate = LocalDate.of(vo.getYear(), vo.getMonth(), vo.getDate());
+						if (y == -1) {
+							vo.setYear(now.getYear());
+						}
+						
+						if (vo.getFocusToRepeat() == null) { // 반복없이 해당 값만 insert 하게 하기
+							recomNum = 1; // 반복 안 하도록
 
-							tmpDate = tmpDate.plusWeeks(k);
-							vo.setDate(tmpDate.getDayOfMonth());
-							vo.setYear(tmpDate.getYear());
-							vo.setMonth(tmpDate.getMonthValue());
-						} else {
-							// 빈 값 중에 가장 큰 위치값의 인덱스 년 < 월 < 일 < 요일
-							// int emptyInfoIdx = DateTimeEn.day.ordinal();
-							// // 월과 요일 정보가 있으면 일 정보가 될 것이고...
-							// // 년과 일 정보가 있으면 월 정보가 될 것이고...
-							// // 년과 요일 정보가 있으면 일 정보가 될...
-							// for(int a = DateTimeEn.day.ordinal() ; a > DateTimeEn.year.ordinal() ; a--) {
-							// if(vo.hasInfo(a) && !vo.hasInfo(a-1)) {
-							// emptyInfoIdx = a-1;
-							// break;
-							// }
-							// }
+							if (m == -1) {
+								vo.setMonth(now.getMonth());
+							}
+							if (dt == -1) {
+								vo.setDate(now.getDate());
+							}
+							if (day == null) {
+								// 날짜에 맞는 요일 구하는 메소드
+								vo.setProperDay();
+							}
 
-							MyLocalDateTime tmpCal2 = new MyLocalDateTime();
-							tmpCal2.setYear(vo.getYear());
-							tmpCal2.setMonth(vo.getMonth());
-							tmpCal2.setDate(vo.getDate());
-							// 해당 정보를 기준으로 더해주기.
-							// tmpCal2.setCloseDate(now, emptyInfoIdx);
+						} else { // focus할 게 있으면 그 정보를 기준으로 for문 돌게끔...
+							if (m == -1) {
+								vo.setMonth(1);
+							}
+							if (dt == -1) {
+								vo.setDate(1);
+							}
+							if (day == null) {
+								// 날짜에 맞는 요일 구하는 메소드
+								vo.setProperDay();
+							}
+							
+							// 이전에는 요일 정보를 안 받았기 때문에 이렇게 짰는데 다시 짜자.
+							if (vo.isFocusOnDay == true) {
+								// 요일에 맞는 날짜만 뽑도록 구하는 로직
+								LocalDate tmpDate = LocalDate.of(vo.getYear(), vo.getMonth(), vo.getDate());
 
-							vo.setYear(tmpCal2.getYear() + k);
+								tmpDate = tmpDate.plusWeeks(k);
+								vo.setDate(tmpDate.getDayOfMonth());
+								vo.setYear(tmpDate.getYear());
+								vo.setMonth(tmpDate.getMonthValue());
+							} else {
+								MyLocalDateTime tmpCal2 = new MyLocalDateTime();
+								tmpCal2.setYear(vo.getYear());
+								tmpCal2.setMonth(vo.getMonth());
+								tmpCal2.setDate(vo.getDate());
+								// focus 할 해당 정보를 기준으로 더해주기.
+								tmpCal2.setCloseDate(tmpCal2, vo.getFocusToRepeat(), k);
 
-							// 날짜에 맞는 요일 구하는 로직
-							vo.setProperDay();
+								vo.setDate(tmpCal2.getDate());
+								vo.setYear(tmpCal2.getYear());
+								vo.setMonth(tmpCal2.getMonth());
+
+								// vo.setYear(tmpCal2.getYear() + k);
+
+								// 날짜에 맞는 요일 구하는 로직
+								vo.setProperDay();
+							}
 						}
 
 						vos.insertVOs(vo);
@@ -438,11 +446,12 @@ public class HomeController {
 					}
 				}
 				if (ableToPut) {
-					for (DateTimeEn d : DateTimeEn.values()) {
-						if (!vos.getElement(j).hasInfo(d.ordinal())) {
-							vos.insertVOs(new DateVO());
-							break;
-						}
+					// 합치는 프로세스 시작
+					// y, m, dt 모두 정보가 없으면 vos에 빈 객체 추가
+					if (!vos.getElement(j).hasInfo(DateTimeEn.year.ordinal())
+							&& !vos.getElement(j).hasInfo(DateTimeEn.month.ordinal())
+							&& !vos.getElement(j).hasInfo(DateTimeEn.date.ordinal())) {
+						vos.insertVOs(new DateVO());
 					}
 					if (targetVos.getElement(i).getYear() != -1) {
 						vos.getElement(j).setYear(targetVos.getElement(i).getYear());
@@ -465,6 +474,18 @@ public class HomeController {
 		for (int j = 0; j < vos.getVos().size() - 1; j++) {
 			targetVos.insertVOs(vos.getElement(j));
 		}
+		for (int j = 0; j < targetVos.getVos().size(); j++) {
+			if (targetVos.getElement(j).getYear() == -1) {
+				targetVos.getElement(j).setFocusToRepeat(DateTimeEn.year);
+			}
+			if (targetVos.getElement(j).getMonth() == -1) {
+				targetVos.getElement(j).setFocusToRepeat(DateTimeEn.month);
+			}
+			if (targetVos.getElement(j).getDate() == -1) {
+				targetVos.getElement(j).setFocusToRepeat(DateTimeEn.date);
+			}
+		}
+
 	}
 
 	// specialDate은 여기서 merge.
@@ -534,7 +555,7 @@ public class HomeController {
 							int wom = calendar.get(Calendar.WEEK_OF_MONTH);
 
 							// 오늘이 수요일인데 이번주 화요일 입력하면 지났지만 나와야함. 그러니까 무턱대고 1주를 더하면 안 됨.
-							if(targetVos.getElement(i).getDay() != null) {
+							if (targetVos.getElement(i).getDay() != null) {
 								td = td.with(TemporalAdjusters.dayOfWeekInMonth(specialDT.ordinal() + wom,
 										targetVos.getElement(i).getDay()));
 							}
@@ -550,7 +571,7 @@ public class HomeController {
 						break;
 					}
 				}
-				if(out) {
+				if (out) {
 					break;
 				}
 			}
