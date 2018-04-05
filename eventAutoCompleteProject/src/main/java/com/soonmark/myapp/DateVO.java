@@ -29,7 +29,7 @@ public class DateVO {
 		this.ignoreDay = false;
 		this.isAllDayEvent = false;
 		this.focusToRepeat = null;
-		hasInfo = new boolean[] {false, false, false, false, false, false};
+		hasInfo = new boolean[] { false, false, false, false, false, false };
 	}
 
 	DateVO(int year, int month, int date, DayOfWeek day, int hour, int minute) {
@@ -43,9 +43,9 @@ public class DateVO {
 		this.ignoreDay = false;
 		this.isAllDayEvent = false;
 		this.focusToRepeat = null;
-		hasInfo = new boolean[] {false, false, false, false, false, false};
+		hasInfo = new boolean[] { false, false, false, false, false, false };
 	}
-	
+
 	public DateTimeEn getFocusToRepeat() {
 		return focusToRepeat;
 	}
@@ -68,7 +68,7 @@ public class DateVO {
 		setMonth(cal.getMonth());
 		setDate(cal.getDate());
 	}
-	
+
 	public void setProperDay() {
 		MyLocalDateTime tmpCal = new MyLocalDateTime();
 		tmpCal.setYear(this.getYear());
@@ -85,11 +85,11 @@ public class DateVO {
 		setDate(vo.getDate());
 		setSpecialDate(vo.getSpecialDate());
 	}
-	
+
 	public String getSpecialDate() {
 		return specialDate;
 	}
-	
+
 	public void setSpecialDate(String specialDate) {
 		this.specialDate = specialDate;
 	}
@@ -97,21 +97,21 @@ public class DateVO {
 	public boolean hasInfo(int idx) {
 		return hasInfo[idx];
 	}
-	
+
 	public void setHasInfo(int idx, boolean flag) {
 		hasInfo[idx] = flag;
 	}
-	
+
 	public boolean isFocusOnDay() {
 		return isFocusOnDay;
 	}
-	
+
 	public void setFocusOnDay(boolean isFocusOnDay) {
 		this.isFocusOnDay = isFocusOnDay;
 	}
-	
+
 	public void set(int idx, int val) {
-		switch(idx) {
+		switch (idx) {
 		case 0:
 			this.year = val;
 			break;
@@ -181,26 +181,25 @@ public class DateVO {
 
 	public void setMinute(int minute) {
 		// 0분, 1분 등이면 00분, 01분 으로 세팅
-//		if(minute.length() == 1) {
-//			this.minute = "0" +  minute;
-//		}
-//		else {
-			this.minute = minute;
-//		}
+		// if(minute.length() == 1) {
+		// this.minute = "0" + minute;
+		// }
+		// else {
+		this.minute = minute;
+		// }
 	}
-	
+
 	public boolean isDateInfoFull() {
 		boolean tmp = false;
-		if(hasInfo[DateTimeEn.year.ordinal()]
-			&& hasInfo[DateTimeEn.month.ordinal()]
-			&& hasInfo[DateTimeEn.date.ordinal()]) {
+		if (hasInfo[DateTimeEn.year.ordinal()] && hasInfo[DateTimeEn.month.ordinal()]
+				&& hasInfo[DateTimeEn.date.ordinal()]) {
 			tmp = true;
 		}
 		return tmp;
 	}
-	
+
 	public void adjustDay() {
-		if(isDateInfoFull()) {
+		if (isDateInfoFull()) {
 			MyLocalDateTime cal = new MyLocalDateTime();
 			cal.setYear(year);
 			cal.setMonth(month);
@@ -208,26 +207,38 @@ public class DateVO {
 			day = cal.getDay();
 		}
 	}
-	
-	public String getDayOfWeekByLocale(String localeWeekDay){
-        for (DayOfWeekByLocale day : DayOfWeekByLocale.values()) {
-            if (day.getLocaleName().equals(localeWeekDay)) {
-                return day.name();
-            }
-        }
-        return null;
-    }
+
+	public String getDayOfWeekByLocale(String localeWeekDay) {
+		for (DayOfWeekByLocale day : DayOfWeekByLocale.values()) {
+			if (day.getLocaleName().equals(localeWeekDay)) {
+				return day.name();
+			}
+		}
+		return null;
+	}
 
 	public String toString() {
-		String jsonString = "{\"year\":\"" + String.format("%04d", this.year)
-				+ "\", \"month\":\"" + String.format("%02d", this.month)
-				+ "\", \"date\":\"" + String.format("%02d", this.date)
-				+ "\", \"day\":\"" + this.day.getDisplayName(TextStyle.FULL, Locale.KOREA)
-				+ "\", \"isAllDayEvent\":\"" + this.isAllDayEvent
-				+ "\", \"hour\":\"" + String.format("%02d", this.hour)
-				+ "\", \"minute\":\"" + String.format("%02d", this.minute)
-				+ "\"}";
+		String jsonString = "";
+		if (this.day != null) {
+			jsonString = "{\"year\":\"" + String.format("%04d", this.year)
+					+ "\", \"month\":\"" + String.format("%02d", this.month)
+					+ "\", \"date\":\"" + String.format("%02d", this.date)
+					+ "\", \"day\":\"" + this.day.getDisplayName(TextStyle.FULL, Locale.KOREA)
+					+ "\", \"isAllDayEvent\":\"" + this.isAllDayEvent
+					+ "\", \"hour\":\"" + String.format("%02d", this.hour)
+					+ "\", \"minute\":\"" + String.format("%02d", this.minute)
+					+ "\"}";
 
+		} else {
+			jsonString = "{\"year\":\"" + String.format("%04d", this.year)
+					+ "\", \"month\":\"" + String.format("%02d", this.month)
+					+ "\", \"date\":\"" + String.format("%02d", this.date)
+					+ "\", \"day\":\""
+					+ "\", \"isAllDayEvent\":\"" + this.isAllDayEvent
+					+ "\", \"hour\":\"" + String.format("%02d", this.hour)
+					+ "\", \"minute\":\"" + String.format("%02d", this.minute)
+					+ "\"}";
+		}
 		return jsonString;
 	}
 }

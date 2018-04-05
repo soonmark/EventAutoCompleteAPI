@@ -163,7 +163,7 @@ body {
 						$(data).each(function(idx, dataEach) {
 							console.log("data " + idx + ": " + dataEach.year);
 
-							if (dataEach.year == "-2") {
+							if (dataEach.year == "-002") {
 								alert("., /, -, : 외의 기호는 입력이 불가능합니다.");
 							} else {
 								str += "<div class=\"list-group-item\">";

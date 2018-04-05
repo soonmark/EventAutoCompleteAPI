@@ -125,14 +125,17 @@ public class HomeController {
 		// 요일과 날짜가 있지만 서로 안 맞는 경우
 		// 요일과 날짜가 있고 둘이 맞는 경우
 		// 위 4가지 경우에 대해 코딩.
+		boolean alreadyDeleted = false;
 		for (int i = 0; i < dateVos.getVos().size(); i++) {
 			for (int j = 0; j < dayVos.getVos().size(); j++) {
 				// 요일 정보 없으면 그냥 나가기
 				// 날짜 정보가 있을 때는 날짜 빈 객체 스킵
 				// 이 2가지 경우에는 dateVos의 마지막 element 삭제.
 				if (dayVos.getVos().size() == 1 || (dateVos.getVos().size() > 1 && i == dateVos.getVos().size() - 1)) {
-					dateVos.deleteVOs(dateVos.getVos().size() - 1);
-					;
+					if(!alreadyDeleted) {
+						dateVos.deleteVOs(dateVos.getVos().size() - 1);
+						alreadyDeleted = true;
+					}
 					continue;
 				}
 				// 요일 정보가 있을 때는 요일 빈 객체 스킵
@@ -389,7 +392,7 @@ public class HomeController {
 		specialDatePatterns.add("^(.*)(?<dayAfterTomorrow>모레)(.*)$"); // 모레
 
 		specialDatePatterns.add("^(.*)(?<thisWeek>이번주)(.*)$"); // 이번주
-		specialDatePatterns.add("^(.*)(?<nextWeek>다음주)(.*)$"); // 다음주
+		specialDatePatterns.add("^(|.*[^다])(?<nextWeek>다음주)(.*)$"); // 다음주
 		specialDatePatterns.add("^(.*)(?<weekAfterNext>다다음주)(.*)$"); // 다다음주
 
 		// 시간 패턴
@@ -481,7 +484,10 @@ public class HomeController {
 				targetVos.getElement(j).setFocusToRepeat(DateTimeEn.date);
 			}
 		}
-
+		
+		
+		
+		// 여기에서 중복 제거를 하던지, 아니면 우선순위 부여를 하던지, 아니면 날짜 비교해서 너무 터무니없이 먼 날짜면 지우는 방향으로!
 	}
 
 	// specialDate은 여기서 merge.
