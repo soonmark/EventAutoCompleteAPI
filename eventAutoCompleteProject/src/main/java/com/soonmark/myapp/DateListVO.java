@@ -1,5 +1,6 @@
 package com.soonmark.myapp;
 
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -39,10 +40,10 @@ public class DateListVO {
 		return null;
 	}
 
-	public void setDayToElement(int index, String val) {
+	public void setDayToElement(int index, DayOfWeek val) {
 		vos.get(index).setDay(val);
 	}
-
+	
 	public String toJsonString() {
 
 		int recomNum = 2; // 추천할 개수를 10개로 한정

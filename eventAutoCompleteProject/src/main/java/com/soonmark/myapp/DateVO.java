@@ -1,34 +1,37 @@
 package com.soonmark.myapp;
 
 import java.time.DayOfWeek;
+import java.time.format.TextStyle;
+import java.util.Locale;
 
 public class DateVO {
-	String year;
-	String month;
-	String date;
+	int year;
+	int month;
+	int date;
 	String specialDate;
-	String day;
-	String hour;
-	String minute;
+	DayOfWeek day;
+	int hour;
+	int minute;
 	boolean isFocusOnDay;
 	boolean ignoreDay;
-//	String binaryDTInfo;
 	boolean[] hasInfo;
+	String formattedDateTime;
+	boolean isAllDayEvent;
 
 	DateVO() {
-		this.year = "-1";
-		this.month = "-1";
-		this.date = "-1";
-		this.day = "-1";
-		this.hour = "-1";
-		this.minute = "-1";
+		this.year = -1;
+		this.month = -1;
+		this.date = -1;
+		this.day = null;
+		this.hour = -1;
+		this.minute = -1;
 		this.isFocusOnDay = false;
 		this.ignoreDay = false;
-//		binaryDTInfo = "000000";
+		this.isAllDayEvent = false;
 		hasInfo = new boolean[] {false, false, false, false, false, false};
 	}
 
-	DateVO(String year, String month, String date, String day, String hour, String minute) {
+	DateVO(int year, int month, int date, DayOfWeek day, int hour, int minute) {
 		this.year = year;
 		this.month = month;
 		this.date = date;
@@ -37,11 +40,19 @@ public class DateVO {
 		this.minute = minute;
 		this.isFocusOnDay = false;
 		this.ignoreDay = false;
-//		binaryDTInfo = "000000";
+		this.isAllDayEvent = false;
 		hasInfo = new boolean[] {false, false, false, false, false, false};
 	}
 	
-	public void setAllDate(MyCalendar cal) {
+	public boolean isAllDayEvent() {
+		return isAllDayEvent;
+	}
+
+	public void setAllDayEvent(boolean isAllDayEvent) {
+		this.isAllDayEvent = isAllDayEvent;
+	}
+
+	public void setAllDate(MyLocalDateTime cal) {
 		setDay(cal.getDay());
 		setYear(cal.getYear());
 		setMonth(cal.getMonth());
@@ -49,10 +60,10 @@ public class DateVO {
 	}
 	
 	public void setProperDay() {
-		MyCalendar tmpCal = new MyCalendar();
-		tmpCal.setYear(Integer.parseInt(this.getYear()));
-		tmpCal.setMonth(Integer.parseInt(this.getMonth()));
-		tmpCal.setDate(Integer.parseInt(this.getDate()));
+		MyLocalDateTime tmpCal = new MyLocalDateTime();
+		tmpCal.setYear(this.getYear());
+		tmpCal.setMonth(this.getMonth());
+		tmpCal.setDate(this.getDate());
 
 		setDay(tmpCal.getDay());
 	}
@@ -81,18 +92,6 @@ public class DateVO {
 		hasInfo[idx] = flag;
 	}
 	
-//	public String getBinaryDTInfo() {
-//		return binaryDTInfo;
-//	}
-//	
-//	public void setBinaryDTInfo(DateTimeEn dateTimeEn) {
-//		int numericDateTime = dateTimeEn.getInteger();
-//		char tmpBit = this.binaryDTInfo.charAt(numericDateTime);
-//		int newInfo = Character.getNumericValue(tmpBit) | 1;
-//		binaryDTInfo = binaryDTInfo.substring(0,numericDateTime)
-//					+ newInfo + binaryDTInfo.substring(numericDateTime + 1);
-//	}
-	
 	public boolean isFocusOnDay() {
 		return isFocusOnDay;
 	}
@@ -101,7 +100,7 @@ public class DateVO {
 		this.isFocusOnDay = isFocusOnDay;
 	}
 	
-	public void set(int idx, String val) {
+	public void set(int idx, int val) {
 		switch(idx) {
 		case 0:
 			this.year = val;
@@ -113,7 +112,7 @@ public class DateVO {
 			this.date = val;
 			break;
 		case 3:
-			this.day = val;
+			this.day = DayOfWeek.of(val);
 			break;
 		case 4:
 			this.hour = val;
@@ -126,112 +125,83 @@ public class DateVO {
 		}
 	}
 
-	public String getYear() {
+	public int getYear() {
 		return year;
 	}
 
-	public void setYear(String year) {
+	public void setYear(int year) {
 		this.year = year;
 	}
 
-	public String getMonth() {
+	public int getMonth() {
 		return month;
 	}
 
-	public void setMonth(String month) {
+	public void setMonth(int month) {
 		this.month = month;
 	}
 
-	public String getDate() {
+	public int getDate() {
 		return date;
 	}
 
-	public void setDate(String date) {
+	public void setDate(int date) {
 		this.date = date;
 	}
 
-	public String getDay() {
+	public DayOfWeek getDay() {
 		return day;
 	}
 
-	public DayOfWeek getDayOfWeekDay() {
-		DayOfWeek iDay = DayOfWeek.MONDAY;;
-		if(day.equals("월")) {
-			iDay = DayOfWeek.MONDAY;
-		} else if(day.equals("화")) {
-			iDay = DayOfWeek.TUESDAY;
-		} else if(day.equals("수")) {
-			iDay = DayOfWeek.WEDNESDAY;
-		} else if(day.equals("목")) {
-			iDay = DayOfWeek.THURSDAY;
-		} else if(day.equals("금")) {
-			iDay = DayOfWeek.FRIDAY;
-		}else if(day.equals("토")) {
-			iDay = DayOfWeek.SATURDAY;
-		}else if(day.equals("일")) {
-			iDay = DayOfWeek.SUNDAY;
-		}
-		
-		return iDay;
-	}
+//	public DayOfWeek getDayOfWeekDay() {
+//		DayOfWeek iDay = DayOfWeek.MONDAY;;
+//		if(day.equals("월")) {
+//			iDay = DayOfWeek.MONDAY;
+//		} else if(day.equals("화")) {
+//			iDay = DayOfWeek.TUESDAY;
+//		} else if(day.equals("수")) {
+//			iDay = DayOfWeek.WEDNESDAY;
+//		} else if(day.equals("목")) {
+//			iDay = DayOfWeek.THURSDAY;
+//		} else if(day.equals("금")) {
+//			iDay = DayOfWeek.FRIDAY;
+//		}else if(day.equals("토")) {
+//			iDay = DayOfWeek.SATURDAY;
+//		}else if(day.equals("일")) {
+//			iDay = DayOfWeek.SUNDAY;
+//		}
+//		
+//		return iDay;
+//	}
 	
-	public void setDay(String day) {
+	public void setDay(DayOfWeek day) {
 		this.day = day;
 	}
 
-	public String getHour() {
+	public int getHour() {
 		return hour;
 	}
 
-	public void setHour(String hour) {
+	public void setHour(int hour) {
 		this.hour = hour;
 	}
 
-	public String getMinute() {
+	public int getMinute() {
 		return minute;
 	}
 
-	public void setMinute(String minute) {
+	public void setMinute(int minute) {
 		// 0분, 1분 등이면 00분, 01분 으로 세팅
-		if(minute.length() == 1) {
-			this.minute = "0" +  minute;
-		}
-		else {
-			this.minute = minute;
-		}
-	}
-	
-//	public String compareBinaryInfo(TokenType tokenType) {
-//		String result = "";
-//		switch(tokenType) {
-//		case dates:
-//			for(int i = DateTimeEn.year.getInteger() ; i < DateTimeEn.day.getInteger() ; i++) {
-//				result += binaryDTInfo.charAt(i);
-//			}
-//			break;
-//		case days:
-//			for(int i = DateTimeEn.day.getInteger() ; i < DateTimeEn.hour.getInteger() ; i++) {
-//				result += binaryDTInfo.charAt(i);
-//			}
-//			break;
-//		case times:
-//			for(int i = DateTimeEn.hour.getInteger() ; i < DateTimeEn.minute.getInteger() ; i++) {
-//				result += binaryDTInfo.charAt(i);
-//			}
-//			break;
+//		if(minute.length() == 1) {
+//			this.minute = "0" +  minute;
 //		}
-//		return result;
-//	}
+//		else {
+			this.minute = minute;
+//		}
+	}
 	
 	public boolean isDateInfoFull() {
 		boolean tmp = false;
-//		if(compareBinaryInfo(TokenType.dates).equals("111")) {
-//			tmp = true;
-//		}
-//		else {
-//			tmp = false;
-//		}
-		
 		if(hasInfo[DateTimeEn.year.ordinal()]
 			&& hasInfo[DateTimeEn.month.ordinal()]
 			&& hasInfo[DateTimeEn.date.ordinal()]) {
@@ -242,17 +212,41 @@ public class DateVO {
 	
 	public void adjustDay() {
 		if(isDateInfoFull()) {
-			MyCalendar cal = new MyCalendar();
-			cal.setYear(Integer.parseInt(year));
-			cal.setMonth(Integer.parseInt(month));
-			cal.setDate(Integer.parseInt(date));
+			MyLocalDateTime cal = new MyLocalDateTime();
+//			cal.setYear(Integer.parseInt(year));
+//			cal.setMonth(Integer.parseInt(month));
+//			cal.setDate(Integer.parseInt(date));
+//			day = cal.getDay();
+			cal.setYear(year);
+			cal.setMonth(month);
+			cal.setDate(date);
 			day = cal.getDay();
 		}
 	}
+	
+	public String getDayOfWeekByLocale(String localeWeekDay){
+        for (DayOfWeekByLocale day : DayOfWeekByLocale.values()) {
+            if (day.getLocaleName().equals(localeWeekDay)) {
+                return day.name();
+            }
+        }
+        return null;
+    }
+
+	
+	public void formatDateTime() {
+		
+		
+	}
 
 	public String toString() {
-		String jsonString = "{\"year\":\"" + this.year + "\", \"month\":\"" + this.month + "\", \"date\":\"" + this.date
-				+ "\", \"day\":\"" + this.day + "\", \"hour\":\"" + this.hour + "\", \"minute\":\"" + this.minute
+		String jsonString = "{\"year\":\"" + this.year
+				+ "\", \"month\":\"" + this.month
+				+ "\", \"date\":\"" + this.date
+				+ "\", \"day\":\"" + this.day.getDisplayName(TextStyle.FULL, Locale.KOREA)
+				+ "\", \"isAllDayEvent\":\"" + this.isAllDayEvent
+				+ "\", \"hour\":\"" + String.format("%02d", this.hour)
+				+ "\", \"minute\":\"" + String.format("%02d", this.minute)
 				+ "\"}";
 
 		return jsonString;

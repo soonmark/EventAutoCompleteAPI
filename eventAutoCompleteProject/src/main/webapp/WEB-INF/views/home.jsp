@@ -177,13 +177,17 @@ body {
 									str += dataEach.date + " ";
 								}
 								if (dataEach.day != "-1") {
-									str += dataEach.day + "요일 ";
+									str += dataEach.day + " ";
 								}
-								if (dataEach.hour != "-1") {
-									str += dataEach.hour;
-								}
-								if (dataEach.minute != "-1") {
-									str += ":" + dataEach.minute;
+								if(dataEach.isAllDayEvent == "true") {
+									str += "종일";
+								}else{
+									if (dataEach.hour != "-1") {
+										str += dataEach.hour;
+									}
+									if (dataEach.minute != "-1") {
+										str += ":" + dataEach.minute;
+									}
 								}
 								str += "</div>";
 							}
