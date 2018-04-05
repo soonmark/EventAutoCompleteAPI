@@ -164,50 +164,26 @@ public class MyLocalDateTime {
 	}
 
 	public void setCloseDate(MyLocalDateTime cal, DateTimeEn focus, int plus) {
-		// 세팅된 날짜가 기준 날짜 전의 날짜면
-//		if (!timePoint.toLocalDate().isAfter(cal.getTimePoint().toLocalDate())) {
-//			if (focus == DateTimeEn.year) {
-//				long diff = cal.getTimePoint().getYear() - timePoint.getYear();
-//				timePoint = timePoint.plusYears(diff + plus);
-//				// 차이만큼 더했는데도 이전이면, 월이나 일을 계산했을 때 이전인 것이므로 한번더 1년을 더해줌.
-//				if (!timePoint.toLocalDate().isAfter(cal.getTimePoint().toLocalDate())) {
-//					timePoint = timePoint.plusYears(1);
-//				}
-//			}
-//			else if (focus == DateTimeEn.month) {
-//				long diff = cal.getTimePoint().getMonthValue() - timePoint.getMonthValue();
-//				timePoint = timePoint.plusMonths(diff + plus);
-//				// 차이만큼 더했는데도 이전이면, 일을 계산했을 때 이전인 것이므로 한번더 1월을 더해줌.
-//				if (!timePoint.toLocalDate().isAfter(cal.getTimePoint().toLocalDate())) {
-//					timePoint = timePoint.plusMonths(1);
-//				}
-//			}
-//			else if (focus == DateTimeEn.date) {
-//				long diff = cal.getTimePoint().getDayOfMonth() - timePoint.getDayOfMonth();
-//				timePoint = timePoint.plusDays(diff + plus);
-//			}
-//		}
 		if (focus == DateTimeEn.year) {
 			long diff = cal.getTimePoint().getYear() - timePoint.getYear();
 			timePoint = timePoint.plusYears(diff + plus);
 			// 차이만큼 더했는데도 이전이면, 월이나 일을 계산했을 때 이전인 것이므로 한번더 1년을 더해줌.
-			if (!timePoint.toLocalDate().isAfter(cal.getTimePoint().toLocalDate())) {
-				timePoint = timePoint.plusYears(1);
-			}
 		}
 		else if (focus == DateTimeEn.month) {
 			long diff = cal.getTimePoint().getMonthValue() - timePoint.getMonthValue();
+			if(timePoint.getYear() == LocalDateTime.now().getYear()) {
+					timePoint = timePoint.withMonth(LocalDateTime.now().getMonthValue());
+				}
 			timePoint = timePoint.plusMonths(diff + plus);
 		}
 		else if (focus == DateTimeEn.date) {
 			long diff = cal.getTimePoint().getDayOfMonth() - timePoint.getDayOfMonth();
+			if(timePoint.getYear() == LocalDateTime.now().getYear()
+				&& timePoint.getMonthValue() == LocalDateTime.now().getMonthValue()) {
+				timePoint = timePoint.withDayOfMonth(LocalDateTime.now().getDayOfMonth());
+			}
 			timePoint = timePoint.plusDays(diff + plus);
 		}
-//		
-//		if (!timePoint.toLocalDate().isAfter(cal.getTimePoint().toLocalDate().pl)) {
-//
-//			
-//		}
 	}
 	
 	

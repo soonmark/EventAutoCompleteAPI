@@ -191,10 +191,6 @@ public class HomeController {
 
 				logger.info("여1");
 
-				// String y = dateVos.getElement(j).getYear();
-				// String m = dateVos.getElement(j).getMonth();
-				// String dt = dateVos.getElement(j).getDate();
-				// String day = dateVos.getElement(j).getDay();
 				int y = dateVos.getElement(j).getYear();
 				int m = dateVos.getElement(j).getMonth();
 				int dt = dateVos.getElement(j).getDate();
@@ -273,13 +269,13 @@ public class HomeController {
 							vo.setMinute(min);
 						}
 
+						
 						if (y == -1) {
 							vo.setYear(now.getYear());
 						}
 						
 						if (vo.getFocusToRepeat() == null) { // 반복없이 해당 값만 insert 하게 하기
 							recomNum = 1; // 반복 안 하도록
-
 							if (m == -1) {
 								vo.setMonth(now.getMonth());
 							}
@@ -549,6 +545,7 @@ public class HomeController {
 							// 이번주라고 무조건 1번째주인건 아님.
 							LocalDate td = LocalDate.now();
 
+							// LocalDateTime 에는 Week of Month 가 없어서...
 							Calendar calendar = new GregorianCalendar();
 							Date trialTime = new Date();
 							calendar.setTime(trialTime);
@@ -558,6 +555,8 @@ public class HomeController {
 							if (targetVos.getElement(i).getDay() != null) {
 								td = td.with(TemporalAdjusters.dayOfWeekInMonth(specialDT.ordinal() + wom,
 										targetVos.getElement(i).getDay()));
+							}else { // 요일 정보가 없는데 이번주, 다음주 등의 정보가 있을 때
+								td = td.with(TemporalAdjusters.dayOfWeekInMonth(specialDT.ordinal() + wom, td.getDayOfWeek()));
 							}
 							targetVos.getElement(i).setDate(td.getDayOfMonth());
 							targetVos.getElement(i).setMonth(td.getMonthValue());
