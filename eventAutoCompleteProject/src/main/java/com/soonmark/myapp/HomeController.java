@@ -8,9 +8,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -351,31 +354,44 @@ public class HomeController {
 	void initPatterns(List<String> datePatterns, List<String> daysPatterns, List<String> specialDatePatterns,
 			List<String> timePatterns) {
 
-		datePatterns.add("^(.*)(?<year>[0-9]{4})-(?<month>0?[1-9]|1[0-2])-(?<date>0[1-9]|[1-2][0-9]|3[0-1])(.*)$"); // 2018-(0)3-19
-		datePatterns.add("^(.*)(?<year>[0-9]{4})/(?<month>0?[1-9]|1[0-2])/(?<date>0[1-9]|[1-2][0-9]|3[0-1])(.*)$"); // 2018/(0)3/19
-		datePatterns.add("^(.*)(?<year>[0-9]{4})\\.(?<month>0?[1-9]|1[0-2])\\.(?<date>0[1-9]|[1-2][0-9]|3[0-1])(.*)$"); // 2018.(0)3.19
-		datePatterns.add("^(.*)(?<year>[0-9]{4})년 (?<month>0?[1-9]|1[0-2])월 (?<date>0[1-9]|[1-2][0-9]|3[0-1])일(.*)$"); // 2018년
-																														// (0)3월
-																														// 19일
+		datePatterns.add("^(.*)(?<year>[0-9]{4})-(?<month>0?[1-9]|1[0-2])-(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 2018-(0)3-9
+		datePatterns.add("^(.*)(?<year>[0-9]{4})/(?<month>0?[1-9]|1[0-2])/(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 2018/(0)3/9
+		datePatterns.add("^(.*)(?<year>[0-9]{4})\\.(?<month>0?[1-9]|1[0-2])\\.(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 2018.(0)3.9
+		datePatterns.add("^(.*)(?<year>[0-9]{4})년 (?<month>0?[1-9]|1[0-2])월 (?<date>[1-9]|[1-2][0-9]|3[0-1])일(|[^0-9].*)$"); // 2018년(0)3월9일
 
-		datePatterns.add("^(.*)(?<year>[0-9]{2})-(?<month>0?[1-9]|1[0-2])-(?<date>0[1-9]|[1-2][0-9]|3[0-1])(.*)$"); // 18-(0)3-19
-		datePatterns.add("^(.*)(?<year>[0-9]{2})/(?<month>0?[1-9]|1[0-2])/(?<date>0[1-9]|[1-2][0-9]|3[0-1])(.*)$"); // 18/(0)3/19
-		datePatterns.add("^(.*)(?<year>[0-9]{2})\\.(?<month>0?[1-9]|1[0-2])\\.(?<date>0[1-9]|[1-2][0-9]|3[0-1])(.*)$"); // 18.(0)3.19
-		datePatterns.add("^(.*)(?<year>[0-9]{2})년 (?<month>0?[1-9]|1[0-2])월 (?<date>0[1-9]|[1-2][0-9]|3[0-1])일(.*)$"); // 18년
-																														// (0)3월
-																														// 19일
+		datePatterns.add("^(.*)(?<year>[0-9]{4})-(?<month>0?[1-9]|1[0-2])-(?<date>0[1-9]|[1-2][0-9]|3[0-1])(.*)$"); // 2018-(0)3-09
+		datePatterns.add("^(.*)(?<year>[0-9]{4})/(?<month>0?[1-9]|1[0-2])/(?<date>0[1-9]|[1-2][0-9]|3[0-1])(.*)$"); // 2018/(0)3/09
+		datePatterns.add("^(.*)(?<year>[0-9]{4})\\.(?<month>0?[1-9]|1[0-2])\\.(?<date>0[1-9]|[1-2][0-9]|3[0-1])(.*)$"); // 2018.(0)3.09
+		datePatterns.add("^(.*)(?<year>[0-9]{4})년 (?<month>0?[1-9]|1[0-2])월 (?<date>0[1-9]|[1-2][0-9]|3[0-1])일(.*)$"); // 2018년(0)3월09일
+
+		datePatterns.add("^(.*)(?<year>[0-9]{2})-(?<month>0?[1-9]|1[0-2])-(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 18-(0)3-9
+		datePatterns.add("^(.*)(?<year>[0-9]{2})/(?<month>0?[1-9]|1[0-2])/(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 18/(0)3/9
+		datePatterns.add("^(.*)(?<year>[0-9]{2})\\.(?<month>0?[1-9]|1[0-2])\\.(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 18.(0)3.9
+		datePatterns.add("^(.*)(?<year>[0-9]{2})년 (?<month>0?[1-9]|1[0-2])월 (?<date>[1-9]|[1-2][0-9]|3[0-1])일(|[^0-9].*)$"); // 18년(0)3월9일
+
+		datePatterns.add("^(.*)(?<year>[0-9]{2})-(?<month>0?[1-9]|1[0-2])-(?<date>0[1-9]|[1-2][0-9]|3[0-1])(.*)$"); // 18-(0)3-09
+		datePatterns.add("^(.*)(?<year>[0-9]{2})/(?<month>0?[1-9]|1[0-2])/(?<date>0[1-9]|[1-2][0-9]|3[0-1])(.*)$"); // 18/(0)3/09
+		datePatterns.add("^(.*)(?<year>[0-9]{2})\\.(?<month>0?[1-9]|1[0-2])\\.(?<date>0[1-9]|[1-2][0-9]|3[0-1])(.*)$"); // 18.(0)3.09
+		datePatterns.add("^(.*)(?<year>[0-9]{2})년 (?<month>0?[1-9]|1[0-2])월 (?<date>0[1-9]|[1-2][0-9]|3[0-1])일(.*)$"); // 18년(0)3월09일
+
 
 		// 20180319
 
-		datePatterns.add("^(.*)(?<month>1[0-2])-(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 11-19
-		datePatterns.add("^(|.*[^1])(?<month>[1-9])-(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 3-19
-		datePatterns.add("^(.*)(?<month>1[0-2])\\.(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 11.19
-		datePatterns.add("^(|.*[^1])(?<month>[1-9])\\.(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 3.19
-		datePatterns.add("^(.*)(?<month>1[0-2])/(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 11/19
-		datePatterns.add("^(|.*[^1])(?<month>[1-9])/(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 3/19
+		datePatterns.add("^(.*)(?<month>1[0-2])-(?<date>0[1-9]|[1-2][0-9]|3[0-1])(.*)$"); // 11-09
+		datePatterns.add("^(|.*[^1])(?<month>[1-9])-(?<date>0[1-9]|[1-2][0-9]|3[0-1])(.*)$"); // 3-09
+		datePatterns.add("^(.*)(?<month>1[0-2])-(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 11-9
+		datePatterns.add("^(|.*[^1])(?<month>[1-9])-(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 3-9
+		datePatterns.add("^(.*)(?<month>1[0-2])\\.(?<date>0[1-9]|[1-2][0-9]|3[0-1])(.*)$"); // 11.09
+		datePatterns.add("^(|.*[^1])(?<month>[1-9])\\.(?<date>0[1-9]|[1-2][0-9]|3[0-1])(.*)$"); // 3.09
+		datePatterns.add("^(.*)(?<month>1[0-2])\\.(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 11.9
+		datePatterns.add("^(|.*[^1])(?<month>[1-9])\\.(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 3.9
+		datePatterns.add("^(.*)(?<month>1[0-2])/(?<date>0[1-9]|[1-2][0-9]|3[0-1])(.*)$"); // 11/09
+		datePatterns.add("^(|.*[^1])(?<month>[1-9])/(?<date>0[1-9]|[1-2][0-9]|3[0-1])(.*)$"); // 3/09
+		datePatterns.add("^(.*)(?<month>1[0-2])/(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 11/9
+		datePatterns.add("^(|.*[^1])(?<month>[1-9])/(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 3/9
 
 		datePatterns.add("^(.*)(?<year>[1-2][0-9][0-9][0-9])년(.*)$"); // 2018년
-		datePatterns.add("^(|.*[^0-9])(?<year>[0-9][0-9])년(.*)$"); // 94년, 18년
+		datePatterns.add("^(.*)(?<year>[0-9][0-9])년(.*)$"); // 94년, 18년
 		// 일만 입력받기
 		datePatterns.add("^(.*)(?<date>[1-2][0-9]|3[0-1])일(.*)$"); // 19일
 		datePatterns.add("^(|.*[^1-3])(?<date>[1-9])일(.*)$"); // 1일
@@ -488,6 +504,37 @@ public class HomeController {
 		
 		
 		// 여기에서 중복 제거를 하던지, 아니면 우선순위 부여를 하던지, 아니면 날짜 비교해서 너무 터무니없이 먼 날짜면 지우는 방향으로!
+		// 중복 제거
+		// 있는 정보 중에는 모두 같은 거
+		for(int j = 0; j < targetVos.getVos().size(); j++) {
+			for(int i = j+1 ; i < targetVos.getVos().size() ; i++) {
+				if(((targetVos.getElement(i).hasInfo(DateTimeEn.year.ordinal())
+						&& targetVos.getElement(j).getYear() == targetVos.getElement(i).getYear())
+						|| !targetVos.getElement(i).hasInfo(DateTimeEn.year.ordinal()))
+					&& ((targetVos.getElement(i).hasInfo(DateTimeEn.month.ordinal())
+						&& targetVos.getElement(j).getMonth() == targetVos.getElement(i).getMonth())
+						|| !targetVos.getElement(i).hasInfo(DateTimeEn.month.ordinal()))
+					&& ((targetVos.getElement(i).hasInfo(DateTimeEn.date.ordinal())
+						&& targetVos.getElement(j).getDate() == targetVos.getElement(i).getDate())
+						|| !targetVos.getElement(i).hasInfo(DateTimeEn.date.ordinal()))) {
+
+					targetVos.deleteVOs(i);
+					i -= 1;
+				}
+			}
+		}
+
+		// 터무니 없는 날짜 제거
+		int a = 1;
+		
+		
+		// 우선순위 부여
+		
+		
+		// 로그 찍기
+		for (int j = 0; j < targetVos.getVos().size() ; j++) {
+			logger.info(targetVos.getElement(j).toString());
+		}
 	}
 
 	// specialDate은 여기서 merge.
