@@ -6,21 +6,21 @@ import java.util.Iterator;
 import java.util.List;
 
 public class DateListVO {
-	List<DateVO> vos;
+	List<DateTimeVO> vos;
 
 	public DateListVO() {
-		vos = new ArrayList<DateVO>();
+		vos = new ArrayList<DateTimeVO>();
 	}
 
-	public List<DateVO> getVos() {
+	public List<DateTimeVO> getVos() {
 		return vos;
 	}
 
-	public void setVos(List<DateVO> vos) {
+	public void setVos(List<DateTimeVO> vos) {
 		this.vos = vos;
 	}
 
-	public void insertVOs(DateVO vo) {
+	public void insertVOs(DateTimeVO vo) {
 		vos.add(vo);
 	}
 
@@ -32,11 +32,11 @@ public class DateListVO {
 		vos.clear();
 	}
 
-	public DateVO getElement(int index) {
+	public DateTimeVO getElement(int index) {
 		return vos.get(index);
 	}
 
-	public Iterator<DateVO> getIter() {
+	public Iterator<DateTimeVO> getIter() {
 		return null;
 	}
 

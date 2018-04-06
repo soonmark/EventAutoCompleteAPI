@@ -22,8 +22,9 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="com.soonmark.myapp.DateVO" project="eventAutoCompleteProject" 
-    file="/eventAutoCompleteProject/src/main/java/com/soonmark/myapp/DateVO.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="3" language="java" name="com.soonmark.myapp.DateTimeVO" project="eventAutoCompleteProject" 
+    file="/eventAutoCompleteProject/src/main/java/com/soonmark/myapp/DateTimeVO.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position height="747" width="255" x="671" y="508"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      

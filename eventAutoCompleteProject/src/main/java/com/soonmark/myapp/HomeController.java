@@ -84,7 +84,7 @@ public class HomeController {
 
 			logger.error("Error : 입력 허용 패턴이 아님");
 
-			DateVO vo = new DateVO();
+			DateTimeVO vo = new DateTimeVO();
 			// -2는 잘못된 기호나 문자 입력 시 에러 코드
 			vo.setYear(-2);
 			dateVos.insertVOs(vo);
@@ -117,10 +117,10 @@ public class HomeController {
 		mergeItself(dateVos);
 
 		// 날짜, 시간 두개의 값이 없을 때도 크로스시켜야 하므로 빈 객체 삽입.
-		timeVos.insertVOs(new DateVO());
-		dateVos.insertVOs(new DateVO());
+		timeVos.insertVOs(new DateTimeVO());
+		dateVos.insertVOs(new DateTimeVO());
 		// 요일도 날짜와 크로스시켜야하므로 빈 객체 삽입.
-		dayVos.insertVOs(new DateVO());
+		dayVos.insertVOs(new DateTimeVO());
 
 		// 우선, 요일과 날짜 크로스
 		// 날짜가 있고 요일이 없는 경우나 - clear
@@ -148,7 +148,7 @@ public class HomeController {
 
 				// 날짜 없고 요일있는건 처리해야하니까 if문 처리 안 함.
 				MyLocalDateTime tmpCal = new MyLocalDateTime();
-				DateVO vo = new DateVO();
+				DateTimeVO vo = new DateTimeVO();
 
 				// 날짜 없고 요일만 있을 때
 				if (dateVos.getVos().size() == 1) {
@@ -182,7 +182,7 @@ public class HomeController {
 		merge(dateVos, specialDateVos);
 
 		// dateVos에 추가했던 element를 삭제했으므로 다시 하나 만들어줌.
-		dateVos.insertVOs(new DateVO());
+		dateVos.insertVOs(new DateTimeVO());
 
 		for (int i = 0; i < timeVos.getVos().size(); i++) {
 			for (int j = 0; j < dateVos.getVos().size(); j++) {
@@ -232,7 +232,7 @@ public class HomeController {
 					comparedCal.setTimePoint(now.getTimePoint());
 
 					for (int k = 0; k < recomNum; k++) {
-						DateVO vo = new DateVO();
+						DateTimeVO vo = new DateTimeVO();
 
 						tmpCal.setCloseDateOfTime(comparedCal);
 						comparedCal.setTimePoint(tmpCal.getTimePoint());
@@ -248,8 +248,8 @@ public class HomeController {
 
 				else { // 날짜 정보 있으면 (시간은 있든 말든 상관없음.)
 					for (int k = 0; k < recomNum; k++) {
-						DateVO vo = new DateVO();
-						DateVO secVo = new DateVO();
+						DateTimeVO vo = new DateTimeVO();
+						DateTimeVO secVo = new DateTimeVO();
 
 						vo.setAllDate(dateVos.getElement(j));
 						vo.setFocusOnDay(isFocusOnDay);
@@ -325,8 +325,6 @@ public class HomeController {
 								vo.setDate(tmpCal2.getDate());
 								vo.setYear(tmpCal2.getYear());
 								vo.setMonth(tmpCal2.getMonth());
-
-								// vo.setYear(tmpCal2.getYear() + k);
 
 								// 날짜에 맞는 요일 구하는 로직
 								vo.setProperDay();
@@ -435,7 +433,7 @@ public class HomeController {
 				logger.info("패턴 : " + pattern);
 				logger.info("패턴 만족 : " + matcher.group(0));
 
-				DateVO vo = new DateVO();
+				DateTimeVO vo = new DateTimeVO();
 
 				// enum의 추상메소드로 바로 감.
 				tokenType.setVoInfo(vo, matcher);
@@ -448,7 +446,7 @@ public class HomeController {
 	// 년, 월, 일을 각각 받게 되면 여기서 merge 할 것.
 	void mergeItself(DateListVO targetVos) {
 		DateListVO vos = new DateListVO();
-		vos.insertVOs(new DateVO());
+		vos.insertVOs(new DateTimeVO());
 
 		for (int i = 0; i < targetVos.getVos().size(); i++) {
 			for (int j = 0; j < vos.getVos().size(); j++) {
@@ -466,7 +464,7 @@ public class HomeController {
 					if (!vos.getElement(j).hasInfo(DateTimeEn.year.ordinal())
 							&& !vos.getElement(j).hasInfo(DateTimeEn.month.ordinal())
 							&& !vos.getElement(j).hasInfo(DateTimeEn.date.ordinal())) {
-						vos.insertVOs(new DateVO());
+						vos.insertVOs(new DateTimeVO());
 					}
 					if (targetVos.getElement(i).getYear() != -1) {
 						vos.getElement(j).setYear(targetVos.getElement(i).getYear());
@@ -540,7 +538,7 @@ public class HomeController {
 	// specialDate은 여기서 merge.
 	void merge(DateListVO targetVos, DateListVO secVos) {
 		// 빈 객체 하나 넣어주기
-		targetVos.insertVOs(new DateVO());
+		targetVos.insertVOs(new DateTimeVO());
 
 		boolean out = false;
 		for (int i = 0; i < targetVos.getVos().size(); i++) {
@@ -570,7 +568,7 @@ public class HomeController {
 					out = true;
 				}
 				if (out) {
-					targetVos.insertVOs(new DateVO());
+					targetVos.insertVOs(new DateTimeVO());
 					break;
 				}
 			}
@@ -585,7 +583,7 @@ public class HomeController {
 					continue;
 				}
 				for (int j = 0; j < secVos.getVos().size(); j++) {
-					DateVO vo = new DateVO();
+					DateTimeVO vo = new DateTimeVO();
 
 					// vo 초기화 : secVos로 세팅
 					vo.setAllDate(secVos.getElement(j));
@@ -618,7 +616,7 @@ public class HomeController {
 						}
 					}
 					if (targetVos.getElement(i).getDay() == null) {
-						targetVos.insertVOs(new DateVO());
+						targetVos.insertVOs(new DateTimeVO());
 						out = true;
 						break;
 					}

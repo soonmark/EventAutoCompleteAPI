@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 
 public enum TokenType {
 	dates(0){
-		void setVoInfo(DateVO vo, Matcher matcher) {
+		void setVoInfo(DateTimeVO vo, Matcher matcher) {
 			try {
 				vo.setYear(Integer.parseInt(matcher.group("year")));
 				int year = vo.getYear();
@@ -50,7 +50,7 @@ public enum TokenType {
 			}
 		}
 	}, days(1){
-		void setVoInfo(DateVO vo, Matcher matcher) {
+		void setVoInfo(DateTimeVO vo, Matcher matcher) {
 			// month와 date 에 해당하는 group 만 따로 읽어 저장
 			try {
 				// getDayOfWeekByLocale
@@ -62,7 +62,7 @@ public enum TokenType {
 			}
 		}
 	}, times(2){
-		void setVoInfo(DateVO vo, Matcher matcher) {
+		void setVoInfo(DateTimeVO vo, Matcher matcher) {
 			vo.setHour(Integer.parseInt(matcher.group("hour")));
 			vo.setHasInfo(DateTimeEn.hour.ordinal(), true);
 			try {
@@ -75,7 +75,7 @@ public enum TokenType {
 			}
 		}
 	}, special(3){
-		void setVoInfo(DateVO vo, Matcher matcher) {
+		void setVoInfo(DateTimeVO vo, Matcher matcher) {
 			//enum 
 			for(specialDateTypeNeedsDay sdt : specialDateTypeNeedsDay.values()) {
 				try {
@@ -128,5 +128,5 @@ public enum TokenType {
 	
 	
 	// 추상 메소드
-	abstract void setVoInfo(DateVO vo, Matcher matcher);
+	abstract void setVoInfo(DateTimeVO vo, Matcher matcher);
 }

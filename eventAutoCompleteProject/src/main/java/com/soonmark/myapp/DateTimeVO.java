@@ -4,7 +4,7 @@ import java.time.DayOfWeek;
 import java.time.format.TextStyle;
 import java.util.Locale;
 
-public class DateVO {
+public class DateTimeVO {
 	int year;
 	int month;
 	int date;
@@ -13,12 +13,11 @@ public class DateVO {
 	int hour;
 	int minute;
 	boolean isFocusOnDay;
-	boolean ignoreDay;
 	boolean[] hasInfo;
 	boolean isAllDayEvent;
 	DateTimeEn focusToRepeat;
 
-	DateVO() {
+	DateTimeVO() {
 		this.year = -1;
 		this.month = -1;
 		this.date = -1;
@@ -26,13 +25,12 @@ public class DateVO {
 		this.hour = -1;
 		this.minute = -1;
 		this.isFocusOnDay = false;
-		this.ignoreDay = false;
 		this.isAllDayEvent = false;
 		this.focusToRepeat = null;
 		hasInfo = new boolean[] { false, false, false, false, false, false };
 	}
 
-	DateVO(int year, int month, int date, DayOfWeek day, int hour, int minute) {
+	DateTimeVO(int year, int month, int date, DayOfWeek day, int hour, int minute) {
 		this.year = year;
 		this.month = month;
 		this.date = date;
@@ -40,7 +38,6 @@ public class DateVO {
 		this.hour = hour;
 		this.minute = minute;
 		this.isFocusOnDay = false;
-		this.ignoreDay = false;
 		this.isAllDayEvent = false;
 		this.focusToRepeat = null;
 		hasInfo = new boolean[] { false, false, false, false, false, false };
@@ -78,7 +75,7 @@ public class DateVO {
 		setDay(tmpCal.getDay());
 	}
 
-	public void setAllDate(DateVO vo) {
+	public void setAllDate(DateTimeVO vo) {
 		setDay(vo.getDay());
 		setYear(vo.getYear());
 		setMonth(vo.getMonth());
