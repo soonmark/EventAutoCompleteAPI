@@ -8,12 +8,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -349,8 +346,8 @@ public class HomeController {
 		return vos.toJsonString();
 	}
 
-	void initPatterns(List<String> datePatterns, List<String> daysPatterns, List<String> specialDatePatterns,
-			List<String> timePatterns) {
+	void initPatterns(List<String> datePatterns, List<String> daysPatterns,
+					List<String> specialDatePatterns, List<String> timePatterns) {
 
 		datePatterns.add("^(.*)(?<year>[0-9]{4})-(?<month>0?[1-9]|1[0-2])-(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 2018-(0)3-9
 		datePatterns.add("^(.*)(?<year>[0-9]{4})/(?<month>0?[1-9]|1[0-2])/(?<date>[1-9]|[1-2][0-9]|3[0-1])(|[^0-9].*)$"); // 2018/(0)3/9
