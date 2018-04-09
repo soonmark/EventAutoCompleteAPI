@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,6 +48,8 @@ public class HomeController {
 	@RequestMapping(value = "refresh", method = RequestMethod.POST, produces = "application/json; charset=utf8")
 	public @ResponseBody String inputProcess(HttpServletRequest httpServletRequest) {
 
+		@Autowired RecommendationService recommendationService;
+		
 		int recomNum = 2; // 추천할 개수를 10개로 한정
 
 		// 현재 시스템 날짜 // 여기서 수정하자.
@@ -62,32 +65,32 @@ public class HomeController {
 		logger.info("현재 시간값 : " + now);
 
 		// 앞으로 추천할 날짜 리스트
-		DateListVO dateVos = new DateListVO();
+		DateTimeListDTO dateList = new DateTimeListDTO();
 
 		// 앞으로 추천할 예외 날짜 리스트
-		DateListVO specialDateVos = new DateListVO();
+		DateTimeListDTO specialDateList = new DateTimeListDTO();
 
 		// 앞으로 추천할 요일 리스트
-		DateListVO dayVos = new DateListVO();
+		DateTimeListDTO dayList = new DateTimeListDTO();
 
 		// 앞으로 추천할 시간 리스트
-		DateListVO timeVos = new DateListVO();
+		DateTimeListDTO timeList = new DateTimeListDTO();
 
 		// 최종 리스트
-		DateListVO vos = new DateListVO();
+		DateTimeListDTO resultList = new DateTimeListDTO();
 
 		// 한글, 숫자, 영어, 공백만 입력 가능
 		if (!(Pattern.matches("^[ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z0-9\\s\\:\\-\\.\\/]*$", inputEvent))) {
 
 			logger.error("Error : 입력 허용 패턴이 아님");
 
-			DateTimeVO vo = new DateTimeVO();
+			DateTimeObject dtObj = new DateTimeObject();
 			// -2는 잘못된 기호나 문자 입력 시 에러 코드
-			vo.setYear(-2);
-			dateVos.insertVOs(vo);
+			dtObj.setYear(-2);
+			dateList.insertDtObj(dtObj);
 
-			logger.info("JSON 값  : " + dateVos.toJsonString());
-			return dateVos.toJsonString();
+			logger.info("JSON 값  : " + dateList.toJsonString());
+			return dateList.toJsonString();
 		}
 
 		logger.info("입력받은 일정 : " + inputEvent);
@@ -105,19 +108,17 @@ public class HomeController {
 		initPatterns(datePatterns, daysPatterns, specialDatePatterns, timePatterns);
 
 		// 날짜 매칭 / 요일 매칭 / 시간 매칭
-		matchingProcess(inputEvent, datePatterns, TokenType.dates, dateVos);
-		matchingProcess(inputEvent, specialDatePatterns, TokenType.special, specialDateVos);
-		matchingProcess(inputEvent, daysPatterns, TokenType.days, dayVos);
-		matchingProcess(inputEvent, timePatterns, TokenType.times, timeVos);
+		matchingProcess(inputEvent, datePatterns, TokenType.dates, dateList);
+		matchingProcess(inputEvent, specialDatePatterns, TokenType.special, specialDateList);
+		matchingProcess(inputEvent, daysPatterns, TokenType.days, dayList);
+		matchingProcess(inputEvent, timePatterns, TokenType.times, timeList);
 
 		// 기본 날짜 병합
-		mergeItself(dateVos);
+		mergeItself(dateList);
 
 		// 날짜, 시간 두개의 값이 없을 때도 크로스시켜야 하므로 빈 객체 삽입.
-		timeVos.insertVOs(new DateTimeVO());
-		dateVos.insertVOs(new DateTimeVO());
-		// 요일도 날짜와 크로스시켜야하므로 빈 객체 삽입.
-		dayVos.insertVOs(new DateTimeVO());
+		timeList.insertDtObj(new DateTimeObject());
+		dateList.insertDtObj(new DateTimeObject());
 
 		// 우선, 요일과 날짜 크로스
 		// 날짜가 있고 요일이 없는 경우나 - clear
@@ -125,83 +126,73 @@ public class HomeController {
 		// 요일과 날짜가 있지만 서로 안 맞는 경우
 		// 요일과 날짜가 있고 둘이 맞는 경우
 		// 위 4가지 경우에 대해 코딩.
-		boolean alreadyDeleted = false;
-		for (int i = 0; i < dateVos.getVos().size(); i++) {
-			for (int j = 0; j < dayVos.getVos().size(); j++) {
-				// 요일 정보 없으면 그냥 나가기
-				// 날짜 정보가 있을 때는 날짜 빈 객체 스킵
-				// 이 2가지 경우에는 dateVos의 마지막 element 삭제.
-				if (dayVos.getVos().size() == 1 || (dateVos.getVos().size() > 1 && i == dateVos.getVos().size() - 1)) {
-					if(!alreadyDeleted) {
-						dateVos.deleteVOs(dateVos.getVos().size() - 1);
-						alreadyDeleted = true;
-					}
-					continue;
-				}
-				// 요일 정보가 있을 때는 요일 빈 객체 스킵
-				if (dayVos.getVos().size() > 1 && j == dayVos.getVos().size() - 1) {
-					continue;
-				}
-
+		
+		for (int i = 0; i < dateList.getList().size(); i++) {
+			// 요일 정보 없으면 그냥 나가기
+			if(dayList.getList().size() == 0) {
+				dateList.deleteList(dateList.getList().size() - 1);
+				break;
+			}
+			for (int j = 0; j < dayList.getList().size(); j++) {
 				// 날짜 없고 요일있는건 처리해야하니까 if문 처리 안 함.
 				MyLocalDateTime tmpCal = new MyLocalDateTime();
-				DateTimeVO vo = new DateTimeVO();
+				DateTimeObject dtObj = new DateTimeObject();
 
 				// 날짜 없고 요일만 있을 때
-				if (dateVos.getVos().size() == 1) {
+				if (dateList.getList().size() == 1) {
 					// 가까운 미래시 날짜 찾아 tmpCal에 세팅.
-					tmpCal.setCloseDateOfTheDay(dayVos.getElement(j).getDay());
-					vo.setFocusOnDay(true);
+					tmpCal.setCloseDateOfTheDay(dayList.getElement(j).getDay());
+					dtObj.setFocusOnDay(true);
 
 				} else { // 요일 정보와 날짜 정보가 있을 때는 요일 정보를 무시
-					if (dateVos.getElement(i).hasInfo(DateTimeEn.year.ordinal())) {
-						tmpCal.setYear(dateVos.getElement(i).getYear());
+					if (dateList.getElement(i).hasInfo(DateTimeEn.year.ordinal())) {
+						tmpCal.setYear(dateList.getElement(i).getYear());
 					}
-					if (dateVos.getElement(i).hasInfo(DateTimeEn.month.ordinal())) {
-						tmpCal.setMonth(dateVos.getElement(i).getMonth());
+					if (dateList.getElement(i).hasInfo(DateTimeEn.month.ordinal())) {
+						tmpCal.setMonth(dateList.getElement(i).getMonth());
 					}
-					if (dateVos.getElement(i).hasInfo(DateTimeEn.date.ordinal())) {
-						tmpCal.setDate(dateVos.getElement(i).getDate());
+					if (dateList.getElement(i).hasInfo(DateTimeEn.date.ordinal())) {
+						tmpCal.setDate(dateList.getElement(i).getDate());
 					}
-					vo.setFocusOnDay(false);
+					dtObj.setFocusOnDay(false);
 				}
 
-				vo.setAllDate(tmpCal);
+				dtObj.setAllDate(tmpCal);
 
-				dateVos.getElement(i).setAllDate(vo);
+				dateList.getElement(i).setAllDate(dtObj);
 
-				dateVos.getElement(i).setFocusOnDay(vo.isFocusOnDay());
-				dateVos.getElement(i).setHasInfo(DateTimeEn.day.ordinal(), true);
+				dateList.getElement(i).setFocusOnDay(dtObj.isFocusOnDay());
+				dateList.getElement(i).setHasInfo(DateTimeEn.day.ordinal(), true);
 			}
 		}
 
 		// special 날짜와 요일까지 세팅된 기본 날짜 병합
-		merge(dateVos, specialDateVos);
+		merge(dateList, specialDateList);
 
-		// dateVos에 추가했던 element를 삭제했으므로 다시 하나 만들어줌.
-		dateVos.insertVOs(new DateTimeVO());
+		// dateList에 추가했던 element를 삭제했으므로 다시 하나 만들어줌.
+		dateList.insertDtObj(new DateTimeObject());
 
-		for (int i = 0; i < timeVos.getVos().size(); i++) {
-			for (int j = 0; j < dateVos.getVos().size(); j++) {
+		for (int i = 0; i < timeList.getList().size(); i++) {
+			for (int j = 0; j < dateList.getList().size(); j++) {
 
 				// 둘다 정보가 들어왔으면 빈값 매칭 안 해줘도 됨.
 				// 시간만 있을 때는 -> 날짜 빈거랑 매칭하고 시간 여분 빼기
 				// 날짜만 있을 때는 -> 시간 빈거랑 매칭하고 날짜 여분 빼기
 				// 둘 다 비어있을 때도 안 해줘도 됨.
-				if (i == timeVos.getVos().size() - 1 && j == dateVos.getVos().size() - 1) {
+				if (i == timeList.getList().size() - 1 && j == dateList.getList().size() - 1) {
 					continue;
 				}
 
 				logger.info("여1");
 
-				int y = dateVos.getElement(j).getYear();
-				int m = dateVos.getElement(j).getMonth();
-				int dt = dateVos.getElement(j).getDate();
-				DayOfWeek day = dateVos.getElement(j).getDay();
-				boolean isFocusOnDay = dateVos.getElement(j).isFocusOnDay();
+				int y = dateList.getElement(j).getYear();
+				int m = dateList.getElement(j).getMonth();
+				int dt = dateList.getElement(j).getDate();
+				DayOfWeek day = dateList.getElement(j).getDay();
+				boolean isFocusOnDay = dateList.getElement(j).isFocusOnDay();
 
-				int h = timeVos.getElement(i).getHour();
-				int min = timeVos.getElement(i).getMinute();
+				int h = timeList.getElement(i).getHour();
+				int min = timeList.getElement(i).getMinute();
 
 				// 월간 일수 차이에 대한 예외처리
 				if ((m == 2 && dt > 28) || (m < 8 && m % 2 == 0 && dt > 30) || (m > 7 && m % 2 == 1 && dt > 30)) {
@@ -210,7 +201,7 @@ public class HomeController {
 				}
 
 				// 날짜 정보가 없으면 가장 근접한 미래날짜로 세팅.
-				if (dateVos.getVos().size() == 1) {
+				if (dateList.getList().size() == 1) {
 					logger.info("여기2");
 
 					// 현재 시각과 비교해서 이미 지난 시간일 경우 + 12;
@@ -229,113 +220,113 @@ public class HomeController {
 					comparedCal.setTimePoint(now.getTimePoint());
 
 					for (int k = 0; k < recomNum; k++) {
-						DateTimeVO vo = new DateTimeVO();
+						DateTimeObject dtObj = new DateTimeObject();
 
 						tmpCal.setCloseDateOfTime(comparedCal);
 						comparedCal.setTimePoint(tmpCal.getTimePoint());
 
 						// 현재 시스템 날짜
-						vo.setAllDate(tmpCal);
-						vo.setHour(tmpCal.getHour());
-						vo.setMinute(tmpCal.getMinute());
+						dtObj.setAllDate(tmpCal);
+						dtObj.setHour(tmpCal.getHour());
+						dtObj.setMinute(tmpCal.getMinute());
 
-						vos.insertVOs(vo);
+						resultList.insertDtObj(dtObj);
 					}
 				}
 
 				else { // 날짜 정보 있으면 (시간은 있든 말든 상관없음.)
 					for (int k = 0; k < recomNum; k++) {
-						DateTimeVO vo = new DateTimeVO();
-						DateTimeVO secVo = new DateTimeVO();
+						DateTimeObject dtObj = new DateTimeObject();
+						DateTimeObject secDtObj = new DateTimeObject();
 
-						vo.setAllDate(dateVos.getElement(j));
-						vo.setFocusOnDay(isFocusOnDay);
-						vo.setFocusToRepeat(dateVos.getElement(j).getFocusToRepeat());
+						dtObj.setAllDate(dateList.getElement(j));
+						dtObj.setFocusOnDay(isFocusOnDay);
+						dtObj.setFocusToRepeat(dateList.getElement(j).getFocusToRepeat());
 
 						// 무슨 정보가 있는지 담겨있음
-						vo.setHasInfo(DateTimeEn.year.ordinal(),
-								dateVos.getElement(j).hasInfo(DateTimeEn.year.ordinal()));
-						vo.setHasInfo(DateTimeEn.month.ordinal(),
-								dateVos.getElement(j).hasInfo(DateTimeEn.month.ordinal()));
-						vo.setHasInfo(DateTimeEn.date.ordinal(),
-								dateVos.getElement(j).hasInfo(DateTimeEn.date.ordinal()));
-						vo.setHasInfo(DateTimeEn.day.ordinal(),
-								dateVos.getElement(j).hasInfo(DateTimeEn.day.ordinal()));
+						dtObj.setHasInfo(DateTimeEn.year.ordinal(),
+								dateList.getElement(j).hasInfo(DateTimeEn.year.ordinal()));
+						dtObj.setHasInfo(DateTimeEn.month.ordinal(),
+								dateList.getElement(j).hasInfo(DateTimeEn.month.ordinal()));
+						dtObj.setHasInfo(DateTimeEn.date.ordinal(),
+								dateList.getElement(j).hasInfo(DateTimeEn.date.ordinal()));
+						dtObj.setHasInfo(DateTimeEn.day.ordinal(),
+								dateList.getElement(j).hasInfo(DateTimeEn.day.ordinal()));
 						
 						
 						// 시간정보 없을 땐, 종일 로 나타내기
-						if (timeVos.getVos().size() == 1) {
-							vo.setAllDayEvent(true);
+						if (timeList.getList().size() == 1) {
+							dtObj.setAllDayEvent(true);
 							
 						} else { // 날짜와 시간 정보 있을 때
-							vo.setHour(h);
-							vo.setMinute(min);
+							dtObj.setHour(h);
+							dtObj.setMinute(min);
 						}
 
 						
 						if (y == -1) {
-							vo.setYear(now.getYear());
+							dtObj.setYear(now.getYear());
 						}
 						
-						if (vo.getFocusToRepeat() == null) { // 반복없이 해당 값만 insert 하게 하기
+						if (dtObj.getFocusToRepeat() == null) { // 반복없이 해당 값만 insert 하게 하기
 							recomNum = 1; // 반복 안 하도록
 							if (m == -1) {
-								vo.setMonth(now.getMonth());
+								dtObj.setMonth(now.getMonth());
 							}
 							if (dt == -1) {
-								vo.setDate(now.getDate());
+								dtObj.setDate(now.getDate());
 							}
 							if (day == null) {
 								// 날짜에 맞는 요일 구하는 메소드
-								vo.setProperDay();
+								dtObj.setProperDay();
 							}
 
 						} else { // focus할 게 있으면 그 정보를 기준으로 for문 돌게끔...
 							if (m == -1) {
-								vo.setMonth(1);
+								dtObj.setMonth(1);
 							}
 							if (dt == -1) {
-								vo.setDate(1);
+								dtObj.setDate(1);
 							}
 							if (day == null) {
 								// 날짜에 맞는 요일 구하는 메소드
-								vo.setProperDay();
+								dtObj.setProperDay();
 							}
 							
 							// 이전에는 요일 정보를 안 받았기 때문에 이렇게 짰는데 다시 짜자.
-							if (vo.isFocusOnDay == true) {
+							if (dtObj.isFocusOnDay() == true) {
 								// 요일에 맞는 날짜만 뽑도록 구하는 로직
-								LocalDate tmpDate = LocalDate.of(vo.getYear(), vo.getMonth(), vo.getDate());
+								LocalDate tmpDate = LocalDate.of(dtObj.getYear(), dtObj.getMonth(), dtObj.getDate());
 
 								tmpDate = tmpDate.plusWeeks(k);
-								vo.setDate(tmpDate.getDayOfMonth());
-								vo.setYear(tmpDate.getYear());
-								vo.setMonth(tmpDate.getMonthValue());
+								dtObj.setDate(tmpDate.getDayOfMonth());
+								dtObj.setYear(tmpDate.getYear());
+								dtObj.setMonth(tmpDate.getMonthValue());
 							} else {
 								MyLocalDateTime tmpCal2 = new MyLocalDateTime();
-								tmpCal2.setYear(vo.getYear());
-								tmpCal2.setMonth(vo.getMonth());
-								tmpCal2.setDate(vo.getDate());
+								tmpCal2.setYear(dtObj.getYear());
+								tmpCal2.setMonth(dtObj.getMonth());
+								tmpCal2.setDate(dtObj.getDate());
 								// focus 할 해당 정보를 기준으로 더해주기.
-								tmpCal2.setCloseDate(tmpCal2, vo.getFocusToRepeat(), k);
+								tmpCal2.setCloseDate(tmpCal2, dtObj.getFocusToRepeat(), k);
 
-								vo.setDate(tmpCal2.getDate());
-								vo.setYear(tmpCal2.getYear());
-								vo.setMonth(tmpCal2.getMonth());
+								dtObj.setDate(tmpCal2.getDate());
+								dtObj.setYear(tmpCal2.getYear());
+								dtObj.setMonth(tmpCal2.getMonth());
 
 								// 날짜에 맞는 요일 구하는 로직
-								vo.setProperDay();
+								dtObj.setProperDay();
 							}
 						}
 
-						vos.insertVOs(vo);
+						resultList.insertDtObj(dtObj);
 
 						// 시간정보와 날짜 모두 있을 땐, halfTime 일 경우, 오후 시간도 저장
-						if (timeVos.getVos().size() > 1 && vo.getHour() <= 12) {
-							secVo.setHour((vo.getHour() + 12) % 24);
-							secVo.setMinute(vo.getMinute());
-							secVo.setAllDate(vo);
-							vos.insertVOs(secVo);
+						if (timeList.getList().size() > 1 && dtObj.getHour() <= 12) {
+							secDtObj.setHour((dtObj.getHour() + 12) % 24);
+							secDtObj.setMinute(dtObj.getMinute());
+							secDtObj.setAllDate(dtObj);
+							resultList.insertDtObj(secDtObj);
 						}
 					}
 				}
@@ -343,7 +334,7 @@ public class HomeController {
 			}
 		}
 
-		return vos.toJsonString();
+		return resultList.toJsonString();
 	}
 
 	void initPatterns(List<String> datePatterns, List<String> daysPatterns,
@@ -418,7 +409,7 @@ public class HomeController {
 		timePatterns.add("^(|.*[^1-2])(?<hour>[1-9])시([^분]*)$"); // 7시
 	}
 
-	void matchingProcess(String inputEv, List<String> patterns, TokenType tokenType, DateListVO targetVos) {
+	void matchingProcess(String inputEv, List<String> patterns, TokenType tokenType, DateTimeListDTO targetList) {
 		// 요일 매칭
 		Iterator<String> iter = patterns.iterator();
 		while (iter.hasNext()) {
@@ -430,69 +421,69 @@ public class HomeController {
 				logger.info("패턴 : " + pattern);
 				logger.info("패턴 만족 : " + matcher.group(0));
 
-				DateTimeVO vo = new DateTimeVO();
+				DateTimeObject dtObj = new DateTimeObject();
 
 				// enum의 추상메소드로 바로 감.
-				tokenType.setVoInfo(vo, matcher);
+				tokenType.setDtObjInfo(dtObj, matcher);
 
-				targetVos.insertVOs(vo);
+				targetList.insertDtObj(dtObj);
 			}
 		}
 	}
 
 	// 년, 월, 일을 각각 받게 되면 여기서 merge 할 것.
-	void mergeItself(DateListVO targetVos) {
-		DateListVO vos = new DateListVO();
-		vos.insertVOs(new DateTimeVO());
+	void mergeItself(DateTimeListDTO targetList) {
+		DateTimeListDTO tmpList = new DateTimeListDTO();
+		tmpList.insertDtObj(new DateTimeObject());
 
-		for (int i = 0; i < targetVos.getVos().size(); i++) {
-			for (int j = 0; j < vos.getVos().size(); j++) {
-				// target 의 원소 중 존재하는 값들이 모두 vos 에 없으면 추가
+		for (int i = 0; i < targetList.getList().size(); i++) {
+			for (int j = 0; j < tmpList.getList().size(); j++) {
+				// target 의 원소 중 존재하는 값들이 모두 list 에 없으면 추가
 				boolean ableToPut = true;
 				for (DateTimeEn d : DateTimeEn.values()) {
-					if (targetVos.getElement(i).hasInfo(d.ordinal()) && vos.getElement(j).hasInfo(d.ordinal())) {
+					if (targetList.getElement(i).hasInfo(d.ordinal()) && tmpList.getElement(j).hasInfo(d.ordinal())) {
 						ableToPut = false;
 						break;
 					}
 				}
 				if (ableToPut) {
 					// 합치는 프로세스 시작
-					// y, m, dt 모두 정보가 없으면 vos에 빈 객체 추가
-					if (!vos.getElement(j).hasInfo(DateTimeEn.year.ordinal())
-							&& !vos.getElement(j).hasInfo(DateTimeEn.month.ordinal())
-							&& !vos.getElement(j).hasInfo(DateTimeEn.date.ordinal())) {
-						vos.insertVOs(new DateTimeVO());
+					// y, m, dt 모두 정보가 없으면 list 에 빈 객체 추가
+					if (!tmpList.getElement(j).hasInfo(DateTimeEn.year.ordinal())
+							&& !tmpList.getElement(j).hasInfo(DateTimeEn.month.ordinal())
+							&& !tmpList.getElement(j).hasInfo(DateTimeEn.date.ordinal())) {
+						tmpList.insertDtObj(new DateTimeObject());
 					}
-					if (targetVos.getElement(i).getYear() != -1) {
-						vos.getElement(j).setYear(targetVos.getElement(i).getYear());
-						vos.getElement(j).setHasInfo(0, true);
+					if (targetList.getElement(i).getYear() != -1) {
+						tmpList.getElement(j).setYear(targetList.getElement(i).getYear());
+						tmpList.getElement(j).setHasInfo(0, true);
 					}
-					if (targetVos.getElement(i).getMonth() != -1) {
-						vos.getElement(j).setMonth(targetVos.getElement(i).getMonth());
-						vos.getElement(j).setHasInfo(1, true);
+					if (targetList.getElement(i).getMonth() != -1) {
+						tmpList.getElement(j).setMonth(targetList.getElement(i).getMonth());
+						tmpList.getElement(j).setHasInfo(1, true);
 					}
-					if (targetVos.getElement(i).getDate() != -1) {
-						vos.getElement(j).setDate(targetVos.getElement(i).getDate());
-						vos.getElement(j).setHasInfo(2, true);
+					if (targetList.getElement(i).getDate() != -1) {
+						tmpList.getElement(j).setDate(targetList.getElement(i).getDate());
+						tmpList.getElement(j).setHasInfo(2, true);
 					}
 					break;
 				}
 			}
 		}
 
-		targetVos.clearVOs();
-		for (int j = 0; j < vos.getVos().size() - 1; j++) {
-			targetVos.insertVOs(vos.getElement(j));
+		targetList.clearList();
+		for (int j = 0; j < tmpList.getList().size() - 1; j++) {
+			targetList.insertDtObj(tmpList.getElement(j));
 		}
-		for (int j = 0; j < targetVos.getVos().size(); j++) {
-			if (targetVos.getElement(j).getYear() == -1) {
-				targetVos.getElement(j).setFocusToRepeat(DateTimeEn.year);
+		for (int j = 0; j < targetList.getList().size(); j++) {
+			if (targetList.getElement(j).getYear() == -1) {
+				targetList.getElement(j).setFocusToRepeat(DateTimeEn.year);
 			}
-			if (targetVos.getElement(j).getMonth() == -1) {
-				targetVos.getElement(j).setFocusToRepeat(DateTimeEn.month);
+			if (targetList.getElement(j).getMonth() == -1) {
+				targetList.getElement(j).setFocusToRepeat(DateTimeEn.month);
 			}
-			if (targetVos.getElement(j).getDate() == -1) {
-				targetVos.getElement(j).setFocusToRepeat(DateTimeEn.date);
+			if (targetList.getElement(j).getDate() == -1) {
+				targetList.getElement(j).setFocusToRepeat(DateTimeEn.date);
 			}
 		}
 		
@@ -501,71 +492,120 @@ public class HomeController {
 		// 여기에서 중복 제거를 하던지, 아니면 우선순위 부여를 하던지, 아니면 날짜 비교해서 너무 터무니없이 먼 날짜면 지우는 방향으로!
 		// 중복 제거
 		// 있는 정보 중에는 모두 같은 거
-		for(int j = 0; j < targetVos.getVos().size(); j++) {
-			for(int i = j+1 ; i < targetVos.getVos().size() ; i++) {
-				if(((targetVos.getElement(i).hasInfo(DateTimeEn.year.ordinal())
-						&& targetVos.getElement(j).getYear() == targetVos.getElement(i).getYear())
-						|| !targetVos.getElement(i).hasInfo(DateTimeEn.year.ordinal()))
-					&& ((targetVos.getElement(i).hasInfo(DateTimeEn.month.ordinal())
-						&& targetVos.getElement(j).getMonth() == targetVos.getElement(i).getMonth())
-						|| !targetVos.getElement(i).hasInfo(DateTimeEn.month.ordinal()))
-					&& ((targetVos.getElement(i).hasInfo(DateTimeEn.date.ordinal())
-						&& targetVos.getElement(j).getDate() == targetVos.getElement(i).getDate())
-						|| !targetVos.getElement(i).hasInfo(DateTimeEn.date.ordinal()))) {
+		for(int j = 0; j < targetList.getList().size(); j++) {
+			for(int i = j+1 ; i < targetList.getList().size() ; i++) {
+				if(((targetList.getElement(i).hasInfo(DateTimeEn.year.ordinal())
+						&& targetList.getElement(j).getYear() == targetList.getElement(i).getYear())
+						|| !targetList.getElement(i).hasInfo(DateTimeEn.year.ordinal()))
+					&& ((targetList.getElement(i).hasInfo(DateTimeEn.month.ordinal())
+						&& targetList.getElement(j).getMonth() == targetList.getElement(i).getMonth())
+						|| !targetList.getElement(i).hasInfo(DateTimeEn.month.ordinal()))
+					&& ((targetList.getElement(i).hasInfo(DateTimeEn.date.ordinal())
+						&& targetList.getElement(j).getDate() == targetList.getElement(i).getDate())
+						|| !targetList.getElement(i).hasInfo(DateTimeEn.date.ordinal()))) {
 
-					targetVos.deleteVOs(i);
+					targetList.deleteList(i);
 					i -= 1;
 				}
 			}
 		}
 
 		// 터무니 없는 날짜 제거
-		int a = 1;
 		
 		
 		// 우선순위 부여
 		
 		
 		// 로그 찍기
-		for (int j = 0; j < targetVos.getVos().size() ; j++) {
-			logger.info(targetVos.getElement(j).toString());
+		for (int j = 0; j < targetList.getList().size() ; j++) {
+			logger.info(targetList.getElement(j).toString());
 		}
+	}
+	
+	void removeDuplicate(DateTimeListDTO targetList, TokenType tokenType) {
+		
+		switch(tokenType) {
+		case dates:
+			// 있는 정보 중에는 모두 같은 거
+			for(int j = 0; j < targetList.getList().size(); j++) {
+				for(int i = j+1 ; i < targetList.getList().size() ; i++) {
+					if(((targetList.getElement(i).hasInfo(DateTimeEn.year.ordinal())
+							&& targetList.getElement(j).getYear() == targetList.getElement(i).getYear())
+							|| !targetList.getElement(i).hasInfo(DateTimeEn.year.ordinal()))
+							&& ((targetList.getElement(i).hasInfo(DateTimeEn.month.ordinal())
+									&& targetList.getElement(j).getMonth() == targetList.getElement(i).getMonth())
+									|| !targetList.getElement(i).hasInfo(DateTimeEn.month.ordinal()))
+							&& ((targetList.getElement(i).hasInfo(DateTimeEn.date.ordinal())
+									&& targetList.getElement(j).getDate() == targetList.getElement(i).getDate())
+									|| !targetList.getElement(i).hasInfo(DateTimeEn.date.ordinal()))) {
+						
+						targetList.deleteList(i);
+						i -= 1;
+					}
+				}
+			}
+			break;
+		case days:
+			// 있는 정보 중에는 모두 같은 거
+			for(int j = 0; j < targetList.getList().size(); j++) {
+				for(int i = j+1 ; i < targetList.getList().size() ; i++) {
+					if(
+							(
+									(targetList.getElement(i).hasInfo(DateTimeEn.day.ordinal())
+											&& targetList.getElement(j).getDay() == targetList.getElement(i).getDay())
+							|| !targetList.getElement(i).hasInfo(DateTimeEn.year.ordinal()))
+							
+							&& ((targetList.getElement(i).hasInfo(DateTimeEn.month.ordinal())
+									&& targetList.getElement(j).getMonth() == targetList.getElement(i).getMonth())
+									|| !targetList.getElement(i).hasInfo(DateTimeEn.month.ordinal()))
+							
+							&& (
+									(targetList.getElement(i).hasInfo(DateTimeEn.date.ordinal())
+									&& targetList.getElement(j).getDate() == targetList.getElement(i).getDate())
+									
+								|| !targetList.getElement(i).hasInfo(DateTimeEn.date.ordinal()))) {
+						
+						targetList.deleteList(i);
+						i -= 1;
+					}
+				}
+			}
+			break;
+		case times:
+			break;
+		case special:
+			break;
+		default:
+			break;
+		}
+		
 	}
 
 	// specialDate은 여기서 merge.
-	void merge(DateListVO targetVos, DateListVO secVos) {
+	void merge(DateTimeListDTO targetList, DateTimeListDTO secList) {
 		// 빈 객체 하나 넣어주기
-		targetVos.insertVOs(new DateTimeVO());
+		targetList.insertDtObj(new DateTimeObject());
 
 		boolean out = false;
-		for (int i = 0; i < targetVos.getVos().size(); i++) {
-			for (int j = 0; j < secVos.getVos().size(); j++) {
+		for (int i = 0; i < targetList.getList().size(); i++) {
+			for (int j = 0; j < secList.getList().size(); j++) {
 
 				MyLocalDateTime cal = new MyLocalDateTime();
 				cal.setTimePoint(LocalDateTime.now());
-				if (secVos.getElement(j).getSpecialDate().equals("오늘")) {
-					targetVos.getElement(i).setDate(cal.getDate());
-					targetVos.getElement(i).setMonth(cal.getMonth());
-					targetVos.getElement(i).setYear(cal.getYear());
-					targetVos.getElement(i).setDay(cal.getDay());
+				if (secList.getElement(j).getSpecialDate().equals("오늘")) {
+					targetList.getElement(i).setAllDate(cal);
 					out = true;
-				} else if (secVos.getElement(j).getSpecialDate().equals("내일")) {
+				} else if (secList.getElement(j).getSpecialDate().equals("내일")) {
 					cal.plusDate(1);
-					targetVos.getElement(i).setDate(cal.getDate());
-					targetVos.getElement(i).setMonth(cal.getMonth());
-					targetVos.getElement(i).setYear(cal.getYear());
-					targetVos.getElement(i).setDay(cal.getDay());
+					targetList.getElement(i).setAllDate(cal);
 					out = true;
-				} else if (secVos.getElement(j).getSpecialDate().equals("모레")) {
+				} else if (secList.getElement(j).getSpecialDate().equals("모레")) {
 					cal.plusDate(2);
-					targetVos.getElement(i).setDate(cal.getDate());
-					targetVos.getElement(i).setMonth(cal.getMonth());
-					targetVos.getElement(i).setYear(cal.getYear());
-					targetVos.getElement(i).setDay(cal.getDay());
+					targetList.getElement(i).setAllDate(cal);
 					out = true;
 				}
 				if (out) {
-					targetVos.insertVOs(new DateTimeVO());
+					targetList.insertDtObj(new DateTimeObject());
 					break;
 				}
 			}
@@ -575,18 +615,18 @@ public class HomeController {
 		}
 
 		if (!out) {
-			for (int i = 0; i < targetVos.getVos().size(); i++) {
-				if (targetVos.getVos().size() > 1 && i == targetVos.getVos().size() - 1) {
+			for (int i = 0; i < targetList.getList().size(); i++) {
+				if (targetList.getList().size() > 1 && i == targetList.getList().size() - 1) {
 					continue;
 				}
-				for (int j = 0; j < secVos.getVos().size(); j++) {
-					DateTimeVO vo = new DateTimeVO();
+				for (int j = 0; j < secList.getList().size(); j++) {
+					DateTimeObject dtObj = new DateTimeObject();
 
-					// vo 초기화 : secVos로 세팅
-					vo.setAllDate(secVos.getElement(j));
-					if (!vo.getSpecialDate().equals("-1")) {
+					// dtObj 초기화 : secList로 세팅
+					dtObj.setAllDate(secList.getElement(j));
+					if (!dtObj.getSpecialDate().equals("-1")) {
 						for (specialDateTypeNeedsDay specialDT : specialDateTypeNeedsDay.values()) {
-							if (!vo.getSpecialDate().equals(specialDT.getTitle())) {
+							if (!dtObj.getSpecialDate().equals(specialDT.getTitle())) {
 								continue;
 							}
 							// 이번주 : 0, 다음주 : 1, 다다음주 : 2
@@ -600,20 +640,20 @@ public class HomeController {
 							int wom = calendar.get(Calendar.WEEK_OF_MONTH);
 
 							// 오늘이 수요일인데 이번주 화요일 입력하면 지났지만 나와야함. 그러니까 무턱대고 1주를 더하면 안 됨.
-							if (targetVos.getElement(i).getDay() != null) {
+							if (targetList.getElement(i).getDay() != null) {
 								td = td.with(TemporalAdjusters.dayOfWeekInMonth(specialDT.ordinal() + wom,
-										targetVos.getElement(i).getDay()));
+										targetList.getElement(i).getDay()));
 							}else { // 요일 정보가 없는데 이번주, 다음주 등의 정보가 있을 때
 								td = td.with(TemporalAdjusters.dayOfWeekInMonth(specialDT.ordinal() + wom, td.getDayOfWeek()));
 							}
-							targetVos.getElement(i).setDate(td.getDayOfMonth());
-							targetVos.getElement(i).setMonth(td.getMonthValue());
-							targetVos.getElement(i).setYear(td.getYear());
+							targetList.getElement(i).setDate(td.getDayOfMonth());
+							targetList.getElement(i).setMonth(td.getMonthValue());
+							targetList.getElement(i).setYear(td.getYear());
 							break;
 						}
 					}
-					if (targetVos.getElement(i).getDay() == null) {
-						targetVos.insertVOs(new DateTimeVO());
+					if (targetList.getElement(i).getDay() == null) {
+						targetList.insertDtObj(new DateTimeObject());
 						out = true;
 						break;
 					}
@@ -623,7 +663,7 @@ public class HomeController {
 				}
 			}
 		}
-		targetVos.deleteVOs(targetVos.getVos().size() - 1);
+		targetList.deleteList(targetList.getList().size() - 1);
 	}
 
 }

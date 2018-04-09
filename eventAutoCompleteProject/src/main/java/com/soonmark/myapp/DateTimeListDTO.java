@@ -5,38 +5,38 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class DateListVO {
-	List<DateTimeVO> vos;
+public class DateTimeListDTO {
+	private List<DateTimeObject> vos;
 
-	public DateListVO() {
-		vos = new ArrayList<DateTimeVO>();
+	public DateTimeListDTO() {
+		vos = new ArrayList<DateTimeObject>();
 	}
 
-	public List<DateTimeVO> getVos() {
+	public List<DateTimeObject> getList() {
 		return vos;
 	}
 
-	public void setVos(List<DateTimeVO> vos) {
+	public void setVos(List<DateTimeObject> vos) {
 		this.vos = vos;
 	}
 
-	public void insertVOs(DateTimeVO vo) {
+	public void insertDtObj(DateTimeObject vo) {
 		vos.add(vo);
 	}
 
-	public void deleteVOs(int index) {
+	public void deleteList(int index) {
 		vos.remove(index);
 	}
 
-	public void clearVOs() {
+	public void clearList() {
 		vos.clear();
 	}
 
-	public DateTimeVO getElement(int index) {
+	public DateTimeObject getElement(int index) {
 		return vos.get(index);
 	}
 
-	public Iterator<DateTimeVO> getIter() {
+	public Iterator<DateTimeObject> getIter() {
 		return null;
 	}
 

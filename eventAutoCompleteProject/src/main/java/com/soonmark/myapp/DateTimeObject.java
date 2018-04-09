@@ -4,20 +4,20 @@ import java.time.DayOfWeek;
 import java.time.format.TextStyle;
 import java.util.Locale;
 
-public class DateTimeVO {
-	int year;
-	int month;
-	int date;
-	String specialDate;
-	DayOfWeek day;
-	int hour;
-	int minute;
-	boolean isFocusOnDay;
-	boolean[] hasInfo;
-	boolean isAllDayEvent;
-	DateTimeEn focusToRepeat;
-
-	DateTimeVO() {
+public class DateTimeObject {
+	private int year;
+	private int month;
+	private int date;
+	private String specialDate;
+	private DayOfWeek day;
+	private int hour;
+	private int minute;
+	private boolean isFocusOnDay;
+	private boolean[] hasInfo;
+	private boolean isAllDayEvent;
+	private DateTimeEn focusToRepeat;
+            
+	DateTimeObject() {
 		this.year = -1;
 		this.month = -1;
 		this.date = -1;
@@ -30,7 +30,7 @@ public class DateTimeVO {
 		hasInfo = new boolean[] { false, false, false, false, false, false };
 	}
 
-	DateTimeVO(int year, int month, int date, DayOfWeek day, int hour, int minute) {
+	DateTimeObject(int year, int month, int date, DayOfWeek day, int hour, int minute) {
 		this.year = year;
 		this.month = month;
 		this.date = date;
@@ -75,12 +75,12 @@ public class DateTimeVO {
 		setDay(tmpCal.getDay());
 	}
 
-	public void setAllDate(DateTimeVO vo) {
-		setDay(vo.getDay());
-		setYear(vo.getYear());
-		setMonth(vo.getMonth());
-		setDate(vo.getDate());
-		setSpecialDate(vo.getSpecialDate());
+	public void setAllDate(DateTimeObject dtObj) {
+		setDay(dtObj.getDay());
+		setYear(dtObj.getYear());
+		setMonth(dtObj.getMonth());
+		setDate(dtObj.getDate());
+		setSpecialDate(dtObj.getSpecialDate());
 	}
 
 	public String getSpecialDate() {
@@ -177,13 +177,7 @@ public class DateTimeVO {
 	}
 
 	public void setMinute(int minute) {
-		// 0분, 1분 등이면 00분, 01분 으로 세팅
-		// if(minute.length() == 1) {
-		// this.minute = "0" + minute;
-		// }
-		// else {
 		this.minute = minute;
-		// }
 	}
 
 	public boolean isDateInfoFull() {

@@ -5,8 +5,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class MyLocalDateTime {
-	LocalDateTime timePoint;
-	boolean isHalfTime;
+	private LocalDateTime timePoint;
+	private boolean isHalfTime;
 
 	MyLocalDateTime() {
 		timePoint = LocalDateTime.now();
