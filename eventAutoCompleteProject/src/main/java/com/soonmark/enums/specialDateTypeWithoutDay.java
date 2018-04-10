@@ -1,4 +1,4 @@
-package com.soonmark.domain;
+package com.soonmark.enums;
 
 public enum specialDateTypeWithoutDay {
 	today("오늘"), tomorrow("내일"), dayAfterTomorrow("모레");

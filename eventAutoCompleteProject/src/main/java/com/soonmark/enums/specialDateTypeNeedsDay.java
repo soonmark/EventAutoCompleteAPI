@@ -1,4 +1,4 @@
-package com.soonmark.domain;
+package com.soonmark.enums;
 
 public enum specialDateTypeNeedsDay {
 	thisWeek("이번주"), nextWeek("다음주"), weekAfterNext("다다음주");

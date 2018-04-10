@@ -1,4 +1,4 @@
-package com.soonmark.domain;
+package com.soonmark.enums;
 
 public enum DateTimeEn {
 	year(0), month(1), date(2), day(3), hour(4), minute(5);

@@ -11,6 +11,10 @@ import java.util.GregorianCalendar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.soonmark.enums.DateTimeEn;
+import com.soonmark.enums.TokenType;
+import com.soonmark.enums.specialDateTypeNeedsDay;
+
 public class DateTimeListManager {
 	private Logger logger = LoggerFactory.getLogger(DateTimeListManager.class);
 	
@@ -103,14 +107,14 @@ public class DateTimeListManager {
 		return list;
 	}
 
-	public void mergeBetween(TokenType target, TokenType s) {
+	public void mergeBetween(TokenType target, TokenType nonTarget) {
 		DateTimeListDTO targetList = getDTListByTokType(target);
-		DateTimeListDTO sList = getDTListByTokType(s);
+		DateTimeListDTO nonTargetList = getDTListByTokType(nonTarget);
 
 		// mergeBy 완성하자
-		// targetList.mergeBy(s);
+		// targetList.mergeBy(nonTarget, nonTargetList);
 
-		if (target == TokenType.dates && s == TokenType.days) {
+		if (target == TokenType.dates && nonTarget == TokenType.days) {
 
 			// 날짜, 시간 두개의 값이 없을 때도 크로스시켜야 하므로 빈 객체 삽입.
 			dateList.insertDtObj(new DateTimeObject());
@@ -125,7 +129,7 @@ public class DateTimeListManager {
 			for (int i = 0; i < dateList.getList().size(); i++) {
 				// 요일 정보 없으면 그냥 나가기
 				if (dayList.getList().size() == 0) {
-					dateList.deleteList(dateList.getList().size() - 1);
+					dateList.deleteDtObj(dateList.getList().size() - 1);
 					break;
 				}
 				for (int j = 0; j < dayList.getList().size(); j++) {
@@ -161,24 +165,24 @@ public class DateTimeListManager {
 				}
 			}
 
-		} else if (target == TokenType.dates && s == TokenType.special) {
+		} else if (target == TokenType.dates && nonTarget == TokenType.special) {
 			// 빈 객체 하나 넣어주기
 			targetList.insertDtObj(new DateTimeObject());
 
 			boolean out = false;
 			for (int i = 0; i < targetList.getList().size(); i++) {
-				for (int j = 0; j < sList.getList().size(); j++) {
+				for (int j = 0; j < nonTargetList.getList().size(); j++) {
 
 					MyLocalDateTime cal = new MyLocalDateTime();
 					cal.setTimePoint(LocalDateTime.now());
-					if (sList.getElement(j).getSpecialDate().equals("오늘")) {
+					if (nonTargetList.getElement(j).getSpecialDate().equals("오늘")) {
 						targetList.getElement(i).setAllDate(cal);
 						out = true;
-					} else if (sList.getElement(j).getSpecialDate().equals("내일")) {
+					} else if (nonTargetList.getElement(j).getSpecialDate().equals("내일")) {
 						cal.plusDate(1);
 						targetList.getElement(i).setAllDate(cal);
 						out = true;
-					} else if (sList.getElement(j).getSpecialDate().equals("모레")) {
+					} else if (nonTargetList.getElement(j).getSpecialDate().equals("모레")) {
 						cal.plusDate(2);
 						targetList.getElement(i).setAllDate(cal);
 						out = true;
@@ -198,11 +202,11 @@ public class DateTimeListManager {
 					if (targetList.getList().size() > 1 && i == targetList.getList().size() - 1) {
 						continue;
 					}
-					for (int j = 0; j < sList.getList().size(); j++) {
+					for (int j = 0; j < nonTargetList.getList().size(); j++) {
 						DateTimeObject dtObj = new DateTimeObject();
 
 						// dtObj 초기화 : secList로 세팅
-						dtObj.setAllDate(sList.getElement(j));
+						dtObj.setAllDate(nonTargetList.getElement(j));
 						if (!dtObj.getSpecialDate().equals("-1")) {
 							for (specialDateTypeNeedsDay specialDT : specialDateTypeNeedsDay.values()) {
 								if (!dtObj.getSpecialDate().equals(specialDT.getTitle())) {
@@ -243,18 +247,17 @@ public class DateTimeListManager {
 					}
 				}
 			}
-			targetList.deleteList(targetList.getList().size() - 1);
+			targetList.deleteDtObj(targetList.getList().size() - 1);
 		}
 	}
 
 	public void createRecommendation() {
 		
-		int recomNum = 2; // 추천할 개수를 10개로 한정
+		int recomNum = 2; // 추천할 개수를 2개로 한정
 
 		// 현재 시스템 날짜 // 여기서 수정하자.
 		MyLocalDateTime now = new MyLocalDateTime();
 		// now.plusHour(3);
-		
 		
 		
 		// 날짜, 시간 두개의 값이 없을 때도 크로스시켜야 하므로 빈 객체 삽입.
@@ -274,7 +277,7 @@ public class DateTimeListManager {
 					continue;
 				}
 
-				logger.info("시간 정보 존재");
+//				logger.info("시간 정보 존재");
 
 				int y = dateList.getElement(j).getYear();
 				int m = dateList.getElement(j).getMonth();

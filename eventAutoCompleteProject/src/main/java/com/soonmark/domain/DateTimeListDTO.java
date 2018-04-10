@@ -1,12 +1,21 @@
 package com.soonmark.domain;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.soonmark.enums.DateTimeEn;
+import com.soonmark.enums.TokenType;
 
 public class DateTimeListDTO {
 	private Logger logger = LoggerFactory.getLogger(DateTimeListDTO.class);
@@ -20,15 +29,11 @@ public class DateTimeListDTO {
 		return dtObjList;
 	}
 
-	public void setVos(List<DateTimeObject> vos) {
-		this.dtObjList = vos;
+	public void insertDtObj(DateTimeObject dtObj) {
+		dtObjList.add(dtObj);
 	}
 
-	public void insertDtObj(DateTimeObject vo) {
-		dtObjList.add(vo);
-	}
-
-	public void deleteList(int index) {
+	public void deleteDtObj(int index) {
 		dtObjList.remove(index);
 	}
 
@@ -119,7 +124,7 @@ public class DateTimeListDTO {
 								&& this.getElement(j).getDate() == this.getElement(i).getDate())
 								|| !this.getElement(i).hasInfo(DateTimeEn.date.ordinal()))) {
 
-					this.deleteList(i);
+					this.deleteDtObj(i);
 					i -= 1;
 				}
 			}
@@ -134,9 +139,32 @@ public class DateTimeListDTO {
 			logger.info(this.getElement(j).toString());
 		}
 	}
-	
-	void mergeBy(TokenType tokenType) {
+
+	void mergeBy(TokenType tokenType, DateTimeListDTO list) {
+		// this <- list 를 병합.
+		// 빈 값일 때도 for문 돌아야 하므로 빈 객체 삽입.
+		insertDtObj(new DateTimeObject());
 		
+		for (int i = 0; i < getList().size(); i++) {
+			// list가 비었으면 그냥 나가기
+			if (list.getList().size() == 0) {
+				deleteDtObj(getList().size() - 1);
+				break;
+			}
+			
+			for (int j = 0; j < list.getList().size(); j++) {
+				// this는 비어있고 list만 값이 있을 때
+				if (getList().size() == 1) {
+					insertDtObj(list.getElement(j));
+				}else {
+					if(j == list.getList().size()-1) {
+						deleteDtObj(getList().size() - 1);
+						break;
+					}
+					insertDtObj(list.getElement(j));
+				}
+			}
+		}
 	}
 
 	public String toJsonString() {

@@ -4,6 +4,8 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.soonmark.enums.DateTimeEn;
+
 public class MyLocalDateTime {
 	private LocalDateTime timePoint;
 	private boolean isHalfTime;

@@ -7,6 +7,8 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.soonmark.enums.TokenType;
+
 public class PatternManager {
 	private Logger logger = LoggerFactory.getLogger(PatternManager.class);
 

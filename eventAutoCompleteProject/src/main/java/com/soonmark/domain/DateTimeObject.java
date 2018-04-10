@@ -4,41 +4,26 @@ import java.time.DayOfWeek;
 import java.time.format.TextStyle;
 import java.util.Locale;
 
+import com.soonmark.enums.DateTimeEn;
+import com.soonmark.enums.DayOfWeekByLocale;
+
 public class DateTimeObject {
-	private int year;
-	private int month;
-	private int date;
+	DateTimeDTO dateTimeDTO;
 	private String specialDate;
-	private DayOfWeek day;
-	private int hour;
-	private int minute;
 	private boolean isFocusOnDay;
 	private boolean[] hasInfo;
-	private boolean isAllDayEvent;
 	private DateTimeEn focusToRepeat;
             
 	public DateTimeObject() {
-		this.year = -1;
-		this.month = -1;
-		this.date = -1;
-		this.day = null;
-		this.hour = -1;
-		this.minute = -1;
+		dateTimeDTO = new DateTimeDTO();
 		this.isFocusOnDay = false;
-		this.isAllDayEvent = false;
 		this.focusToRepeat = null;
 		hasInfo = new boolean[] { false, false, false, false, false, false };
 	}
 
-	DateTimeObject(int year, int month, int date, DayOfWeek day, int hour, int minute) {
-		this.year = year;
-		this.month = month;
-		this.date = date;
-		this.day = day;
-		this.hour = hour;
-		this.minute = minute;
+	public DateTimeObject(int year, int month, int date, DayOfWeek day, int hour, int minute) {
+		dateTimeDTO = new DateTimeDTO(year, month, date, day, hour, minute, false);
 		this.isFocusOnDay = false;
-		this.isAllDayEvent = false;
 		this.focusToRepeat = null;
 		hasInfo = new boolean[] { false, false, false, false, false, false };
 	}
@@ -52,11 +37,11 @@ public class DateTimeObject {
 	}
 
 	public boolean isAllDayEvent() {
-		return isAllDayEvent;
+		return dateTimeDTO.isAllDayEvent();
 	}
 
 	public void setAllDayEvent(boolean isAllDayEvent) {
-		this.isAllDayEvent = isAllDayEvent;
+		this.dateTimeDTO.setAllDayEvent(isAllDayEvent);
 	}
 
 	public void setAllDate(MyLocalDateTime cal) {
@@ -107,77 +92,52 @@ public class DateTimeObject {
 		this.isFocusOnDay = isFocusOnDay;
 	}
 
-	public void set(int idx, int val) {
-		switch (idx) {
-		case 0:
-			this.year = val;
-			break;
-		case 1:
-			this.month = val;
-			break;
-		case 2:
-			this.date = val;
-			break;
-		case 3:
-			this.day = DayOfWeek.of(val);
-			break;
-		case 4:
-			this.hour = val;
-			break;
-		case 5:
-			this.minute = val;
-			break;
-		default:
-			break;
-		}
-	}
-
 	public int getYear() {
-		return year;
+		return dateTimeDTO.getYear();
 	}
 
 	public void setYear(int year) {
-		this.year = year;
+		dateTimeDTO.setYear(year);
 	}
 
 	public int getMonth() {
-		return month;
+		return dateTimeDTO.getMonth();
 	}
 
 	public void setMonth(int month) {
-		this.month = month;
+		dateTimeDTO.setMonth(month);
 	}
 
 	public int getDate() {
-		return date;
+		return dateTimeDTO.getDate();
 	}
 
 	public void setDate(int date) {
-		this.date = date;
+		dateTimeDTO.setDate(date);
 	}
 
 	public DayOfWeek getDay() {
-		return day;
+		return dateTimeDTO.getDay();
 	}
 
 	public void setDay(DayOfWeek day) {
-		this.day = day;
+		dateTimeDTO.setDay(day);
 	}
 
 	public int getHour() {
-		return hour;
+		return dateTimeDTO.getHour();
 	}
 
 	public void setHour(int hour) {
-		this.hour = hour;
+		dateTimeDTO.setHour(hour);
 	}
 
 	public int getMinute() {
-		return minute;
+		return dateTimeDTO.getMinute();
 	}
 
 	public void setMinute(int minute) {
-		this.minute = minute;
+		dateTimeDTO.setMinute(minute);
 	}
 
 	public boolean isDateInfoFull() {
@@ -192,10 +152,10 @@ public class DateTimeObject {
 	public void adjustDay() {
 		if (isDateInfoFull()) {
 			MyLocalDateTime cal = new MyLocalDateTime();
-			cal.setYear(year);
-			cal.setMonth(month);
-			cal.setDate(date);
-			day = cal.getDay();
+			cal.setYear(dateTimeDTO.getYear());
+			cal.setMonth(dateTimeDTO.getMonth());
+			cal.setDate(dateTimeDTO.getDate());
+			dateTimeDTO.setDay(cal.getDay());
 		}
 	}
 
@@ -209,27 +169,6 @@ public class DateTimeObject {
 	}
 
 	public String toString() {
-		String jsonString = "";
-		if (this.day != null) {
-			jsonString = "{\"year\":\"" + String.format("%04d", this.year)
-					+ "\", \"month\":\"" + String.format("%02d", this.month)
-					+ "\", \"date\":\"" + String.format("%02d", this.date)
-					+ "\", \"day\":\"" + this.day.getDisplayName(TextStyle.FULL, Locale.KOREA)
-					+ "\", \"isAllDayEvent\":\"" + this.isAllDayEvent
-					+ "\", \"hour\":\"" + String.format("%02d", this.hour)
-					+ "\", \"minute\":\"" + String.format("%02d", this.minute)
-					+ "\"}";
-
-		} else {
-			jsonString = "{\"year\":\"" + String.format("%04d", this.year)
-					+ "\", \"month\":\"" + String.format("%02d", this.month)
-					+ "\", \"date\":\"" + String.format("%02d", this.date)
-					+ "\", \"day\":\""
-					+ "\", \"isAllDayEvent\":\"" + this.isAllDayEvent
-					+ "\", \"hour\":\"" + String.format("%02d", this.hour)
-					+ "\", \"minute\":\"" + String.format("%02d", this.minute)
-					+ "\"}";
-		}
-		return jsonString;
+		return dateTimeDTO.toString();
 	}
 }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.soonmark.domain.DateTimeListManager;
 import com.soonmark.domain.DateTimeObject;
 import com.soonmark.domain.PatternManager;
-import com.soonmark.domain.TokenType;
+import com.soonmark.enums.TokenType;
 
 @Service
 public class RecommendationServiceImpl implements RecommendationService {
@@ -33,8 +33,6 @@ public class RecommendationServiceImpl implements RecommendationService {
 			// -2는 잘못된 기호나 문자 입력 시 에러 코드
 			dtObj.setYear(-2);
 			dateTimeListManager.getResultList().insertDtObj(dtObj);
-
-			logger.info("JSON 값  : " + dateTimeListManager.getResultList().toJsonString());
 		}
 		else {
 			// 패턴 생성
