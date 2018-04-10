@@ -14,7 +14,7 @@ import com.soonmark.domain.TokenType;
 @Service
 public class RecommendationServiceImpl implements RecommendationService {
 
-	private static final Logger logger = LoggerFactory.getLogger(RecommendationServiceImpl.class);
+	private Logger logger = LoggerFactory.getLogger(RecommendationServiceImpl.class);
 	
 	// 패턴 관리 객체
 	private PatternManager patternManager;
@@ -32,24 +32,25 @@ public class RecommendationServiceImpl implements RecommendationService {
 			DateTimeObject dtObj = new DateTimeObject();
 			// -2는 잘못된 기호나 문자 입력 시 에러 코드
 			dtObj.setYear(-2);
-			dateTimeListManager.getDateList().insertDtObj(dtObj);
+			dateTimeListManager.getResultList().insertDtObj(dtObj);
 
-			logger.info("JSON 값  : " + dateTimeListManager.getDateList().toJsonString());
-			return dateTimeListManager.getDateList().toJsonString();
+			logger.info("JSON 값  : " + dateTimeListManager.getResultList().toJsonString());
+		}
+		else {
+			// 패턴 생성
+			patternManager = new PatternManager();
+			patternManager.matchToPatterns(inputText, dateTimeListManager);
+			
+			// 기본 날짜 병합
+			dateTimeListManager.innerMerge(TokenType.dates);
+			dateTimeListManager.mergeBetween(TokenType.dates, TokenType.days);
+			dateTimeListManager.mergeBetween(TokenType.dates, TokenType.special);
+			
+			dateTimeListManager.createRecommendation();
 		}
 		
-		// 패턴 생성
-		patternManager = new PatternManager();
-		patternManager.matchToPatterns(inputText, dateTimeListManager);
+		logger.info("JSON 값  : " + dateTimeListManager.getResultList().toJsonString());
 		
-		// 기본 날짜 병합
-		dateTimeListManager.innerMerge(TokenType.dates);
-		dateTimeListManager.mergeBetween(TokenType.dates, TokenType.days);
-		dateTimeListManager.mergeBetween(TokenType.dates, TokenType.special);
-		
-		dateTimeListManager.createRecommendation();
-		
-
 		return dateTimeListManager.getResultList().toJsonString();
 	}
 

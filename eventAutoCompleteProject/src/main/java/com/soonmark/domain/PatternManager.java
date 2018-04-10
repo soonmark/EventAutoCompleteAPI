@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PatternManager {
-//	private Logger logger = LoggerFactory.getLogger(PatternManager.class);
+	private Logger logger = LoggerFactory.getLogger(PatternManager.class);
 
 	PatternMaker patternMaker;
 
@@ -51,8 +51,8 @@ public class PatternManager {
 			Matcher matcher = inputPattern.matcher(inputText);
 
 			if (matcher.matches()) {
-//				logger.info("패턴 : " + pattern);
-//				logger.info("패턴 만족 : " + matcher.group(0));
+				logger.info("패턴 : " + pattern);
+				logger.info("패턴 만족 : " + matcher.group(0));
 
 				DateTimeObject dtObj = new DateTimeObject();
 

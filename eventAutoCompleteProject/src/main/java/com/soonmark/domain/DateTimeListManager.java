@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DateTimeListManager {
-//	private Logger logger = LoggerFactory.getLogger(DateTimeListManager.class);
+	private Logger logger = LoggerFactory.getLogger(DateTimeListManager.class);
 	
 	// 앞으로 추천할 날짜 리스트
 	private DateTimeListDTO dateList;
@@ -274,7 +274,7 @@ public class DateTimeListManager {
 					continue;
 				}
 
-//				logger.info("여기1");
+				logger.info("시간 정보 존재");
 
 				int y = dateList.getElement(j).getYear();
 				int m = dateList.getElement(j).getMonth();
@@ -293,7 +293,7 @@ public class DateTimeListManager {
 
 				// 날짜 정보가 없으면 가장 근접한 미래날짜로 세팅.
 				if (dateList.getList().size() == 1) {
-//					logger.info("여기2");
+					logger.info("날짜 정보없음");
 
 					// 현재 시각과 비교해서 이미 지난 시간일 경우 + 12;
 					MyLocalDateTime tmpCal = new MyLocalDateTime();

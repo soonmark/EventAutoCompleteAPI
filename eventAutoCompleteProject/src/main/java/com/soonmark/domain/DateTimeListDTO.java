@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DateTimeListDTO {
-//	private Logger logger = LoggerFactory.getLogger(DateTimeListDTO.class);
+	private Logger logger = LoggerFactory.getLogger(DateTimeListDTO.class);
 	private List<DateTimeObject> dtObjList;
 
 	public DateTimeListDTO() {
@@ -131,7 +131,7 @@ public class DateTimeListDTO {
 
 		// 로그 찍기
 		for (int j = 0; j < dtObjList.size(); j++) {
-//			logger.info(this.getElement(j).toString());
+			logger.info(this.getElement(j).toString());
 		}
 	}
 	
