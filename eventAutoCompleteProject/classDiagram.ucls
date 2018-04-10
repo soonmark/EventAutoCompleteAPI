@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.1.14" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
   associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
-  <enumeration id="1" language="java" name="com.soonmark.myapp.specialDateTypeNeedsDay" 
+  <enumeration id="1" language="java" name="com.soonmark.domain.specialDateTypeNeedsDay" 
     project="eventAutoCompleteProject" 
-    file="/eventAutoCompleteProject/src/main/java/com/soonmark/myapp/specialDateTypeNeedsDay.java" binary="false" 
+    file="/eventAutoCompleteProject/src/main/java/com/soonmark/domain/specialDateTypeNeedsDay.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="171" width="235" x="144" y="-9"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -12,8 +12,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </enumeration>  
-  <class id="2" language="java" name="com.soonmark.myapp.MyLocalDateTime" project="eventAutoCompleteProject" 
-    file="/eventAutoCompleteProject/src/main/java/com/soonmark/myapp/MyLocalDateTime.java" binary="false" 
+  <class id="2" language="java" name="com.soonmark.domain.MyLocalDateTime" project="eventAutoCompleteProject" 
+    file="/eventAutoCompleteProject/src/main/java/com/soonmark/domain/MyLocalDateTime.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="477" width="212" x="419" y="-9"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -22,8 +22,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="com.soonmark.myapp.DateTimeObject" project="eventAutoCompleteProject" 
-    file="/eventAutoCompleteProject/src/main/java/com/soonmark/myapp/DateTimeObject.java" binary="false" 
+  <class id="3" language="java" name="com.soonmark.domain.DateTimeObject" project="eventAutoCompleteProject" 
+    file="/eventAutoCompleteProject/src/main/java/com/soonmark/domain/DateTimeObject.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="747" width="255" x="671" y="508"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -32,8 +32,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <enumeration id="4" language="java" name="com.soonmark.myapp.TokenType" project="eventAutoCompleteProject" 
-    file="/eventAutoCompleteProject/src/main/java/com/soonmark/myapp/TokenType.java" binary="false" 
+  <enumeration id="4" language="java" name="com.soonmark.domain.TokenType" project="eventAutoCompleteProject" 
+    file="/eventAutoCompleteProject/src/main/java/com/soonmark/domain/TokenType.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="207" width="185" x="892" y="-9"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -42,8 +42,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </enumeration>  
-  <class id="5" language="java" name="com.soonmark.myapp.DateTimeListDTO" project="eventAutoCompleteProject" 
-    file="/eventAutoCompleteProject/src/main/java/com/soonmark/myapp/DateTimeListDTO.java" binary="false" 
+  <class id="5" language="java" name="com.soonmark.domain.DateTimeListDTO" project="eventAutoCompleteProject" 
+    file="/eventAutoCompleteProject/src/main/java/com/soonmark/domain/DateTimeListDTO.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="243" width="181" x="671" y="-9"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -52,9 +52,9 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <enumeration id="6" language="java" name="com.soonmark.myapp.specialDateTypeWithoutDay" 
+  <enumeration id="6" language="java" name="com.soonmark.domain.specialDateTypeWithoutDay" 
     project="eventAutoCompleteProject" 
-    file="/eventAutoCompleteProject/src/main/java/com/soonmark/myapp/specialDateTypeWithoutDay.java" binary="false" 
+    file="/eventAutoCompleteProject/src/main/java/com/soonmark/domain/specialDateTypeWithoutDay.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="171" width="258" x="1117" y="-9"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -63,8 +63,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </enumeration>  
-  <class id="7" language="java" name="com.soonmark.myapp.HomeController" project="eventAutoCompleteProject" 
-    file="/eventAutoCompleteProject/src/main/java/com/soonmark/myapp/HomeController.java" binary="false" 
+  <class id="7" language="java" name="com.soonmark.controller.HomeController" project="eventAutoCompleteProject" 
+    file="/eventAutoCompleteProject/src/main/java/com/soonmark/controller/HomeController.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="207" width="347" x="1415" y="-9"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -73,8 +73,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <enumeration id="8" language="java" name="com.soonmark.myapp.DateTimeEn" project="eventAutoCompleteProject" 
-    file="/eventAutoCompleteProject/src/main/java/com/soonmark/myapp/DateTimeEn.java" binary="false" 
+  <enumeration id="8" language="java" name="com.soonmark.domain.DateTimeEn" project="eventAutoCompleteProject" 
+    file="/eventAutoCompleteProject/src/main/java/com/soonmark/domain/DateTimeEn.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="225" width="119" x="1802" y="-9"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
