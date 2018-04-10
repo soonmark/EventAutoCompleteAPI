@@ -41,10 +41,10 @@ public class SampleControllerTest {
 		logger.info("setup..");
 	}
 	
-	@Test
-	public void test() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.get("/"));
-	}
+//	@Test
+//	public void test() throws Exception {
+//		mockMvc.perform(MockMvcRequestBuilders.get("/"));
+//	}
 
 	@Autowired RecommendationService recommendationService;
 	
@@ -54,10 +54,9 @@ public class SampleControllerTest {
 		Iterator<TestData> iter = testDataList.getList().iterator();
 		while(iter.hasNext()) {
 			TestData data = iter.next();
-			
 
-//			assertEquals(data.getFirstOutput(),
-//						recommendationService.getRecommendation(data.getInput()));
+			assertEquals(data.outputToString(),
+						recommendationService.getRecommendation(data.getInput()));
 		}
 	}
 	

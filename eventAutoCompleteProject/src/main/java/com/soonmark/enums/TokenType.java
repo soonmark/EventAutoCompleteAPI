@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import com.soonmark.domain.DateTimeObject;
 
 public enum TokenType {
-	dates(0){
+	dates(0, 3){
 		public void setDtObjInfo(DateTimeObject dtObj, Matcher matcher) {
 			try {
 				dtObj.setYear(Integer.parseInt(matcher.group("year")));
@@ -40,7 +40,7 @@ public enum TokenType {
 				dtObj.setDate(-1);
 			}
 		}
-	}, days(1){
+	}, days(1, 1){
 		public void setDtObjInfo(DateTimeObject dtObj, Matcher matcher) {
 			// month와 date 에 해당하는 group 만 따로 읽어 저장
 			try {
@@ -52,7 +52,7 @@ public enum TokenType {
 				dtObj.setDay(null);
 			}
 		}
-	}, times(2){
+	}, times(2, 2){
 		public void setDtObjInfo(DateTimeObject dtObj, Matcher matcher) {
 			dtObj.setHour(Integer.parseInt(matcher.group("hour")));
 			dtObj.setHasInfo(DateTimeEn.hour.ordinal(), true);
@@ -65,7 +65,7 @@ public enum TokenType {
 				dtObj.setHasInfo(DateTimeEn.minute.ordinal(), true);
 			}
 		}
-	}, special(3){
+	}, special(3, 1){
 		public void setDtObjInfo(DateTimeObject dtObj, Matcher matcher) {
 			//enum 
 			for(specialDateTypeNeedsDay sdt : specialDateTypeNeedsDay.values()) {
@@ -97,14 +97,19 @@ public enum TokenType {
 	};
 	
 	int tokenType;
-	TokenType(int type){
+	int innerTypeNum;
+	TokenType(int type, int innerTypeNum){
 		tokenType = type;
+		this.innerTypeNum = innerTypeNum;
 	}
 	
-	int getInteger() {
+	public int getInteger() {
 		return tokenType;
 	}
 	
+	public int getElementNum() {
+		return innerTypeNum;
+	}
 	
 	// 추상 메소드
 	abstract public void setDtObjInfo(DateTimeObject vo, Matcher matcher);

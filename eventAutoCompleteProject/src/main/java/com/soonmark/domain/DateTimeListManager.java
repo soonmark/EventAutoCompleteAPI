@@ -34,10 +34,10 @@ public class DateTimeListManager {
 	private DateTimeListDTO resultList;
 
 	public DateTimeListManager() {
-		dateList = new DateTimeListDTO();
-		specialDateList = new DateTimeListDTO();
-		dayList = new DateTimeListDTO();
-		timeList = new DateTimeListDTO();
+		dateList = new DateTimeListDTO(TokenType.dates);
+		specialDateList = new DateTimeListDTO(TokenType.special);
+		dayList = new DateTimeListDTO(TokenType.days);
+		timeList = new DateTimeListDTO(TokenType.times);
 		resultList = new DateTimeListDTO();
 	}
 

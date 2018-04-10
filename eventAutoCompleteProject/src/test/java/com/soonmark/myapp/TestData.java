@@ -30,4 +30,22 @@ public class TestData {
 	public void setSecondOutput(DateTimeObject secondOutput) {
 		this.secondOutput = secondOutput;
 	}
+	
+	public String outputToString() {
+		String first = "";
+		String second = "";
+		String json = "[" ;
+		try {
+			first = firstOutput.toString();
+			json += first;
+			second = secondOutput.toString();
+			json +=  "," + second + "]";
+			
+		}catch(NullPointerException e) {
+			json += "]";
+			return json;
+		}
+		
+		return json;
+	}
 }

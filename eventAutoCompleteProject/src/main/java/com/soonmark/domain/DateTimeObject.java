@@ -28,6 +28,13 @@ public class DateTimeObject {
 		hasInfo = new boolean[] { false, false, false, false, false, false };
 	}
 
+	public DateTimeObject(int year, int month, int date, DayOfWeek day, int hour, int minute, boolean isFocusOnDay) {
+		dateTimeDTO = new DateTimeDTO(year, month, date, day, hour, minute, isFocusOnDay);
+		this.isFocusOnDay = false;
+		this.focusToRepeat = null;
+		hasInfo = new boolean[] { false, false, false, false, false, false };
+	}
+
 	public DateTimeEn getFocusToRepeat() {
 		return focusToRepeat;
 	}
