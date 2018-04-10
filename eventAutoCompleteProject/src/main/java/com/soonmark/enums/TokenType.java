@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import com.soonmark.domain.DateTimeObject;
 
 public enum TokenType {
-	dates(0, 3){
+	dates(0){
 		public void setDtObjInfo(DateTimeObject dtObj, Matcher matcher) {
 			try {
 				dtObj.setYear(Integer.parseInt(matcher.group("year")));

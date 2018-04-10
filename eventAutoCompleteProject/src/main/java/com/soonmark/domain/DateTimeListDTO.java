@@ -183,11 +183,10 @@ public class DateTimeListDTO {
 //						tmpList.insertDtObj(new DateTimeObject());
 //					}
 					for(DateTimeEn d : DateTimeEn.values()) {
-						if(d.ordinal() < listType.getInteger()
-							|| d.ordinal() >= (listType.getInteger() + listType.getElementNum())) {
-							
+						if(d.getTypeNum() != listType.getInteger(){
+							continue;
 						}
-						if(!tmpList.getElement(j).hasInfo(listType.getInteger()+listType.getElementNum())) {
+						if(!tmpList.getElement(j).hasInfo()) {
 							
 						}
 					}

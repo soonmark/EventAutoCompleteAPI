@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<class-diagram version="1.1.14" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
-  associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
+<class-diagram version="1.1.14" icons="true" automaticImage="JPEG" always-add-relationships="false" 
+  generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true" 
+  router="FAN">  
   <class id="1" language="java" name="com.soonmark.domain.DateTimeListManager" project="eventAutoCompleteProject" 
     file="/eventAutoCompleteProject/src/main/java/com/soonmark/domain/DateTimeListManager.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -144,68 +145,68 @@
     </display>  
   </class>  
   <association id="15">    
-    <end type="SOURCE" refId="11" navigable="false">      
-      <attribute id="16" name="dtObjList">        
+    <end type="SOURCE" refId="14" navigable="false">      
+      <attribute id="16" name="patternMaker">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="17" minimum="0" maximum="2147483647">        
+      <multiplicity id="17" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="18">    
+    <end type="SOURCE" refId="11" navigable="false">      
+      <attribute id="19" name="dtObjList">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="20" minimum="0" maximum="2147483647">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="13" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="18">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="19" name="dateTimeListManager">        
+  <association id="21">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="22" name="dateList">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="20" minimum="0" maximum="1">        
+      <multiplicity id="23" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="1" navigable="true"/>    
+    <end type="TARGET" refId="11" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="21">    
+  <association id="24">    
     <end type="SOURCE" refId="13" navigable="false">      
-      <attribute id="22" name="dateTimeDTO">        
+      <attribute id="25" name="dateTimeDTO">        
         <position height="0" width="0" x="13" y="71"/>      
       </attribute>      
-      <multiplicity id="23" minimum="0" maximum="1">        
+      <multiplicity id="26" minimum="0" maximum="1">        
         <position height="0" width="0" x="13" y="71"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="5" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="24">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="25" name="timeList">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="26" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="11" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
   <association id="27">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="28" name="specialDateList">        
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="28" name="patternManager">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="29" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="11" navigable="true"/>    
+    <end type="TARGET" refId="14" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="30">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="31" name="dateList">        
+      <attribute id="31" name="timeList">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="32" minimum="0" maximum="1">        
@@ -216,63 +217,63 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="33">    
-    <end type="SOURCE" refId="13" navigable="false">      
-      <attribute id="34" name="focusToRepeat">        
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="34" name="specialDateList">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="35" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="8" navigable="true"/>    
+    <end type="TARGET" refId="11" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="36">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="37" name="patternManager">        
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="37" name="dayList">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="38" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="14" navigable="true"/>    
+    <end type="TARGET" refId="11" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="39">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="40" name="dayList">        
+    <end type="SOURCE" refId="13" navigable="false">      
+      <attribute id="40" name="focusToRepeat">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="41" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="11" navigable="true"/>    
+    <end type="TARGET" refId="8" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="42">    
-    <end type="SOURCE" refId="14" navigable="false">      
-      <attribute id="43" name="patternMaker">        
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="43" name="resultList">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="44" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="7" navigable="true"/>    
+    <end type="TARGET" refId="11" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="45">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="46" name="resultList">        
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="46" name="dateTimeListManager">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="47" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="11" navigable="true"/>    
+    <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
