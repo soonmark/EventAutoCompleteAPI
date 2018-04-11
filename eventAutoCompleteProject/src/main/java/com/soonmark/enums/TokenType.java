@@ -4,11 +4,11 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.regex.Matcher;
 
-import com.soonmark.domain.DateTimeObject;
+import com.soonmark.managers.DateTimeManager;
 
 public enum TokenType {
 	dates(0){
-		public void setDtObjInfo(DateTimeObject dtObj, Matcher matcher) {
+		public void setDtObjInfo(DateTimeManager dtObj, Matcher matcher) {
 			try {
 				dtObj.setYear(Integer.parseInt(matcher.group("year")));
 				int year = dtObj.getYear();
@@ -40,8 +40,8 @@ public enum TokenType {
 				dtObj.setDate(-1);
 			}
 		}
-	}, days(1, 1){
-		public void setDtObjInfo(DateTimeObject dtObj, Matcher matcher) {
+	}, days(1){
+		public void setDtObjInfo(DateTimeManager dtObj, Matcher matcher) {
 			// month와 date 에 해당하는 group 만 따로 읽어 저장
 			try {
 				// getDayOfWeekByLocale
@@ -52,8 +52,8 @@ public enum TokenType {
 				dtObj.setDay(null);
 			}
 		}
-	}, times(2, 2){
-		public void setDtObjInfo(DateTimeObject dtObj, Matcher matcher) {
+	}, times(2){
+		public void setDtObjInfo(DateTimeManager dtObj, Matcher matcher) {
 			dtObj.setHour(Integer.parseInt(matcher.group("hour")));
 			dtObj.setHasInfo(DateTimeEn.hour.ordinal(), true);
 			try {
@@ -65,8 +65,8 @@ public enum TokenType {
 				dtObj.setHasInfo(DateTimeEn.minute.ordinal(), true);
 			}
 		}
-	}, special(3, 1){
-		public void setDtObjInfo(DateTimeObject dtObj, Matcher matcher) {
+	}, special(3){
+		public void setDtObjInfo(DateTimeManager dtObj, Matcher matcher) {
 			//enum 
 			for(specialDateTypeNeedsDay sdt : specialDateTypeNeedsDay.values()) {
 				try {
@@ -97,20 +97,14 @@ public enum TokenType {
 	};
 	
 	int tokenType;
-	int innerTypeNum;
-	TokenType(int type, int innerTypeNum){
+	TokenType(int type){
 		tokenType = type;
-		this.innerTypeNum = innerTypeNum;
 	}
 	
 	public int getInteger() {
 		return tokenType;
 	}
-	
-	public int getElementNum() {
-		return innerTypeNum;
-	}
-	
+		
 	// 추상 메소드
-	abstract public void setDtObjInfo(DateTimeObject vo, Matcher matcher);
+	abstract public void setDtObjInfo(DateTimeManager vo, Matcher matcher);
 }

@@ -1,13 +1,13 @@
 package com.soonmark.myapp;
 
-import com.soonmark.domain.DateTimeObject;
+import com.soonmark.managers.DateTimeManager;
 
 public class TestData {
 	private String input;
-	private DateTimeObject firstOutput;
-	private DateTimeObject secondOutput;
+	private DateTimeManager firstOutput;
+	private DateTimeManager secondOutput;
 	
-	public TestData(String input, DateTimeObject firstOutput, DateTimeObject secondOutput) {
+	public TestData(String input, DateTimeManager firstOutput, DateTimeManager secondOutput) {
 		this.input = input;
 		this.firstOutput = firstOutput;
 		this.secondOutput = secondOutput;
@@ -18,16 +18,16 @@ public class TestData {
 	public void setInput(String input) {
 		this.input = input;
 	}
-	public DateTimeObject getFirstOutput() {
+	public DateTimeManager getFirstOutput() {
 		return firstOutput;
 	}
-	public void setFirstOutput(DateTimeObject firstOutput) {
+	public void setFirstOutput(DateTimeManager firstOutput) {
 		this.firstOutput = firstOutput;
 	}
-	public DateTimeObject getSecondOutput() {
+	public DateTimeManager getSecondOutput() {
 		return secondOutput;
 	}
-	public void setSecondOutput(DateTimeObject secondOutput) {
+	public void setSecondOutput(DateTimeManager secondOutput) {
 		this.secondOutput = secondOutput;
 	}
 	

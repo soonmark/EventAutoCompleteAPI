@@ -1,38 +1,46 @@
-package com.soonmark.domain;
+package com.soonmark.managers;
 
 import java.time.DayOfWeek;
-import java.time.format.TextStyle;
-import java.util.Locale;
 
+import com.soonmark.domain.DateTimeDTO;
 import com.soonmark.enums.DateTimeEn;
 import com.soonmark.enums.DayOfWeekByLocale;
 
-public class DateTimeObject {
+public class DateTimeManager {
 	DateTimeDTO dateTimeDTO;
 	private String specialDate;
 	private boolean isFocusOnDay;
 	private boolean[] hasInfo;
 	private DateTimeEn focusToRepeat;
             
-	public DateTimeObject() {
+	public DateTimeManager() {
 		dateTimeDTO = new DateTimeDTO();
 		this.isFocusOnDay = false;
 		this.focusToRepeat = null;
 		hasInfo = new boolean[] { false, false, false, false, false, false };
 	}
 
-	public DateTimeObject(int year, int month, int date, DayOfWeek day, int hour, int minute) {
+	public DateTimeManager(int year, int month, int date, DayOfWeek day, int hour, int minute) {
 		dateTimeDTO = new DateTimeDTO(year, month, date, day, hour, minute, false);
 		this.isFocusOnDay = false;
 		this.focusToRepeat = null;
 		hasInfo = new boolean[] { false, false, false, false, false, false };
 	}
 
-	public DateTimeObject(int year, int month, int date, DayOfWeek day, int hour, int minute, boolean isFocusOnDay) {
+	public DateTimeManager(int year, int month, int date, DayOfWeek day, int hour, int minute, boolean isFocusOnDay) {
 		dateTimeDTO = new DateTimeDTO(year, month, date, day, hour, minute, isFocusOnDay);
 		this.isFocusOnDay = false;
 		this.focusToRepeat = null;
 		hasInfo = new boolean[] { false, false, false, false, false, false };
+	}
+	
+	
+	public DateTimeDTO getDateTimeDTO() {
+		return dateTimeDTO;
+	}
+
+	public void setDateTimeDTO(DateTimeDTO dateTimeDTO) {
+		this.dateTimeDTO = dateTimeDTO;
 	}
 
 	public DateTimeEn getFocusToRepeat() {
@@ -51,7 +59,7 @@ public class DateTimeObject {
 		this.dateTimeDTO.setAllDayEvent(isAllDayEvent);
 	}
 
-	public void setAllDate(MyLocalDateTime cal) {
+	public void setAllDate(DateTimeAdjuster cal) {
 		setDay(cal.getDay());
 		setYear(cal.getYear());
 		setMonth(cal.getMonth());
@@ -59,7 +67,7 @@ public class DateTimeObject {
 	}
 
 	public void setProperDay() {
-		MyLocalDateTime tmpCal = new MyLocalDateTime();
+		DateTimeAdjuster tmpCal = new DateTimeAdjuster();
 		tmpCal.setYear(this.getYear());
 		tmpCal.setMonth(this.getMonth());
 		tmpCal.setDate(this.getDate());
@@ -67,7 +75,7 @@ public class DateTimeObject {
 		setDay(tmpCal.getDay());
 	}
 
-	public void setAllDate(DateTimeObject dtObj) {
+	public void setAllDate(DateTimeManager dtObj) {
 		setDay(dtObj.getDay());
 		setYear(dtObj.getYear());
 		setMonth(dtObj.getMonth());
@@ -97,6 +105,69 @@ public class DateTimeObject {
 
 	public void setFocusOnDay(boolean isFocusOnDay) {
 		this.isFocusOnDay = isFocusOnDay;
+	}
+	
+	public void setByDateTimeEn(DateTimeEn dt, int val) {
+		switch(dt) {
+		case year:
+			setYear(val);
+			break;
+		case month:
+			setMonth(val);
+			break;
+		case date:
+			setDate(val);
+			break;
+		case hour:
+			setHour(val);
+			break;
+		case minute:
+			setMinute(val);
+			break;
+		default:
+			break;
+
+		}
+	}
+	public void setByDateTimeEn(DateTimeEn dt, DayOfWeek val) {
+		switch(dt) {
+		case day:
+			setDay(val);
+			break;
+		default:
+			break;
+			
+		}
+	}
+	
+	public int getByDateTimeEn(DateTimeEn dt) {
+		int val = 0;
+		switch(dt) {
+		case year:
+			val = getYear();
+			break;
+		case month:
+			val = getMonth();
+			break;
+		case date:
+			val = getDate();
+			break;
+		case day:
+			if(getDay() == null) {
+				val = -1;
+			}
+			break;
+		case hour:
+			val = getHour();
+			break;
+		case minute:
+			val = getMinute();
+			break;
+		default:
+			break;
+
+		}
+		return val;
 	}
 
 	public int getYear() {
@@ -158,7 +229,7 @@ public class DateTimeObject {
 
 	public void adjustDay() {
 		if (isDateInfoFull()) {
-			MyLocalDateTime cal = new MyLocalDateTime();
+			DateTimeAdjuster cal = new DateTimeAdjuster();
 			cal.setYear(dateTimeDTO.getYear());
 			cal.setMonth(dateTimeDTO.getMonth());
 			cal.setDate(dateTimeDTO.getDate());

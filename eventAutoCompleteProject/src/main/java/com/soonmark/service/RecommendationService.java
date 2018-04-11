@@ -8,7 +8,4 @@ public interface RecommendationService {
 	
 	public String getRecommendation(String inputText) throws Exception ;
 	
-	public boolean blockInvalidCharacters(String inputText);
-	
-	
 }

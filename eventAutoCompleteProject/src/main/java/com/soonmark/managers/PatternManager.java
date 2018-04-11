@@ -1,4 +1,4 @@
-package com.soonmark.domain;
+package com.soonmark.managers;
 
 import java.util.Iterator;
 import java.util.regex.Matcher;
@@ -18,13 +18,13 @@ public class PatternManager {
 		patternMaker = new PatternMaker();
 	}
 
-	public void matchToPatterns(String inputText, DateTimeListManager dateTimeListManager) {
+	public void matchToPatterns(String inputText, DateTimeListManagerSet dateTimeListManager) {
 		for(TokenType tokType : TokenType.values()) {
 			matchToOnePatternType(inputText, tokType, dateTimeListManager);
 		}
 	}
 	
-	void matchToOnePatternType(String inputText, TokenType tokenType, DateTimeListManager dateTimeListManager) {
+	void matchToOnePatternType(String inputText, TokenType tokenType, DateTimeListManagerSet dateTimeListManager) {
 		
 		Iterator<String> iter;
 		switch(tokenType) {
@@ -45,7 +45,7 @@ public class PatternManager {
 		break;
 		}
 		
-		DateTimeListDTO list = dateTimeListManager.getDTListByTokType(tokenType);
+		DateTimeListManager list = dateTimeListManager.getDTListByTokType(tokenType);
 
 		while (iter.hasNext()) {
 			String pattern = iter.next();
@@ -56,7 +56,7 @@ public class PatternManager {
 				logger.info("패턴 : " + pattern);
 				logger.info("패턴 만족 : " + matcher.group(0));
 
-				DateTimeObject dtObj = new DateTimeObject();
+				DateTimeManager dtObj = new DateTimeManager();
 
 				// enum의 추상메소드로 바로 감.
 				tokenType.setDtObjInfo(dtObj, matcher);

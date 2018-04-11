@@ -54,7 +54,7 @@ public class SampleControllerTest {
 		Iterator<TestData> iter = testDataList.getList().iterator();
 		while(iter.hasNext()) {
 			TestData data = iter.next();
-
+			
 			assertEquals(data.outputToString(),
 						recommendationService.getRecommendation(data.getInput()));
 		}

@@ -1,4 +1,4 @@
-package com.soonmark.domain;
+package com.soonmark.managers;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -6,11 +6,11 @@ import java.time.LocalDateTime;
 
 import com.soonmark.enums.DateTimeEn;
 
-public class MyLocalDateTime {
+public class DateTimeAdjuster {
 	private LocalDateTime timePoint;
 	private boolean isHalfTime;
 
-	public MyLocalDateTime() {
+	public DateTimeAdjuster() {
 		timePoint = LocalDateTime.now();
 	}
 
@@ -77,7 +77,7 @@ public class MyLocalDateTime {
 		return timePoint.getMinute();
 	}
 
-	public boolean isAfter(MyLocalDateTime cal) {
+	public boolean isAfter(DateTimeAdjuster cal) {
 		return timePoint.isAfter(cal.getTimePoint());
 	}
 
@@ -139,16 +139,16 @@ public class MyLocalDateTime {
 		}
 	}
 
-	public void setCloseDateOfTime(MyLocalDateTime cal) {
+	public void setCloseDateOfTime(LocalDateTime cal) {
 		if (isHalfTime) {
 			LocalDateTime tmpTime = timePoint;
 			tmpTime = tmpTime.plusHours(12);
 
 			// halfTime 이고, 09:30 가 들어왔을 때
 			// 09:30 < 기준 시간
-			if (!(timePoint.isAfter(cal.getTimePoint()))) {
+			if (!(timePoint.isAfter(cal))) {
 				// 09:30 < 기준 시간 < 21:30
-				if (tmpTime.isAfter(cal.getTimePoint())) {
+				if (tmpTime.isAfter(cal)) {
 					// 다음날 오전으로 해야함. 하루를 더하면 됨.
 					plusHour(12);
 				} else { // 09:30 < 21:30 < 기준 시간
@@ -159,13 +159,13 @@ public class MyLocalDateTime {
 		} else {
 			// halfTime 이 아니고, 13:30 가 들어왔을 때
 			// 13:30 < 기준 시간
-			if (!(timePoint.toLocalTime().isAfter(cal.getTimePoint().toLocalTime()))) {
+			if (!(timePoint.toLocalTime().isAfter(cal.toLocalTime()))) {
 				plusDate(1);
 			}
 		}
 	}
 
-	public void setCloseDate(MyLocalDateTime cal, DateTimeEn focus, int plus) {
+	public void setCloseDate(DateTimeAdjuster cal, DateTimeEn focus, int plus) {
 		if (focus == DateTimeEn.year) {
 			long diff = cal.getTimePoint().getYear() - timePoint.getYear();
 			timePoint = timePoint.plusYears(diff + plus);
@@ -187,8 +187,6 @@ public class MyLocalDateTime {
 			timePoint = timePoint.plusDays(diff + plus);
 		}
 	}
-	
-	
 	
 	
 }

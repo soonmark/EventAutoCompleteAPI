@@ -179,7 +179,7 @@ body {
 								if (dataEach.day != "-1") {
 									str += dataEach.day + " ";
 								}
-								if(dataEach.isAllDayEvent == "true") {
+								if(dataEach.allDayEvent == true) {
 									str += "종일";
 								}else{
 									if (dataEach.hour != "-1") {

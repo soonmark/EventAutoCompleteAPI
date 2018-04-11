@@ -43,7 +43,7 @@ public class HomeController {
 
 		// 입력값 불러오기
 		String inputEvent = httpServletRequest.getParameter("inputEventsss");
-
+		
 		// 서비스에 넘김
 		return recommendationService.getRecommendation(inputEvent);
 	}

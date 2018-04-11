@@ -75,6 +75,7 @@ public class DateTimeDTO {
 		this.isAllDayEvent = isAllDayEvent;
 	}
 	
+	@Override
 	public String toString() {
 		String jsonString = "";
 		if (this.day != null) {

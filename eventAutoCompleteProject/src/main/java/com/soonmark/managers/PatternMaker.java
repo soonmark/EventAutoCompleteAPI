@@ -1,4 +1,4 @@
-package com.soonmark.domain;
+package com.soonmark.managers;
 
 import java.util.ArrayList;
 import java.util.List;

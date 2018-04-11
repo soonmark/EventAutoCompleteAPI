@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<class-diagram version="1.1.14" icons="true" automaticImage="JPEG" always-add-relationships="false" 
-  generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true" 
-  router="FAN">  
-  <class id="1" language="java" name="com.soonmark.domain.DateTimeListManager" project="eventAutoCompleteProject" 
-    file="/eventAutoCompleteProject/src/main/java/com/soonmark/domain/DateTimeListManager.java" binary="false" 
+<class-diagram version="1.1.14" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
+  <class id="1" language="java" name="com.soonmark.managers.DateTimeListManagerSet" project="eventAutoCompleteProject" 
+    file="/eventAutoCompleteProject/src/main/java/com/soonmark/managers/DateTimeListManagerSet.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="775" y="832"/>    
+    <position height="-1" width="-1" x="447" y="745"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -15,7 +14,7 @@
   <enumeration id="2" language="java" name="com.soonmark.enums.DayOfWeekByLocale" project="eventAutoCompleteProject" 
     file="/eventAutoCompleteProject/src/main/java/com/soonmark/enums/DayOfWeekByLocale.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="135" y="266"/>    
+    <position height="-1" width="-1" x="127" y="172"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -25,7 +24,7 @@
   <class id="3" language="java" name="com.soonmark.service.RecommendationServiceImpl" project="eventAutoCompleteProject" 
     file="/eventAutoCompleteProject/src/main/java/com/soonmark/service/RecommendationServiceImpl.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1151" y="189"/>    
+    <position height="-1" width="-1" x="894" y="102"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -35,245 +34,293 @@
   <enumeration id="4" language="java" name="com.soonmark.enums.TokenType" project="eventAutoCompleteProject" 
     file="/eventAutoCompleteProject/src/main/java/com/soonmark/enums/TokenType.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="157" y="548"/>    
+    <position height="-1" width="-1" x="136" y="1653"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </enumeration>  
-  <class id="5" language="java" name="com.soonmark.domain.DateTimeDTO" project="eventAutoCompleteProject" 
-    file="/eventAutoCompleteProject/src/main/java/com/soonmark/domain/DateTimeDTO.java" binary="false" 
+  <class id="5" language="java" name="com.soonmark.managers.DateTimeManager" project="eventAutoCompleteProject" 
+    file="/eventAutoCompleteProject/src/main/java/com/soonmark/managers/DateTimeManager.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="755" y="2507"/>    
+    <position height="-1" width="-1" x="447" y="1941"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <enumeration id="6" language="java" name="com.soonmark.enums.specialDateTypeWithoutDay" 
+  <class id="6" language="java" name="com.soonmark.managers.PatternManager" project="eventAutoCompleteProject" 
+    file="/eventAutoCompleteProject/src/main/java/com/soonmark/managers/PatternManager.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="820" y="637"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="7" language="java" name="com.soonmark.domain.DateTimeDTO" project="eventAutoCompleteProject" 
+    file="/eventAutoCompleteProject/src/main/java/com/soonmark/domain/DateTimeDTO.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="601" y="2620"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <enumeration id="8" language="java" name="com.soonmark.enums.specialDateTypeWithoutDay" 
     project="eventAutoCompleteProject" 
     file="/eventAutoCompleteProject/src/main/java/com/soonmark/enums/specialDateTypeWithoutDay.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="430" y="240"/>    
+    <position height="-1" width="-1" x="139" y="612"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </enumeration>  
-  <class id="7" language="java" name="com.soonmark.domain.PatternMaker" project="eventAutoCompleteProject" 
-    file="/eventAutoCompleteProject/src/main/java/com/soonmark/domain/PatternMaker.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1146" y="1134"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <enumeration id="8" language="java" name="com.soonmark.enums.DateTimeEn" project="eventAutoCompleteProject" 
+  <enumeration id="9" language="java" name="com.soonmark.enums.DateTimeEn" project="eventAutoCompleteProject" 
     file="/eventAutoCompleteProject/src/main/java/com/soonmark/enums/DateTimeEn.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1067" y="1833"/>    
+    <position height="-1" width="-1" x="362" y="2503"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </enumeration>  
-  <enumeration id="9" language="java" name="com.soonmark.enums.specialDateTypeNeedsDay" 
+  <enumeration id="10" language="java" name="com.soonmark.enums.specialDateTypeNeedsDay" 
     project="eventAutoCompleteProject" 
     file="/eventAutoCompleteProject/src/main/java/com/soonmark/enums/specialDateTypeNeedsDay.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="433" y="519"/>    
+    <position height="-1" width="-1" x="139" y="401"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </enumeration>  
-  <class id="10" language="java" name="com.soonmark.controller.HomeController" project="eventAutoCompleteProject" 
+  <class id="11" language="java" name="com.soonmark.controller.HomeController" project="eventAutoCompleteProject" 
     file="/eventAutoCompleteProject/src/main/java/com/soonmark/controller/HomeController.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1407" y="189"/>    
+    <position height="-1" width="-1" x="1150" y="102"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="11" language="java" name="com.soonmark.domain.DateTimeListDTO" project="eventAutoCompleteProject" 
-    file="/eventAutoCompleteProject/src/main/java/com/soonmark/domain/DateTimeListDTO.java" binary="false" 
+  <class id="12" language="java" name="com.soonmark.managers.DateTimeListManager" project="eventAutoCompleteProject" 
+    file="/eventAutoCompleteProject/src/main/java/com/soonmark/managers/DateTimeListManager.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="748" y="1207"/>    
+    <position height="-1" width="-1" x="461" y="1235"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="12" language="java" name="com.soonmark.domain.MyLocalDateTime" project="eventAutoCompleteProject" 
-    file="/eventAutoCompleteProject/src/main/java/com/soonmark/domain/MyLocalDateTime.java" binary="false" 
+  <interface id="13" language="java" name="com.soonmark.service.RecommendationService" 
+    project="eventAutoCompleteProject" 
+    file="/eventAutoCompleteProject/src/main/java/com/soonmark/service/RecommendationService.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="729" y="328"/>    
+    <position height="-1" width="-1" x="1155" y="619"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
-  </class>  
-  <class id="13" language="java" name="com.soonmark.domain.DateTimeObject" project="eventAutoCompleteProject" 
-    file="/eventAutoCompleteProject/src/main/java/com/soonmark/domain/DateTimeObject.java" binary="false" 
+  </interface>  
+  <class id="14" language="java" name="com.soonmark.managers.PatternMaker" project="eventAutoCompleteProject" 
+    file="/eventAutoCompleteProject/src/main/java/com/soonmark/managers/PatternMaker.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="766" y="1799"/>    
+    <position height="-1" width="-1" x="772" y="1154"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="14" language="java" name="com.soonmark.domain.PatternManager" project="eventAutoCompleteProject" 
-    file="/eventAutoCompleteProject/src/main/java/com/soonmark/domain/PatternManager.java" binary="false" 
+  <class id="15" language="java" name="com.soonmark.domain.DTOList" project="eventAutoCompleteProject" 
+    file="/eventAutoCompleteProject/src/main/java/com/soonmark/domain/DTOList.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="731" y="1617"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="16" language="java" name="com.soonmark.managers.DateTimeAdjuster" project="eventAutoCompleteProject" 
+    file="/eventAutoCompleteProject/src/main/java/com/soonmark/managers/DateTimeAdjuster.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1130" y="724"/>    
+    <position height="-1" width="-1" x="456" y="290"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <association id="15">    
-    <end type="SOURCE" refId="14" navigable="false">      
-      <attribute id="16" name="patternMaker">        
+  <association id="17">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="18" name="specialDateList">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="17" minimum="0" maximum="1">        
+      <multiplicity id="19" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="7" navigable="true"/>    
+    <end type="TARGET" refId="12" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="18">    
+  <association id="20">    
     <end type="SOURCE" refId="11" navigable="false">      
-      <attribute id="19" name="dtObjList">        
+      <attribute id="21" name="recommendationService">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="20" minimum="0" maximum="2147483647">        
+      <multiplicity id="22" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="13" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="21">    
+  <association id="23">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="22" name="dateList">        
+      <attribute id="24" name="timeList">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="23" minimum="0" maximum="1">        
+      <multiplicity id="25" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="11" navigable="true"/>    
+    <end type="TARGET" refId="12" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="24">    
-    <end type="SOURCE" refId="13" navigable="false">      
-      <attribute id="25" name="dateTimeDTO">        
-        <position height="0" width="0" x="13" y="71"/>      
-      </attribute>      
-      <multiplicity id="26" minimum="0" maximum="1">        
-        <position height="0" width="0" x="13" y="71"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="27">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="28" name="patternManager">        
+  <association id="26">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="27" name="dateList">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="29" minimum="0" maximum="1">        
+      <multiplicity id="28" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="12" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="29">    
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="30" name="patternMaker">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="31" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="14" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="30">    
+  <association id="32">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="31" name="timeList">        
+      <attribute id="33" name="resultList">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="32" minimum="0" maximum="1">        
+      <multiplicity id="34" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="11" navigable="true"/>    
+    <end type="TARGET" refId="12" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="33">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="34" name="specialDateList">        
+  <association id="35">    
+    <end type="SOURCE" refId="12" navigable="false">      
+      <attribute id="36" name="dtObjList">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="35" minimum="0" maximum="1">        
+      <multiplicity id="37" minimum="0" maximum="2147483647">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="11" navigable="true"/>    
+    <end type="TARGET" refId="5" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="36">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="37" name="dayList">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="38" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="11" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
+  <realization id="38">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="13"/>  
+  </realization>  
   <association id="39">    
-    <end type="SOURCE" refId="13" navigable="false">      
-      <attribute id="40" name="focusToRepeat">        
+    <end type="SOURCE" refId="12" navigable="false">      
+      <attribute id="40" name="listType">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="41" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="8" navigable="true"/>    
+    <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="42">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="43" name="resultList">        
+    <end type="SOURCE" refId="12" navigable="false">      
+      <attribute id="43" name="dtDTOList">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="44" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="11" navigable="true"/>    
+    <end type="TARGET" refId="15" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="45">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="46" name="dateTimeListManager">        
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="46" name="dayList">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="47" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="1" navigable="true"/>    
+    <end type="TARGET" refId="12" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="48">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="49" name="focusToRepeat">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="50" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="9" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="51">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="52" name="dateTimeDTO">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="53" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="54">    
+    <end type="SOURCE" refId="15" navigable="false">      
+      <attribute id="55" name="dtoList">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="56" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
