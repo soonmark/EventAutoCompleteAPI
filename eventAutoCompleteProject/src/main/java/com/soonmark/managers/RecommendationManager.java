@@ -3,11 +3,14 @@ package com.soonmark.managers;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.soonmark.domain.AppConstants;
+import com.soonmark.domain.DateTimeDTO;
 import com.soonmark.enums.DateTimeEn;
 import com.soonmark.enums.TokenType;
 
@@ -24,24 +27,22 @@ public class RecommendationManager {
 	String inputText;
 	
 
-	public RecommendationManager(String inputText) {
-		
-		dateTimeListManagerSet = new DateTimeListManagerSet();
-		
+	public RecommendationManager() {
 		// 패턴 생성
 		patternManager = new PatternManager();
 		
-		this.inputText = inputText;
 	}
 	
-	public String getRecommendations(){
+	public List<DateTimeDTO> getRecommendations(String inputText){
+		dateTimeListManagerSet = new DateTimeListManagerSet();
+		this.inputText = inputText;
 		
 		logger.info("입력받은 일정 : " + inputText);
 
 		if (blockInvalidCharacters() == true) {
 			DateTimeManager dtObj = new DateTimeManager();
 			// -2는 잘못된 기호나 문자 입력 시 에러 코드
-			dtObj.setYear(-2);
+			dtObj.setYear(AppConstants.INVALID_INPUT_CHARACTER);
 			dateTimeListManagerSet.getResultList().insertDtObj(dtObj);
 		}
 		else {
@@ -58,7 +59,7 @@ public class RecommendationManager {
 		
 		logger.info("JSON 값  : " + dateTimeListManagerSet.getResultList().getDtDTOList().toString());
 		
-		return dateTimeListManagerSet.getResultList().getDtDTOList().toString();
+		return dateTimeListManagerSet.getResultList().getDtDTOList().getDtoList();
 	}
 
 	
@@ -79,23 +80,33 @@ public class RecommendationManager {
 		LocalDateTime now = LocalDateTime.now();
 		// now.plusHour(3);
 		
-		
+		boolean isDateEmpty = false;
+		boolean isTimeEmpty = false;
 		// 날짜, 시간 두개의 값이 없을 때도 크로스시켜야 하므로 빈 객체 삽입.
-		dateTimeListManagerSet.getTimeList().insertDtObj(new DateTimeManager());
-		
-		// dateList에 추가했던 element를 삭제했으므로 다시 하나 만들어줌.
-		dateTimeListManagerSet.getDateList().insertDtObj(new DateTimeManager());
+		if(dateTimeListManagerSet.getTimeList().getDtMgrList().size() == 0) {
+			dateTimeListManagerSet.getTimeList().insertDtObj(new DateTimeManager());
+			isDateEmpty = true;
+		}
 
+		if(dateTimeListManagerSet.getDateList().getDtMgrList().size() == 0) {
+			dateTimeListManagerSet.getDateList().insertDtObj(new DateTimeManager());
+			isTimeEmpty = true;
+		}
+		
+		if(isDateEmpty && isTimeEmpty)
+			return;
+		
 		for (int i = 0; i < dateTimeListManagerSet.getTimeList().getDtMgrList().size(); i++) {
 			for (int j = 0; j < dateTimeListManagerSet.getDateList().getDtMgrList().size(); j++) {
 
-				// 둘다 정보가 들어왔으면 빈값 매칭 안 해줘도 됨.
-				// 시간만 있을 때는 -> 날짜 빈거랑 매칭하고 시간 여분 빼기
-				// 날짜만 있을 때는 -> 시간 빈거랑 매칭하고 날짜 여분 빼기
-				// 둘 다 비어있을 때도 안 해줘도 됨.
-				if (i == dateTimeListManagerSet.getTimeList().getDtMgrList().size() - 1 && j == dateTimeListManagerSet.getDateList().getDtMgrList().size() - 1) {
-					continue;
-				}
+//				// 둘다 정보가 들어왔으면 빈값 매칭 안 해줘도 됨.
+//				// 시간만 있을 때는 -> 날짜 빈거랑 매칭하고 시간 여분 빼기
+//				// 날짜만 있을 때는 -> 시간 빈거랑 매칭하고 날짜 여분 빼기
+//				// 둘 다 비어있을 때도 안 해줘도 됨.
+//				if (i == dateTimeListManagerSet.getTimeList().getDtMgrList().size() - 1
+//						&& j == dateTimeListManagerSet.getDateList().getDtMgrList().size() - 1) {
+//					continue;
+//				}
 
 //				logger.info("시간 정보 존재");
 
@@ -115,7 +126,7 @@ public class RecommendationManager {
 				}
 
 				// 날짜 정보가 없으면 가장 근접한 미래날짜로 세팅.
-				if (dateTimeListManagerSet.getDateList().getDtMgrList().size() == 1) {
+				if (isDateEmpty == true) {
 					logger.info("날짜 정보없음");
 
 					// 현재 시각과 비교해서 이미 지난 시간일 경우 + 12;
@@ -123,7 +134,7 @@ public class RecommendationManager {
 
 					// 메소드의 객체가 now 캘린더가 아니면 true 입력
 					tmpCal.setHour(h, true);
-					if (min == -1) {
+					if (min == AppConstants.NO_DATA) {
 						tmpCal.setMinute(0);
 					} else {
 						tmpCal.setMinute(min);
@@ -167,7 +178,7 @@ public class RecommendationManager {
 								dateTimeListManagerSet.getDateList().getElement(j).hasInfo(DateTimeEn.day.ordinal()));
 
 						// 시간정보 없을 땐, 종일 로 나타내기
-						if (dateTimeListManagerSet.getTimeList().getDtMgrList().size() == 1) {
+						if (isTimeEmpty == true) {
 							dtObj.setAllDayEvent(true);
 
 						} else { // 날짜와 시간 정보 있을 때
@@ -175,31 +186,31 @@ public class RecommendationManager {
 							dtObj.setMinute(min);
 						}
 
-						if (y == -1) {
+						if (y == AppConstants.NO_DATA) {
 							dtObj.setYear(now.getYear());
 						}
 
 						if (dtObj.getFocusToRepeat() == null) { // 반복없이 해당 값만 insert 하게 하기
 							recomNum = 1; // 반복 안 하도록
-							if (m == -1) {
+							if (m == AppConstants.NO_DATA) {
 								dtObj.setMonth(now.getMonthValue());
 							}
-							if (dt == -1) {
+							if (dt == AppConstants.NO_DATA) {
 								dtObj.setDate(now.getDayOfMonth());
 							}
-							if (day == null) {
+							if (day == AppConstants.NO_DATA_FOR_DAY) {
 								// 날짜에 맞는 요일 구하는 메소드
 								dtObj.setProperDay();
 							}
 
 						} else { // focus할 게 있으면 그 정보를 기준으로 for문 돌게끔...
-							if (m == -1) {
+							if (m == AppConstants.NO_DATA) {
 								dtObj.setMonth(1);
 							}
-							if (dt == -1) {
+							if (dt == AppConstants.NO_DATA) {
 								dtObj.setDate(1);
 							}
-							if (day == null) {
+							if (day == AppConstants.NO_DATA_FOR_DAY) {
 								// 날짜에 맞는 요일 구하는 메소드
 								dtObj.setProperDay();
 							}
@@ -243,6 +254,12 @@ public class RecommendationManager {
 				}
 
 			}
+		}
+		
+		
+		// 2개만 남기고 다 지우기
+		for(int i = recomNum ; i < dateTimeListManagerSet.getResultList().getDtDTOList().getDtoList().size() ; ) {
+			dateTimeListManagerSet.getResultList().deleteDtObj(i);
 		}
 	}
 	

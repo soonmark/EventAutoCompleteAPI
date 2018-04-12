@@ -3,7 +3,7 @@ package com.soonmark.managers;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PatternMaker {
+public class PatternStorage {
 	// 년월일 패턴
 	List<String> datePatterns = new ArrayList<String>();
 	// 요일 패턴
@@ -14,7 +14,7 @@ public class PatternMaker {
 	// 시간 패턴
 	List<String> timePatterns = new ArrayList<String>();
 	
-	PatternMaker(){
+	PatternStorage(){
 		initPatterns();
 	}
 

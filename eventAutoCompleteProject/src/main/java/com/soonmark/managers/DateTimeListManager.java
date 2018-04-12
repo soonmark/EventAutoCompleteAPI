@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.soonmark.domain.DTOList;
 import com.soonmark.domain.DateTimeDTO;
 import com.soonmark.enums.DateTimeEn;
@@ -16,23 +13,23 @@ import com.soonmark.enums.TokenType;
 public class DateTimeListManager {
 	private List<DateTimeManager> dtObjList;
 	private DTOList dtDTOList;
-	private InnerMerger innerMerger;
-	private OuterMerger outerMerger;
+	private ListElementDeduplicator innerMerger;
+	private ListMerger outerMerger;
 	TokenType listType;
 
 	public DateTimeListManager() {
 		dtObjList = new ArrayList<DateTimeManager>();
 		dtDTOList = new DTOList();
-		innerMerger = new InnerMerger();
-		outerMerger = new OuterMerger();
+		innerMerger = new ListElementDeduplicator();
+		outerMerger = new ListMerger();
 		this.listType = null;
 	}
 
 	public DateTimeListManager(TokenType listType) {
 		dtObjList = new ArrayList<DateTimeManager>();
 		dtDTOList = new DTOList();
-		innerMerger = new InnerMerger();
-		outerMerger = new OuterMerger();
+		innerMerger = new ListElementDeduplicator();
+		outerMerger = new ListMerger();
 		this.listType = listType;
 	}
 	
@@ -84,9 +81,9 @@ public class DateTimeListManager {
 		return dtObjList.get(index);
 	}
 
-	public Iterator<DateTimeManager> getIter() {
-		return null;
-	}
+//	public Iterator<DateTimeManager> getIter() {
+//		return null;
+//	}
 
 	public void setDayToElement(int index, DayOfWeek val) {
 		dtObjList.get(index).setDay(val);
@@ -133,7 +130,7 @@ public class DateTimeListManager {
 	// 리스트 간 병합
 	void mergeBy(TokenType tokenType, DateTimeListManager list) {
 		
-		outerMerger.outerMergeProcess(this, list);
+		outerMerger.listMerge(this, list);
 	}
 
 }

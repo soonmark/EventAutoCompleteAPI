@@ -2,13 +2,13 @@ package com.soonmark.managers;
 
 import com.soonmark.enums.DateTimeEn;
 
-public class OuterMerger {
+public class ListMerger {
 	DateTimeListManager afterListMgr;
 
-	OuterMerger() {
+	ListMerger() {
 	}
 
-	void outerMergeProcess(DateTimeListManager targetListMgr, DateTimeListManager listMgr) {
+	void listMerge(DateTimeListManager targetListMgr, DateTimeListManager listMgr) {
 		afterListMgr = targetListMgr;
 		// 일단 merge
 		DateTimeListManager tmpListMgr = simplyMergeBy(listMgr);

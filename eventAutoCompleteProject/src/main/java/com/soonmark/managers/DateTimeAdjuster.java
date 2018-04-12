@@ -4,6 +4,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.soonmark.domain.AppConstants;
 import com.soonmark.enums.DateTimeEn;
 
 public class DateTimeAdjuster {
@@ -34,36 +35,36 @@ public class DateTimeAdjuster {
 		return timePoint.getDayOfMonth();
 	}
 
-	public String getStrDay() {
-		String tDay;
-		switch (timePoint.getDayOfWeek()) {
-		case SUNDAY:
-			tDay = "일";
-			break;
-		case MONDAY:
-			tDay = "월";
-			break;
-		case TUESDAY:
-			tDay = "화";
-			break;
-		case WEDNESDAY:
-			tDay = "수";
-			break;
-		case THURSDAY:
-			tDay = "목";
-			break;
-		case FRIDAY:
-			tDay = "금";
-			break;
-		case SATURDAY:
-			tDay = "토";
-			break;
-		default:
-			tDay = "";
-			break;
-		}
-		return tDay;
-	}
+//	public String getStrDay() {
+//		String tDay;
+//		switch (timePoint.getDayOfWeek()) {
+//		case SUNDAY:
+//			tDay = "일";
+//			break;
+//		case MONDAY:
+//			tDay = "월";
+//			break;
+//		case TUESDAY:
+//			tDay = "화";
+//			break;
+//		case WEDNESDAY:
+//			tDay = "수";
+//			break;
+//		case THURSDAY:
+//			tDay = "목";
+//			break;
+//		case FRIDAY:
+//			tDay = "금";
+//			break;
+//		case SATURDAY:
+//			tDay = "토";
+//			break;
+//		default:
+//			tDay = AppConstants.NO_DATA_FOR_DISPLAYDAY;
+//			break;
+//		}
+//		return tDay;
+//	}
 
 	public DayOfWeek getDay() {
 		return timePoint.getDayOfWeek();
@@ -122,7 +123,7 @@ public class DateTimeAdjuster {
 	}
 
 	public void setCloseDateOfTheDay(DayOfWeek val) {
-		if (val != null) {
+		if (val != AppConstants.NO_DATA_FOR_DAY) {
 
 			LocalDate tmpDate = LocalDate.now();
 

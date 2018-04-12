@@ -146,7 +146,20 @@ body {
 				if (tmpStr != prev)
 					checkInput();
 			}); // end keyup
+			
+			function zeroFill(number, width) {
+				width -= number.toString().length;
+				if ( width > 0 )
+				{
+					return new Array( width + (/\./.test(number) ? 2 : 1) ).join( '0' ) + number;
+				}
+				return number + "";
+			}
 
+			const INVALID_INPUT_CHARACTER = -2;
+			const NO_DATA = -1;
+			const NO_DATA_FOR_DAY = "";
+			
 			function checkInput() {
 				console.log("tmpStr 내용 : " + tmpStr);
 
@@ -163,30 +176,30 @@ body {
 						$(data).each(function(idx, dataEach) {
 							console.log("data " + idx + ": " + dataEach.year);
 
-							if (dataEach.year == "-002") {
+							if (dataEach.year == INVALID_INPUT_CHARACTER) {
 								alert("., /, -, : 외의 기호는 입력이 불가능합니다.");
 							} else {
 								str += "<div class=\"list-group-item\">";
-								if (dataEach.year != "-1") {
-									str += dataEach.year;
+								if (dataEach.year != NO_DATA) {
+									str += zeroFill(dataEach.year, 4);
 								}
-								if (dataEach.month != "-1") {
-									str += "/" + dataEach.month + "/";
+								if (dataEach.month != NO_DATA) {
+									str += "/" + zeroFill(dataEach.month, 2) + "/";
 								}
-								if (dataEach.date != "-1") {
-									str += dataEach.date + " ";
+								if (dataEach.date != NO_DATA) {
+									str += zeroFill(dataEach.date, 2) + " ";
 								}
-								if (dataEach.day != "-1") {
-									str += dataEach.day + " ";
+								if (dataEach.displayDay != NO_DATA_FOR_DAY) {
+									str += dataEach.displayDay + " ";
 								}
 								if(dataEach.allDayEvent == true) {
 									str += "종일";
 								}else{
-									if (dataEach.hour != "-1") {
-										str += dataEach.hour;
+									if (dataEach.hour != NO_DATA) {
+										str += zeroFill(dataEach.hour, 2);
 									}
-									if (dataEach.minute != "-1") {
-										str += ":" + dataEach.minute;
+									if (dataEach.minute != NO_DATA) {
+										str += ":" + zeroFill(dataEach.minute, 2);
 									}
 								}
 								str += "</div>";

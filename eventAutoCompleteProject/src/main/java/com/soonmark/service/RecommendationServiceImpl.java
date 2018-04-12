@@ -1,19 +1,21 @@
 package com.soonmark.service;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.soonmark.domain.DateTimeDTO;
 import com.soonmark.managers.RecommendationManager;
 
 @Service
 public class RecommendationServiceImpl implements RecommendationService {
 
-	private RecommendationManager recommendationManager;
-
+	@Autowired private RecommendationManager recommendationManager;
 
 	@Override
-	public String getRecommendation(String inputText) throws Exception {
+	public List<DateTimeDTO> getRecommendation(String inputText) throws Exception {
 		
-		recommendationManager = new RecommendationManager(inputText);
-		
-		return recommendationManager.getRecommendations();
+		return recommendationManager.getRecommendations(inputText);
 	}
 }

@@ -1,6 +1,5 @@
 package com.soonmark.managers;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
@@ -8,15 +7,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.soonmark.domain.AppConstants;
 import com.soonmark.enums.DateTimeEn;
 import com.soonmark.enums.TokenType;
 import com.soonmark.enums.specialDateTypeNeedsDay;
 
 public class DateTimeListManagerSet {
-	private Logger logger = LoggerFactory.getLogger(DateTimeListManagerSet.class);
 	
 	// 앞으로 추천할 날짜 리스트
 	private DateTimeListManager dateList;
@@ -163,6 +159,11 @@ public class DateTimeListManagerSet {
 					dateList.getElement(i).setFocusOnDay(dtObj.isFocusOnDay());
 					dateList.getElement(i).setHasInfo(DateTimeEn.day.ordinal(), true);
 				}
+				
+				if (i == dateList.getDtMgrList().size() - 1) {
+					dateList.deleteDtObj(dateList.getDtMgrList().size() - 1);
+					break;
+				}
 			}
 
 		} else if (target == TokenType.dates && nonTarget == TokenType.special) {
@@ -207,7 +208,7 @@ public class DateTimeListManagerSet {
 
 						// dtObj 초기화 : secList로 세팅
 						dtObj.setAllDate(nonTargetList.getElement(j));
-						if (!dtObj.getSpecialDate().equals("-1")) {
+						if (!dtObj.getSpecialDate().equals(AppConstants.NO_DATA_FOR_SPECIALDATE)) {
 							for (specialDateTypeNeedsDay specialDT : specialDateTypeNeedsDay.values()) {
 								if (!dtObj.getSpecialDate().equals(specialDT.getTitle())) {
 									continue;
@@ -223,7 +224,7 @@ public class DateTimeListManagerSet {
 								int wom = calendar.get(Calendar.WEEK_OF_MONTH);
 
 								// 오늘이 수요일인데 이번주 화요일 입력하면 지났지만 나와야함. 그러니까 무턱대고 1주를 더하면 안 됨.
-								if (targetList.getElement(i).getDay() != null) {
+								if (targetList.getElement(i).getDay() != AppConstants.NO_DATA_FOR_DAY) {
 									td = td.with(TemporalAdjusters.dayOfWeekInMonth(specialDT.ordinal() + wom,
 											targetList.getElement(i).getDay()));
 								} else { // 요일 정보가 없는데 이번주, 다음주 등의 정보가 있을 때
@@ -236,7 +237,7 @@ public class DateTimeListManagerSet {
 								break;
 							}
 						}
-						if (targetList.getElement(i).getDay() == null) {
+						if (targetList.getElement(i).getDay() == AppConstants.NO_DATA_FOR_DAY) {
 							targetList.insertDtObj(new DateTimeManager());
 							out = true;
 							break;

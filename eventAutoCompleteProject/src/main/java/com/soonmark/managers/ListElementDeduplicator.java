@@ -1,41 +1,45 @@
 package com.soonmark.managers;
 
+import com.soonmark.domain.AppConstants;
 import com.soonmark.enums.DateTimeEn;
 import com.soonmark.enums.TokenType;
 
-public class InnerMerger {
+public class ListElementDeduplicator {
 	DateTimeListManager afterListMgr;
 	TokenType listType;
 	
-	InnerMerger(){
+	ListElementDeduplicator(){
 	}
 
 	public void mergeProcess(DateTimeListManager dtObjListMgr, TokenType listType) {
 		afterListMgr = dtObjListMgr;
 		this.listType = listType;
 		
-		// 메인 merge 프로세스
-		innerMergeProcess();
+		// 각기 흩어진 토큰들을 더 큰 토큰으로 묶어내는 프로세스
+		grouping();
 
 		// 중복 제거
-		removeDuplicates();
+		elementDeduplicates();
 		// 터무니 없는 날짜 제거
 		removeIrrelevants();
 		// 우선순위 부여
 		givePriority();
 	}
 	
-	private void innerMergeProcess() {
+	private void grouping() {
 		
 		// 임시로 병합데이터 담고 있을 리스트
 		DateTimeListManager tmpList = new DateTimeListManager();
 		tmpList.insertDtObj(new DateTimeManager());
 		
-		saveMergedData(tmpList);
+		// 흩어진 토큰을 리스트에 하나로 모아 넣음.
+		gatherPartialsTo(tmpList);
+		
+		// 넣은 리스트를 타겟 리스트에 옮겨 넣음.
 		moveDataToTargetList(tmpList);
 	}
 	
-	private void saveMergedData(DateTimeListManager tmpList) {
+	private void gatherPartialsTo(DateTimeListManager tmpList) {
 		for (int i = 0; i < afterListMgr.getDtMgrList().size(); i++) {
 			// tmpList에 this 를 넣을 수 있는지 확인
 			if (afterListMgr.ableToPut(tmpList.getElement(0), afterListMgr.getElement(i)) == true) {
@@ -49,7 +53,7 @@ public class InnerMerger {
 					if (d.getTypeNum() != listType.getInteger()) {
 						continue;
 					}
-					if (afterListMgr.getElement(i).getByDateTimeEn(d) != -1) {
+					if (afterListMgr.getElement(i).getByDateTimeEn(d) != AppConstants.NO_DATA) {
 						tmpList.getElement(0).setByDateTimeEn(d, afterListMgr.getElement(i).getByDateTimeEn(d));
 						tmpList.getElement(0).setHasInfo(d.ordinal(), true);
 					}
@@ -70,7 +74,7 @@ public class InnerMerger {
 				if (d.getTypeNum() != listType.getInteger()) {
 					continue;
 				}
-				if (afterListMgr.getElement(j).getByDateTimeEn(d) == -1) {
+				if (afterListMgr.getElement(j).getByDateTimeEn(d) == AppConstants.NO_DATA) {
 					tmpList.getElement(j).setFocusToRepeat(d);
 				}
 			}
@@ -86,7 +90,7 @@ public class InnerMerger {
 
 	}
 
-	private void removeDuplicates() {
+	private void elementDeduplicates() {
 		// 있는 정보 중에는 모두 같은 거
 		for (int j = 0; j < afterListMgr.getDtMgrList().size(); j++) {
 			for (int i = j + 1; i < afterListMgr.getDtMgrList().size(); i++) {

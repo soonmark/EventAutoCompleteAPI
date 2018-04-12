@@ -12,10 +12,10 @@ import com.soonmark.enums.TokenType;
 public class PatternManager {
 	private Logger logger = LoggerFactory.getLogger(PatternManager.class);
 
-	PatternMaker patternMaker;
+	PatternStorage patternMaker;
 
 	public PatternManager() {
-		patternMaker = new PatternMaker();
+		patternMaker = new PatternStorage();
 	}
 
 	public void matchToPatterns(String inputText, DateTimeListManagerSet dateTimeListManager) {

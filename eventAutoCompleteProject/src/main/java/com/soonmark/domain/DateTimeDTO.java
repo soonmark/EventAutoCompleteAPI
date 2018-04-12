@@ -9,17 +9,19 @@ public class DateTimeDTO {
 	private int month;
 	private int date;
 	private DayOfWeek day;
+	private String displayDay;
 	private int hour;
 	private int minute;
 	private boolean isAllDayEvent;
 	
 	public DateTimeDTO() {
-		this.year = -1;
-		this.month = -1;
-		this.date = -1;
-		this.day = null;
-		this.hour = -1;
-		this.minute = -1;
+		this.year = AppConstants.NO_DATA;
+		this.month = AppConstants.NO_DATA;
+		this.date = AppConstants.NO_DATA;
+		this.day = AppConstants.NO_DATA_FOR_DAY;
+		this.setDisplayDay(AppConstants.NO_DATA_FOR_DISPLAYDAY);
+		this.hour = AppConstants.NO_DATA;
+		this.minute = AppConstants.NO_DATA;
 		this.isAllDayEvent = false;
 	}
 	
@@ -28,6 +30,11 @@ public class DateTimeDTO {
 		this.month = month;
 		this.date = date;
 		this.day = day;
+		if(day != AppConstants.NO_DATA_FOR_DAY) {
+			this.setDisplayDay(day.getDisplayName(TextStyle.FULL, Locale.KOREA));
+		}else {
+			this.setDisplayDay(AppConstants.NO_DATA_FOR_DISPLAYDAY);
+		}
 		this.hour = hour;
 		this.minute = minute;
 		this.isAllDayEvent = isAllDayEvent;
@@ -55,6 +62,11 @@ public class DateTimeDTO {
 	}
 	public void setDay(DayOfWeek day) {
 		this.day = day;
+		if(day != AppConstants.NO_DATA_FOR_DAY) {
+			this.setDisplayDay(day.getDisplayName(TextStyle.FULL, Locale.KOREA));
+		}else {
+			this.setDisplayDay(AppConstants.NO_DATA_FOR_DISPLAYDAY);
+		}
 	}
 	public int getHour() {
 		return hour;
@@ -74,15 +86,23 @@ public class DateTimeDTO {
 	public void setAllDayEvent(boolean isAllDayEvent) {
 		this.isAllDayEvent = isAllDayEvent;
 	}
+
+	public String getDisplayDay() {
+		return displayDay;
+	}
+
+	public void setDisplayDay(String displayDay) {
+		this.displayDay = displayDay;
+	}
 	
 	@Override
 	public String toString() {
 		String jsonString = "";
-		if (this.day != null) {
+		if (this.day != AppConstants.NO_DATA_FOR_DAY) {
 			jsonString = "{\"year\":\"" + String.format("%04d", this.year)
 			+ "\", \"month\":\"" + String.format("%02d", this.month)
 			+ "\", \"date\":\"" + String.format("%02d", this.date)
-			+ "\", \"day\":\"" + this.day.getDisplayName(TextStyle.FULL, Locale.KOREA)
+			+ "\", \"day\":\"" + this.displayDay
 			+ "\", \"isAllDayEvent\":\"" + this.isAllDayEvent
 			+ "\", \"hour\":\"" + String.format("%02d", this.hour)
 			+ "\", \"minute\":\"" + String.format("%02d", this.minute)

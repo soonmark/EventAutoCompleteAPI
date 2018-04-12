@@ -2,6 +2,7 @@ package com.soonmark.managers;
 
 import java.time.DayOfWeek;
 
+import com.soonmark.domain.AppConstants;
 import com.soonmark.domain.DateTimeDTO;
 import com.soonmark.enums.DateTimeEn;
 import com.soonmark.enums.DayOfWeekByLocale;
@@ -153,8 +154,8 @@ public class DateTimeManager {
 			val = getDate();
 			break;
 		case day:
-			if(getDay() == null) {
-				val = -1;
+			if(getDay() == AppConstants.NO_DATA_FOR_DAY) {
+				val = AppConstants.NO_DATA;
 			}
 			break;
 		case hour:

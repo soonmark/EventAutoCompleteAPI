@@ -4,6 +4,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.regex.Matcher;
 
+import com.soonmark.domain.AppConstants;
 import com.soonmark.managers.DateTimeManager;
 
 public enum TokenType {
@@ -25,19 +26,19 @@ public enum TokenType {
 				}
 				dtObj.setHasInfo(DateTimeEn.year.ordinal(), true);
 			} catch (IllegalArgumentException e) {
-				dtObj.setYear(-1);
+				dtObj.setYear(AppConstants.NO_DATA);
 			}
 			try {
 				dtObj.setMonth(Integer.parseInt(matcher.group("month")));
 				dtObj.setHasInfo(DateTimeEn.month.ordinal(), true);
 			} catch (IllegalArgumentException e) {
-				dtObj.setMonth(-1);
+				dtObj.setMonth(AppConstants.NO_DATA);
 			}
 			try {
 				dtObj.setDate(Integer.parseInt(matcher.group("date")));
 				dtObj.setHasInfo(DateTimeEn.date.ordinal(), true);
 			} catch (IllegalArgumentException e) {
-				dtObj.setDate(-1);
+				dtObj.setDate(AppConstants.NO_DATA);
 			}
 		}
 	}, days(1){
@@ -49,7 +50,7 @@ public enum TokenType {
 				dtObj.setDay(DayOfWeek.valueOf(engWeekday));
 				dtObj.setHasInfo(DateTimeEn.day.ordinal(), true);
 			} catch (IllegalArgumentException e) {
-				dtObj.setDay(null);
+				dtObj.setDay(AppConstants.NO_DATA_FOR_DAY);
 			}
 		}
 	}, times(2){
@@ -88,7 +89,7 @@ public enum TokenType {
 							dtObj.setFocusOnDay(false);
 							break;
 						} catch (IllegalArgumentException event) {
-							dtObj.setSpecialDate("-1");
+							dtObj.setSpecialDate(AppConstants.NO_DATA_FOR_SPECIALDATE);
 						}
 					}
 				}
