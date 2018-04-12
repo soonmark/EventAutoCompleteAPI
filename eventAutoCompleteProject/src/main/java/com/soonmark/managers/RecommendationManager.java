@@ -22,7 +22,7 @@ public class RecommendationManager {
 	private PatternManager patternManager;
 	
 	// 각 날짜, 요일, 시간, 특수 리스트 매니저 셋
-	private DateTimeListManagerSet dateTimeListManagerSet;
+	private DateTimeListMgrSet dateTimeListManagerSet;
 	
 	String inputText;
 	
@@ -34,13 +34,13 @@ public class RecommendationManager {
 	}
 	
 	public List<DateTimeDTO> getRecommendations(String inputText){
-		dateTimeListManagerSet = new DateTimeListManagerSet();
+		dateTimeListManagerSet = new DateTimeListMgrSet();
 		this.inputText = inputText;
 		
 		logger.info("입력받은 일정 : " + inputText);
 
 		if (blockInvalidCharacters() == true) {
-			DateTimeManager dtObj = new DateTimeManager();
+			DateTimeObjManager dtObj = new DateTimeObjManager();
 			// -2는 잘못된 기호나 문자 입력 시 에러 코드
 			dtObj.setYear(AppConstants.INVALID_INPUT_CHARACTER);
 			dateTimeListManagerSet.getResultList().insertDtObj(dtObj);
@@ -59,7 +59,7 @@ public class RecommendationManager {
 		
 		logger.info("JSON 값  : " + dateTimeListManagerSet.getResultList().getDtDTOList().toString());
 		
-		return dateTimeListManagerSet.getResultList().getDtDTOList().getDtoList();
+		return dateTimeListManagerSet.getResultList().getDtDTOList();
 	}
 
 	
@@ -72,7 +72,9 @@ public class RecommendationManager {
 		}
 		return false;
 	}
+
 	
+	// 수정해야하는 메소드
 	public void createRecommendations() {
 		int recomNum = 2; // 추천할 개수를 2개로 한정
 
@@ -84,12 +86,12 @@ public class RecommendationManager {
 		boolean isTimeEmpty = false;
 		// 날짜, 시간 두개의 값이 없을 때도 크로스시켜야 하므로 빈 객체 삽입.
 		if(dateTimeListManagerSet.getTimeList().getDtMgrList().size() == 0) {
-			dateTimeListManagerSet.getTimeList().insertDtObj(new DateTimeManager());
+			dateTimeListManagerSet.getTimeList().insertDtObj(new DateTimeObjManager());
 			isDateEmpty = true;
 		}
 
 		if(dateTimeListManagerSet.getDateList().getDtMgrList().size() == 0) {
-			dateTimeListManagerSet.getDateList().insertDtObj(new DateTimeManager());
+			dateTimeListManagerSet.getDateList().insertDtObj(new DateTimeObjManager());
 			isTimeEmpty = true;
 		}
 		
@@ -144,7 +146,7 @@ public class RecommendationManager {
 					LocalDateTime comparedCal = LocalDateTime.now();
 
 					for (int k = 0; k < recomNum; k++) {
-						DateTimeManager dtObj = new DateTimeManager();
+						DateTimeObjManager dtObj = new DateTimeObjManager();
 
 						tmpCal.setCloseDateOfTime(comparedCal);
 						comparedCal = comparedCal.with(tmpCal.getTimePoint());
@@ -160,8 +162,8 @@ public class RecommendationManager {
 
 				else { // 날짜 정보 있으면 (시간은 있든 말든 상관없음.)
 					for (int k = 0; k < recomNum; k++) {
-						DateTimeManager dtObj = new DateTimeManager();
-						DateTimeManager secDtObj = new DateTimeManager();
+						DateTimeObjManager dtObj = new DateTimeObjManager();
+						DateTimeObjManager secDtObj = new DateTimeObjManager();
 
 						dtObj.setAllDate(dateTimeListManagerSet.getDateList().getElement(j));
 						dtObj.setFocusOnDay(isFocusOnDay);
@@ -258,7 +260,7 @@ public class RecommendationManager {
 		
 		
 		// 2개만 남기고 다 지우기
-		for(int i = recomNum ; i < dateTimeListManagerSet.getResultList().getDtDTOList().getDtoList().size() ; ) {
+		for(int i = recomNum ; i < dateTimeListManagerSet.getResultList().getDtDTOList().size() ; ) {
 			dateTimeListManagerSet.getResultList().deleteDtObj(i);
 		}
 	}
@@ -271,11 +273,11 @@ public class RecommendationManager {
 		this.patternManager = patternManager;
 	}
 	
-	public DateTimeListManagerSet getDateTimeListManagerSet() {
+	public DateTimeListMgrSet getDateTimeListManagerSet() {
 		return dateTimeListManagerSet;
 	}
 	
-	public void setDateTimeListManagerSet(DateTimeListManagerSet dateTimeListManagerSet) {
+	public void setDateTimeListManagerSet(DateTimeListMgrSet dateTimeListManagerSet) {
 		this.dateTimeListManagerSet = dateTimeListManagerSet;
 	}
 }

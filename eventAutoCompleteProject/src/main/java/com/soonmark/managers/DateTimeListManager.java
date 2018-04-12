@@ -5,55 +5,41 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.soonmark.domain.DTOList;
 import com.soonmark.domain.DateTimeDTO;
 import com.soonmark.enums.DateTimeEn;
 import com.soonmark.enums.TokenType;
 
 public class DateTimeListManager {
-	private List<DateTimeManager> dtObjList;
-	private DTOList dtDTOList;
+	private List<DateTimeObjManager> dtObjList;
 	private ListElementDeduplicator innerMerger;
 	private ListMerger outerMerger;
 	TokenType listType;
 
 	public DateTimeListManager() {
-		dtObjList = new ArrayList<DateTimeManager>();
-		dtDTOList = new DTOList();
+		dtObjList = new ArrayList<DateTimeObjManager>();
 		innerMerger = new ListElementDeduplicator();
 		outerMerger = new ListMerger();
 		this.listType = null;
 	}
 
 	public DateTimeListManager(TokenType listType) {
-		dtObjList = new ArrayList<DateTimeManager>();
-		dtDTOList = new DTOList();
+		dtObjList = new ArrayList<DateTimeObjManager>();
 		innerMerger = new ListElementDeduplicator();
 		outerMerger = new ListMerger();
 		this.listType = listType;
 	}
 	
-	
-	public DTOList getDtDTOList() {
-		if(dtDTOList.getDtoList() != null) {
-			dtDTOList.getDtoList().clear();
-		}
-		
+	public List<DateTimeDTO> getDtDTOList() {
 		List<DateTimeDTO> newList = new ArrayList<DateTimeDTO>();
 		
-		Iterator<DateTimeManager> iter = dtObjList.iterator();
+		Iterator<DateTimeObjManager> iter = dtObjList.iterator();
 		while(iter.hasNext()) {
 			newList.add(iter.next().getDateTimeDTO());
 		}
-		dtDTOList.setDtoList(newList);
-		return dtDTOList;
+		return newList;
 	}
 
-	public void setDtDTOList(DTOList dtDTOList) {
-		this.dtDTOList = dtDTOList;
-	}
-
-	public List<DateTimeManager> getDtMgrList() {
+	public List<DateTimeObjManager> getDtMgrList() {
 		return dtObjList;
 	}
 
@@ -65,7 +51,7 @@ public class DateTimeListManager {
 		this.listType = listType;
 	}
 
-	public void insertDtObj(DateTimeManager dtObj) {
+	public void insertDtObj(DateTimeObjManager dtObj) {
 		dtObjList.add(dtObj);
 	}
 
@@ -77,7 +63,7 @@ public class DateTimeListManager {
 		dtObjList.clear();
 	}
 
-	public DateTimeManager getElement(int index) {
+	public DateTimeObjManager getElement(int index) {
 		return dtObjList.get(index);
 	}
 
@@ -93,7 +79,7 @@ public class DateTimeListManager {
 		innerMerger.mergeProcess(this, listType);
 	}
 
-	boolean isTargetMgrEmpty(DateTimeManager nonTarget) {
+	boolean isTargetMgrEmpty(DateTimeObjManager nonTarget) {
 		boolean isEmpty = true;
 		for (DateTimeEn d : DateTimeEn.values()) {
 			if (d.getTypeNum() != listType.getInteger()) {
@@ -106,7 +92,7 @@ public class DateTimeListManager {
 		return isEmpty;
 	}
 	
-	boolean isListEmpty(List<DateTimeManager> list) {
+	boolean isListEmpty(List<DateTimeObjManager> list) {
 		boolean isEmpty = false;
 		if (list.size() == 0) {
 			isEmpty = true;
@@ -114,7 +100,7 @@ public class DateTimeListManager {
 		return isEmpty;
 	}
 
-	boolean ableToPut(DateTimeManager target, DateTimeManager nonTarget) {
+	boolean ableToPut(DateTimeObjManager target, DateTimeObjManager nonTarget) {
 		// target 의 원소 중 존재하는 값들이 모두 list 에 없으면 추가
 		boolean ableToPut = true;
 		for (DateTimeEn d : DateTimeEn.values()) {

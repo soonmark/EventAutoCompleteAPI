@@ -7,28 +7,28 @@ import com.soonmark.domain.DateTimeDTO;
 import com.soonmark.enums.DateTimeEn;
 import com.soonmark.enums.DayOfWeekByLocale;
 
-public class DateTimeManager {
+public class DateTimeObjManager {
 	DateTimeDTO dateTimeDTO;
 	private String specialDate;
 	private boolean isFocusOnDay;
 	private boolean[] hasInfo;
 	private DateTimeEn focusToRepeat;
             
-	public DateTimeManager() {
+	public DateTimeObjManager() {
 		dateTimeDTO = new DateTimeDTO();
 		this.isFocusOnDay = false;
 		this.focusToRepeat = null;
 		hasInfo = new boolean[] { false, false, false, false, false, false };
 	}
 
-	public DateTimeManager(int year, int month, int date, DayOfWeek day, int hour, int minute) {
+	public DateTimeObjManager(int year, int month, int date, DayOfWeek day, int hour, int minute) {
 		dateTimeDTO = new DateTimeDTO(year, month, date, day, hour, minute, false);
 		this.isFocusOnDay = false;
 		this.focusToRepeat = null;
 		hasInfo = new boolean[] { false, false, false, false, false, false };
 	}
 
-	public DateTimeManager(int year, int month, int date, DayOfWeek day, int hour, int minute, boolean isFocusOnDay) {
+	public DateTimeObjManager(int year, int month, int date, DayOfWeek day, int hour, int minute, boolean isFocusOnDay) {
 		dateTimeDTO = new DateTimeDTO(year, month, date, day, hour, minute, isFocusOnDay);
 		this.isFocusOnDay = false;
 		this.focusToRepeat = null;
@@ -76,7 +76,7 @@ public class DateTimeManager {
 		setDay(tmpCal.getDay());
 	}
 
-	public void setAllDate(DateTimeManager dtObj) {
+	public void setAllDate(DateTimeObjManager dtObj) {
 		setDay(dtObj.getDay());
 		setYear(dtObj.getYear());
 		setMonth(dtObj.getMonth());
@@ -245,6 +245,13 @@ public class DateTimeManager {
 			}
 		}
 		return null;
+	}
+	
+	
+	// 여기 질문
+	public DateTimeDTO toDateTimeDTO() {
+		DateTimeDTO dto = new DateTimeDTO();
+		return dto;
 	}
 
 	public String toString() {

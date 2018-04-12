@@ -12,7 +12,7 @@ import com.soonmark.enums.DateTimeEn;
 import com.soonmark.enums.TokenType;
 import com.soonmark.enums.specialDateTypeNeedsDay;
 
-public class DateTimeListManagerSet {
+public class DateTimeListMgrSet {
 	
 	// 앞으로 추천할 날짜 리스트
 	private DateTimeListManager dateList;
@@ -29,7 +29,7 @@ public class DateTimeListManagerSet {
 	// 최종 리스트
 	private DateTimeListManager resultList;
 
-	public DateTimeListManagerSet() {
+	public DateTimeListMgrSet() {
 		dateList = new DateTimeListManager(TokenType.dates);
 		specialDateList = new DateTimeListManager(TokenType.special);
 		dayList = new DateTimeListManager(TokenType.days);
@@ -113,7 +113,7 @@ public class DateTimeListManagerSet {
 		if (target == TokenType.dates && nonTarget == TokenType.days) {
 
 			// 날짜, 시간 두개의 값이 없을 때도 크로스시켜야 하므로 빈 객체 삽입.
-			dateList.insertDtObj(new DateTimeManager());
+			dateList.insertDtObj(new DateTimeObjManager());
 
 			// 우선, 요일과 날짜 크로스
 			// 날짜가 있고 요일이 없는 경우나 - clear
@@ -131,7 +131,7 @@ public class DateTimeListManagerSet {
 				for (int j = 0; j < dayList.getDtMgrList().size(); j++) {
 					// 날짜 없고 요일있는건 처리해야하니까 if문 처리 안 함.
 					DateTimeAdjuster tmpCal = new DateTimeAdjuster();
-					DateTimeManager dtObj = new DateTimeManager();
+					DateTimeObjManager dtObj = new DateTimeObjManager();
 
 					// 날짜 없고 요일만 있을 때
 					if (dateList.getDtMgrList().size() == 1) {
@@ -168,7 +168,7 @@ public class DateTimeListManagerSet {
 
 		} else if (target == TokenType.dates && nonTarget == TokenType.special) {
 			// 빈 객체 하나 넣어주기
-			targetList.insertDtObj(new DateTimeManager());
+			targetList.insertDtObj(new DateTimeObjManager());
 
 			boolean out = false;
 			for (int i = 0; i < targetList.getDtMgrList().size(); i++) {
@@ -189,7 +189,7 @@ public class DateTimeListManagerSet {
 						out = true;
 					}
 					if (out) {
-						targetList.insertDtObj(new DateTimeManager());
+						targetList.insertDtObj(new DateTimeObjManager());
 						break;
 					}
 				}
@@ -204,7 +204,7 @@ public class DateTimeListManagerSet {
 						continue;
 					}
 					for (int j = 0; j < nonTargetList.getDtMgrList().size(); j++) {
-						DateTimeManager dtObj = new DateTimeManager();
+						DateTimeObjManager dtObj = new DateTimeObjManager();
 
 						// dtObj 초기화 : secList로 세팅
 						dtObj.setAllDate(nonTargetList.getElement(j));
@@ -238,7 +238,7 @@ public class DateTimeListManagerSet {
 							}
 						}
 						if (targetList.getElement(i).getDay() == AppConstants.NO_DATA_FOR_DAY) {
-							targetList.insertDtObj(new DateTimeManager());
+							targetList.insertDtObj(new DateTimeObjManager());
 							out = true;
 							break;
 						}

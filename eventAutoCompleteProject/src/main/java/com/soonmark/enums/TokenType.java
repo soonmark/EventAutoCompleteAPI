@@ -5,11 +5,11 @@ import java.time.LocalDate;
 import java.util.regex.Matcher;
 
 import com.soonmark.domain.AppConstants;
-import com.soonmark.managers.DateTimeManager;
+import com.soonmark.managers.DateTimeObjManager;
 
 public enum TokenType {
 	dates(0){
-		public void setDtObjInfo(DateTimeManager dtObj, Matcher matcher) {
+		public void setDtObjInfo(DateTimeObjManager dtObj, Matcher matcher) {
 			try {
 				dtObj.setYear(Integer.parseInt(matcher.group("year")));
 				int year = dtObj.getYear();
@@ -42,7 +42,7 @@ public enum TokenType {
 			}
 		}
 	}, days(1){
-		public void setDtObjInfo(DateTimeManager dtObj, Matcher matcher) {
+		public void setDtObjInfo(DateTimeObjManager dtObj, Matcher matcher) {
 			// month와 date 에 해당하는 group 만 따로 읽어 저장
 			try {
 				// getDayOfWeekByLocale
@@ -54,7 +54,7 @@ public enum TokenType {
 			}
 		}
 	}, times(2){
-		public void setDtObjInfo(DateTimeManager dtObj, Matcher matcher) {
+		public void setDtObjInfo(DateTimeObjManager dtObj, Matcher matcher) {
 			dtObj.setHour(Integer.parseInt(matcher.group("hour")));
 			dtObj.setHasInfo(DateTimeEn.hour.ordinal(), true);
 			try {
@@ -67,7 +67,7 @@ public enum TokenType {
 			}
 		}
 	}, special(3){
-		public void setDtObjInfo(DateTimeManager dtObj, Matcher matcher) {
+		public void setDtObjInfo(DateTimeObjManager dtObj, Matcher matcher) {
 			//enum 
 			for(specialDateTypeNeedsDay sdt : specialDateTypeNeedsDay.values()) {
 				try {
@@ -107,5 +107,5 @@ public enum TokenType {
 	}
 		
 	// 추상 메소드
-	abstract public void setDtObjInfo(DateTimeManager vo, Matcher matcher);
+	abstract public void setDtObjInfo(DateTimeObjManager vo, Matcher matcher);
 }

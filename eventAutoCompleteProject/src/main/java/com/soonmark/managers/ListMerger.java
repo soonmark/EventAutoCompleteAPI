@@ -37,14 +37,14 @@ public class ListMerger {
 
 		// 빈 값일 때도 for문 돌아야 하므로 빈 객체 삽입.
 		if (afterListMgr.isListEmpty(afterListMgr.getDtMgrList()) == false) {
-			afterListMgr.insertDtObj(new DateTimeManager());
+			afterListMgr.insertDtObj(new DateTimeObjManager());
 		}
 
 
 		for (int i = 0; i < afterListMgr.getDtMgrList().size(); i++) {
 			for (int j = 0; j < list.getDtMgrList().size(); j++) {
 
-				DateTimeManager dateTimeObject = new DateTimeManager();
+				DateTimeObjManager dateTimeObject = new DateTimeObjManager();
 
 				dateTimeObject = afterListMgr.getElement(i);
 				// nonTarget 정보 있으면 담음.

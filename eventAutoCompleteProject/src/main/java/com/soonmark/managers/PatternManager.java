@@ -18,13 +18,13 @@ public class PatternManager {
 		patternMaker = new PatternStorage();
 	}
 
-	public void matchToPatterns(String inputText, DateTimeListManagerSet dateTimeListManager) {
+	public void matchToPatterns(String inputText, DateTimeListMgrSet dateTimeListManager) {
 		for(TokenType tokType : TokenType.values()) {
 			matchToOnePatternType(inputText, tokType, dateTimeListManager);
 		}
 	}
 	
-	void matchToOnePatternType(String inputText, TokenType tokenType, DateTimeListManagerSet dateTimeListManager) {
+	void matchToOnePatternType(String inputText, TokenType tokenType, DateTimeListMgrSet dateTimeListManager) {
 		
 		Iterator<String> iter;
 		switch(tokenType) {
@@ -56,7 +56,7 @@ public class PatternManager {
 				logger.info("패턴 : " + pattern);
 				logger.info("패턴 만족 : " + matcher.group(0));
 
-				DateTimeManager dtObj = new DateTimeManager();
+				DateTimeObjManager dtObj = new DateTimeObjManager();
 
 				// enum의 추상메소드로 바로 감.
 				tokenType.setDtObjInfo(dtObj, matcher);

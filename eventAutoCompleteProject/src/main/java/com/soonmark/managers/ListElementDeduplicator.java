@@ -30,7 +30,7 @@ public class ListElementDeduplicator {
 		
 		// 임시로 병합데이터 담고 있을 리스트
 		DateTimeListManager tmpList = new DateTimeListManager();
-		tmpList.insertDtObj(new DateTimeManager());
+		tmpList.insertDtObj(new DateTimeObjManager());
 		
 		// 흩어진 토큰을 리스트에 하나로 모아 넣음.
 		gatherPartialsTo(tmpList);
@@ -46,7 +46,7 @@ public class ListElementDeduplicator {
 				// 합치는 프로세스 시작
 				// tmpList의 y, m, dt 모두 정보가 없으면 tmpList에 빈 객체 추가.
 				if (afterListMgr.isTargetMgrEmpty(tmpList.getElement(0)) == true) {
-					tmpList.insertDtObj(new DateTimeManager());
+					tmpList.insertDtObj(new DateTimeObjManager());
 				}
 				
 				for (DateTimeEn d : DateTimeEn.values()) {
