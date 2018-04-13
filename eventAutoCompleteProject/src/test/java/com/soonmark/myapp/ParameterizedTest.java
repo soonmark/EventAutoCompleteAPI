@@ -52,15 +52,27 @@ public class ParameterizedTest {
 		params.add(new Object[] { "4월 9일 월요일 19시",
 				Arrays.asList(new DateTimeDTO(2018, 4, 9, DayOfWeek.MONDAY, 19, 0, false),
 						new DateTimeDTO(2019, 4, 9, DayOfWeek.TUESDAY, 19, 0, false))});
-//		params.add(new Object[] { "4/9 화요일 7:00",
-//				Arrays.asList(new DateTimeDTO(2018, 4, 9, DayOfWeek.MONDAY, 7, 0, false),
-//						new DateTimeDTO(2018, 4, 9, DayOfWeek.MONDAY, 19, 0, false))});
-//		params.add(new Object[] { "4.9 12시 30분",
-//				Arrays.asList(new DateTimeDTO(2018, 4, 9, DayOfWeek.MONDAY, 12, 30, false),
-//						new DateTimeDTO(2018, 4, 9, DayOfWeek.MONDAY, 0, 30, false))});
-//		params.add(new Object[] { "4-9",
-//				Arrays.asList(new DateTimeDTO(2018, 4, 9, DayOfWeek.MONDAY, -1, -1, true),
-//						new DateTimeDTO(2019, 4, 9, DayOfWeek.TUESDAY, -1, -1, true))});
+		params.add(new Object[] { "4-9",
+				Arrays.asList(new DateTimeDTO(2018, 4, 9, DayOfWeek.MONDAY, -1, -1, true),
+						new DateTimeDTO(2019, 4, 9, DayOfWeek.TUESDAY, -1, -1, true))});
+
+		params.add(new Object[] { "이번주 영화보기 토요일 조조",
+				Arrays.asList(new DateTimeDTO(2018, 4, 14, DayOfWeek.SATURDAY, -1, -1, true))});
+		params.add(new Object[] { "2월에 졸업식",
+				Arrays.asList(new DateTimeDTO(2018, 2, 1, DayOfWeek.THURSDAY, -1, -1, true),
+						new DateTimeDTO(2018, 2, 2, DayOfWeek.FRIDAY, -1, -1, true))});
+
+		
+		
+		
+		params.add(new Object[] { "4/9 화요일 7:00",
+				Arrays.asList(new DateTimeDTO(2018, 4, 9, DayOfWeek.MONDAY, 7, 0, false),
+						new DateTimeDTO(2018, 4, 9, DayOfWeek.MONDAY, 19, 0, false))});
+		params.add(new Object[] { "4.9 12시 30분",
+				Arrays.asList(new DateTimeDTO(2018, 4, 9, DayOfWeek.MONDAY, 12, 30, false),
+						new DateTimeDTO(2018, 4, 9, DayOfWeek.MONDAY, 0, 30, false))});
+		params.add(new Object[] { "이번주 13일",
+				Arrays.asList(new DateTimeDTO(2018, 4, 13, DayOfWeek.FRIDAY, -1, -1, true))});
 		return params;
 	}
 	
