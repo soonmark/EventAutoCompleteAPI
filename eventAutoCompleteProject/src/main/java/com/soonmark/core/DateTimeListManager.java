@@ -2,6 +2,8 @@ package com.soonmark.core;
 
 import java.time.DayOfWeek;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -124,4 +126,17 @@ public class DateTimeListManager {
 		dateTimeAdjuster.addPmTime(this);
 	}
 
+	public void sortByPriority() {
+		Ascending ascending = new Ascending();
+        Collections.sort(this.getDtMgrList(), ascending);
+	}
+
+}
+
+class Ascending implements Comparator<DateTimeLogicalObject> {
+	 
+	@Override
+	public int compare(DateTimeLogicalObject o1, DateTimeLogicalObject o2) {
+		return o1.getPriority().compareTo(o2.getPriority());
+	}
 }

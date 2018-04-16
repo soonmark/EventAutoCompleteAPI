@@ -2,19 +2,20 @@ package com.soonmark.core;
 
 import com.soonmark.domain.AppConstants;
 import com.soonmark.domain.DateTimeEn;
+import com.soonmark.domain.Priority;
 import com.soonmark.domain.TokenType;
 
 public class ListElementDeduplicator {
 	DateTimeListManager afterListMgr;
 	TokenType listType;
-	
-	ListElementDeduplicator(){
+
+	ListElementDeduplicator() {
 	}
 
 	public void mergeProcess(DateTimeListManager dtObjListMgr, TokenType listType) {
 		afterListMgr = dtObjListMgr;
 		this.listType = listType;
-		
+
 		// 각기 흩어진 토큰들을 더 큰 토큰으로 묶어내는 프로세스
 		grouping();
 
@@ -25,33 +26,33 @@ public class ListElementDeduplicator {
 		// 우선순위 부여
 		givePriority();
 	}
-	
+
 	private void grouping() {
-		
+
 		// 임시로 병합데이터 담고 있을 리스트
 		DateTimeListManager tmpList = new DateTimeListManager();
 		tmpList.insertDtObj(new DateTimeLogicalObject());
-		
+
 		// 흩어진 토큰을 리스트에 하나로 모아 넣음.
 		gatherPartialsTo(tmpList);
-		
+
 		// 윤년있으면 처리
 		setIfIsLeapYear(tmpList);
-		
+
 		// 넣은 리스트를 타겟 리스트에 옮겨 넣음.
 		moveDataToTargetList(tmpList);
 	}
-	
+
 	private void setIfIsLeapYear(DateTimeListManager tmpList) {
 		for (int i = 0; i < tmpList.getDtMgrList().size(); i++) {
-			if(tmpList.getElement(i).getMonth() == 2 && tmpList.getElement(i).getDate() == 29) {
+			if (tmpList.getElement(i).getMonth() == 2 && tmpList.getElement(i).getDate() == 29) {
 				tmpList.getElement(i).setLeapYear(true);
-				
+
 				DateTimeAdjuster dateTimeAdjuster = new DateTimeAdjuster();
-				if(tmpList.getElement(i).getYear() != AppConstants.NO_DATA) {
+				if (tmpList.getElement(i).getYear() != AppConstants.NO_DATA) {
 					dateTimeAdjuster.setYear(tmpList.getElement(i).getYear());
 				}
-				
+
 				// 해당 년도가 윤년이 아니라면 근접한 미래 년도로 세팅. -> 년도 무시
 				tmpList.getElement(i).setYear(dateTimeAdjuster.getNextOrSameLeapYear());
 			}
@@ -67,7 +68,7 @@ public class ListElementDeduplicator {
 				if (afterListMgr.isTargetMgrEmpty(tmpList.getElement(0)) == true) {
 					tmpList.insertDtObj(new DateTimeLogicalObject());
 				}
-				
+
 				for (DateTimeEn d : DateTimeEn.values()) {
 					if (d.getTypeNum() != listType.getInteger()) {
 						continue;
@@ -79,9 +80,9 @@ public class ListElementDeduplicator {
 				}
 			}
 		}
-		
+
 	}
-	
+
 	private void moveDataToTargetList(DateTimeListManager tmpList) {
 		// 임시 리스트 -> 타겟 리스트로 데이터 옮기기
 		afterListMgr.clearList();
@@ -98,11 +99,22 @@ public class ListElementDeduplicator {
 				}
 			}
 		}
-		
-	}
-	
-	private void givePriority() {
 
+	}
+
+	private void givePriority() {
+		// 있는 정보 중에
+		for (int i = 0; i < afterListMgr.getDtMgrList().size(); i++) {
+			if (afterListMgr.getElement(i).getByDateTimeEn(DateTimeEn.year) == AppConstants.NO_DATA) {
+				afterListMgr.getElement(i).setPriority(Priority.yearIsMissing);
+			}
+			if (afterListMgr.getElement(i).getByDateTimeEn(DateTimeEn.month) == AppConstants.NO_DATA) {
+				afterListMgr.getElement(i).setPriority(Priority.monthIsMissing);
+			}
+			if (afterListMgr.getElement(i).getByDateTimeEn(DateTimeEn.date) == AppConstants.NO_DATA) {
+				afterListMgr.getElement(i).setPriority(Priority.dateIsMissing);
+			}
+		}
 	}
 
 	private void removeIrrelevants() {
@@ -118,8 +130,8 @@ public class ListElementDeduplicator {
 					if (d.getTypeNum() != listType.getInteger()) {
 						continue;
 					}
-					if (afterListMgr.getElement(i).hasInfo(d.ordinal())
-							&& afterListMgr.getElement(j).getByDateTimeEn(d) != afterListMgr.getElement(i).getByDateTimeEn(d)) {
+					if (afterListMgr.getElement(i).hasInfo(d.ordinal()) && afterListMgr.getElement(j)
+							.getByDateTimeEn(d) != afterListMgr.getElement(i).getByDateTimeEn(d)) {
 						ableToDelete = false;
 					}
 				}

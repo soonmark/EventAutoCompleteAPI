@@ -6,6 +6,7 @@ import com.soonmark.domain.AppConstants;
 import com.soonmark.domain.DateTimeDTO;
 import com.soonmark.domain.DateTimeEn;
 import com.soonmark.domain.DayOfWeekByLocale;
+import com.soonmark.domain.Priority;
 
 public class DateTimeLogicalObject {
 	DateTimeDTO dateTimeDTO;
@@ -14,7 +15,8 @@ public class DateTimeLogicalObject {
 	private boolean[] hasInfo;
 	private DateTimeEn focusToRepeat;
 	private boolean isLeapYear;
-            
+	private Priority priority;
+
 	public DateTimeLogicalObject() {
 		dateTimeDTO = new DateTimeDTO();
 		this.isFocusOnDay = false;
@@ -22,6 +24,7 @@ public class DateTimeLogicalObject {
 		specialDate = AppConstants.NO_DATA_FOR_SPECIALDATE;
 		hasInfo = new boolean[] { false, false, false, false, false, false, false };
 		isLeapYear = false;
+		priority = Priority.none;
 	}
 
 	public DateTimeLogicalObject(int year, int month, int date, DayOfWeek day, int hour, int minute) {
@@ -31,6 +34,7 @@ public class DateTimeLogicalObject {
 		specialDate = AppConstants.NO_DATA_FOR_SPECIALDATE;
 		hasInfo = new boolean[] { false, false, false, false, false, false, false };
 		isLeapYear = false;
+		priority = Priority.none;
 	}
 
 	public DateTimeLogicalObject(int year, int month, int date, DayOfWeek day, int hour, int minute, boolean isFocusOnDay) {
@@ -40,6 +44,15 @@ public class DateTimeLogicalObject {
 		specialDate = AppConstants.NO_DATA_FOR_SPECIALDATE;
 		hasInfo = new boolean[] { false, false, false, false, false, false, false };
 		isLeapYear = false;
+		priority = Priority.none;
+	}
+	
+	public Priority getPriority() {
+		return priority;
+	}
+	
+	public void setPriority(Priority priority) {
+		this.priority = priority;
 	}
 	
 	public boolean[] getHasInfo() {
@@ -63,6 +76,7 @@ public class DateTimeLogicalObject {
 		this.setHasInfo(origin.getHasInfo());
 		this.setFocusToRepeat(origin.getFocusToRepeat());
 		this.setLeapYear(origin.isLeapYear());
+		this.setPriority(origin.getPriority());
 	}
 	
 	public boolean isLeapYear() {

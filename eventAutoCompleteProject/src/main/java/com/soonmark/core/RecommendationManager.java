@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.soonmark.domain.AppConstants;
 import com.soonmark.domain.DateTimeDTO;
+import com.soonmark.domain.Priority;
 import com.soonmark.domain.TokenType;
 
 public class RecommendationManager {
@@ -119,7 +120,7 @@ public class RecommendationManager {
 		} else {
 			// 월간 일수 차이에 대한 예외처리
 			if (isValidDates() == true) {
-				addEstimateDates(isTimeEmpty);
+				addEstimateDateAndTime(isTimeEmpty);
 			}
 		}
 
@@ -138,84 +139,115 @@ public class RecommendationManager {
 		return result;
 	}
 
-	private void addEstimateDates(boolean isTimeEmpty) {
+	private void addEstimateDateAndTime(boolean isTimeEmpty) {
 		for (int i = 0; i < dateTimeListManagerSet.getTimeList().getDtMgrList().size(); i++) {
 			for (int j = 0; j < dateTimeListManagerSet.getDateList().getDtMgrList().size(); j++) {
-
-				int h = dateTimeListManagerSet.getTimeList().getElement(i).getHour();
-				int min = dateTimeListManagerSet.getTimeList().getElement(i).getMinute();
-
 				for (int k = 0; k < recomNum; k++) {
 					DateTimeLogicalObject dtObj = new DateTimeLogicalObject();
 					dtObj.copyEveryPropertyExceptForDayFrom(dateTimeListManagerSet.getDateList().getElement(j));
 
-					// 시간정보 없을 땐, 종일 로 나타내기
-					if (isTimeEmpty == true) {
-						dtObj.setAllDayEvent(true);
-					} else { // 날짜와 시간 정보 있을 때
-						dtObj.setHour(h);
-						dtObj.setMinute(min);
-					}
+					// 시간정보 없을 땐 종일 로 나타내기
+					estimateTime(isTimeEmpty, dtObj, dateTimeListManagerSet.getTimeList().getElement(i));
 
-					if (dtObj.getYear() == AppConstants.NO_DATA) {
-						dtObj.setYear(LocalDate.now().getYear());
-					}
-
-					if (dtObj.getFocusToRepeat() == null) { // 반복없이 해당 값만 insert 하게 하기
-						recomNum = 1;
-						if (dtObj.getMonth() == AppConstants.NO_DATA) {
-							dtObj.setMonth(LocalDate.now().getMonthValue());
-						}
-						if (dtObj.getDate() == AppConstants.NO_DATA) {
-							dtObj.setDate(LocalDate.now().getDayOfMonth());
-						}
-						if (dtObj.getDay() == AppConstants.NO_DATA_FOR_DAY) {
-							// 날짜에 맞는 요일 구하는 메소드
-							dtObj.setProperDay();
-						}
-
-						dateTimeListManagerSet.getResultList().insertDtObj(dtObj);
-					} else { // focus할 게 있으면 그 정보를 기준으로 for문 돌게끔...
-						if (dtObj.getMonth() == AppConstants.NO_DATA) {
-							dtObj.setMonth(1);
-						}
-						if (dtObj.getDate() == AppConstants.NO_DATA) {
-							dtObj.setDate(1);
-						}
-						if (dtObj.getDay() == AppConstants.NO_DATA_FOR_DAY) {
-							// 날짜에 맞는 요일 구하는 메소드
-							dtObj.setProperDay();
-						}
-
-						if (dtObj.isFocusOnDay() == true) {
-							// 요일에 맞는 날짜만 뽑도록 구하는 로직
-							LocalDate tmpDate = LocalDate.of(dtObj.getYear(), dtObj.getMonth(), dtObj.getDate());
-
-							tmpDate = tmpDate.plusWeeks(k);
-							dtObj.setDate(tmpDate.getDayOfMonth());
-							dtObj.setYear(tmpDate.getYear());
-							dtObj.setMonth(tmpDate.getMonthValue());
-						} else {
-							DateTimeAdjuster tmpCal2 = new DateTimeAdjuster();
-							tmpCal2.setYear(dtObj.getYear());
-							tmpCal2.setMonth(dtObj.getMonth());
-							tmpCal2.setDate(dtObj.getDate());
-							// focus 할 해당 정보를 기준으로 더해주기.
-							tmpCal2.setCloseDate(tmpCal2, dtObj.getFocusToRepeat(), k);
-
-							dtObj.setDate(tmpCal2.getDate());
-							dtObj.setYear(tmpCal2.getYear());
-							dtObj.setMonth(tmpCal2.getMonth());
-
-							// 날짜에 맞는 요일 구하는 로직
-							dtObj.setProperDay();
-						}
-						dateTimeListManagerSet.getResultList().insertDtObj(dtObj);
-					}
+					// 년월일 요일 추정
+					estimateDates(dtObj, k);
 				}
 			}
 		}
 
+	}
+
+	private void estimateDates(DateTimeLogicalObject dtObj, int k) {
+
+		estimateYear(dtObj);
+
+		if (dtObj.getFocusToRepeat() == null) {
+			// 반복없이 해당 값만 insert
+			estimateOneDate(dtObj);
+		} else {
+			// focus할 게 있으면 그 정보를 기준으로 for문 돌며 여러값 insert
+			estimateMultipleDates(dtObj, k);
+		}
+	}
+
+	private void estimateMultipleDates(DateTimeLogicalObject dtObj, int k) {
+		if (dtObj.getMonth() == AppConstants.NO_DATA) {
+			dtObj.setMonth(1);
+		}
+		if (dtObj.getDate() == AppConstants.NO_DATA) {
+			dtObj.setDate(1);
+		}
+		if (dtObj.getDay() == AppConstants.NO_DATA_FOR_DAY) {
+			// 날짜에 맞는 요일 구하는 메소드
+			dtObj.setProperDay();
+		}
+
+		if (k == 0 && dtObj.isAllDayEvent() != true) {
+			dtObj.setPriority(Priority.timeWithFirstEstimateDate);
+		}
+		if (dtObj.isFocusOnDay() == true) {
+			// 매주 해당 요일에 맞는 날짜만 뽑도록 구하는 로직
+			setDatesByEveryWeek(dtObj, k);
+		} else {
+			setDatesByToken(dtObj, k);
+		}
+		dateTimeListManagerSet.getResultList().insertDtObj(dtObj);
+	}
+
+	private void setDatesByToken(DateTimeLogicalObject dtObj, int k) {
+		DateTimeAdjuster tmpCal2 = new DateTimeAdjuster();
+		tmpCal2.setYear(dtObj.getYear());
+		tmpCal2.setMonth(dtObj.getMonth());
+		tmpCal2.setDate(dtObj.getDate());
+		// focus 할 해당 정보를 기준으로 더해주기.
+		tmpCal2.setCloseDate(tmpCal2, dtObj.getFocusToRepeat(), k);
+
+		dtObj.setDate(tmpCal2.getDate());
+		dtObj.setYear(tmpCal2.getYear());
+		dtObj.setMonth(tmpCal2.getMonth());
+
+		// 날짜에 맞는 요일 구하는 로직
+		dtObj.setProperDay();
+	}
+
+	private void setDatesByEveryWeek(DateTimeLogicalObject dtObj, int k) {
+		LocalDate tmpDate = LocalDate.of(dtObj.getYear(), dtObj.getMonth(), dtObj.getDate());
+		tmpDate = tmpDate.plusWeeks(k);
+		dtObj.setDate(tmpDate.getDayOfMonth());
+		dtObj.setYear(tmpDate.getYear());
+		dtObj.setMonth(tmpDate.getMonthValue());
+	}
+
+	private void estimateOneDate(DateTimeLogicalObject dtObj) {
+		recomNum = 1;
+		if (dtObj.getMonth() == AppConstants.NO_DATA) {
+			dtObj.setMonth(LocalDate.now().getMonthValue());
+		}
+		if (dtObj.getDate() == AppConstants.NO_DATA) {
+			dtObj.setDate(LocalDate.now().getDayOfMonth());
+		}
+		if (dtObj.getDay() == AppConstants.NO_DATA_FOR_DAY) {
+			// 날짜에 맞는 요일 구하는 메소드
+			dtObj.setProperDay();
+		}
+
+		dateTimeListManagerSet.getResultList().insertDtObj(dtObj);
+	}
+
+	private void estimateYear(DateTimeLogicalObject dtObj) {
+		if (dtObj.getYear() == AppConstants.NO_DATA) {
+			dtObj.setYear(LocalDate.now().getYear());
+		}
+	}
+
+	private void estimateTime(boolean isTimeEmpty, DateTimeLogicalObject dtObj, DateTimeLogicalObject timeObj) {
+		if (isTimeEmpty == true) {
+			dtObj.setAllDayEvent(true);
+		} else { // 날짜와 시간 정보 있을 때
+			dtObj.setPriority(timeObj.getPriority());
+			dtObj.setHour(timeObj.getHour());
+			dtObj.setMinute(timeObj.getMinute());
+		}
 	}
 
 	private void setTimeToCloseFutureTime() {
@@ -249,7 +281,9 @@ public class RecommendationManager {
 	}
 
 	private void sortByPriority() {
-
+		for (int i = 0; i < dateTimeListManagerSet.getResultList().getDtMgrList().size(); i++) {
+			dateTimeListManagerSet.getResultList().sortByPriority();
+		}
 	}
 
 	public PatternManager getPatternManager() {

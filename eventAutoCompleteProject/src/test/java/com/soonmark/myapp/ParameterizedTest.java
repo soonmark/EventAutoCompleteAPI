@@ -57,7 +57,7 @@ public class ParameterizedTest {
 						new DateTimeDTO(2019, 4, 9, DayOfWeek.TUESDAY, -1, -1, true))});
 
 		params.add(new Object[] { "이번주 영화보기 토요일 조조",
-				Arrays.asList(new DateTimeDTO(2018, 4, 14, DayOfWeek.SATURDAY, -1, -1, true))});
+				Arrays.asList(new DateTimeDTO(2018, 4, 21, DayOfWeek.SATURDAY, -1, -1, true))});
 		params.add(new Object[] { "2월에 졸업식",
 				Arrays.asList(new DateTimeDTO(2018, 2, 1, DayOfWeek.THURSDAY, -1, -1, true),
 						new DateTimeDTO(2018, 2, 2, DayOfWeek.FRIDAY, -1, -1, true))});
@@ -72,7 +72,8 @@ public class ParameterizedTest {
 				Arrays.asList(new DateTimeDTO(2018, 4, 9, DayOfWeek.MONDAY, 12, 30, false),
 						new DateTimeDTO(2018, 4, 9, DayOfWeek.MONDAY, 0, 30, false))});
 		params.add(new Object[] { "이번주 13일",
-				Arrays.asList(new DateTimeDTO(2018, 4, 13, DayOfWeek.FRIDAY, -1, -1, true))});
+				Arrays.asList(new DateTimeDTO(2018, 4, 13, DayOfWeek.FRIDAY, -1, -1, true),
+						new DateTimeDTO(2018, 4, 15, DayOfWeek.SUNDAY, -1, -1, true))});
 		return params;
 	}
 	
