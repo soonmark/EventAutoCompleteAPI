@@ -36,7 +36,7 @@ public class DateTimeListManager {
 		
 		Iterator<DateTimeLogicalObject> iter = dtObjList.iterator();
 		while(iter.hasNext()) {
-			newList.add(iter.next().getDateTimeDTO());
+			newList.add(iter.next().toDTO());
 		}
 		return newList;
 	}
@@ -68,10 +68,6 @@ public class DateTimeListManager {
 	public DateTimeLogicalObject getElement(int index) {
 		return dtObjList.get(index);
 	}
-
-//	public Iterator<DateTimeManager> getIter() {
-//		return null;
-//	}
 
 	public void setDayToElement(int index, DayOfWeek val) {
 		dtObjList.get(index).setDay(val);
@@ -106,7 +102,8 @@ public class DateTimeListManager {
 		// target 의 원소 중 존재하는 값들이 모두 list 에 없으면 추가
 		boolean ableToPut = true;
 		for (DateTimeEn d : DateTimeEn.values()) {
-			if (target.hasInfo(d.ordinal()) && nonTarget.hasInfo(d.ordinal())) {
+			if (target.hasInfo(d.ordinal()) && nonTarget.hasInfo(d.ordinal())
+					&& target.getByDateTimeEn(d) == nonTarget.getByDateTimeEn(d)) {
 				ableToPut = false;
 				break;
 			}
@@ -129,6 +126,19 @@ public class DateTimeListManager {
 	public void sortByPriority() {
 		Ascending ascending = new Ascending();
         Collections.sort(this.getDtMgrList(), ascending);
+	}
+
+	public boolean isDiffValueFromTargetMgr(DateTimeLogicalObject target, DateTimeLogicalObject nonTarget) {
+		boolean isDiffValueFromTargetMgr = false;
+		for (DateTimeEn d : DateTimeEn.values()) {
+			if (target.hasInfo(d.ordinal()) && nonTarget.hasInfo(d.ordinal())
+					&& target.getByDateTimeEn(d) != nonTarget.getByDateTimeEn(d)) {
+				isDiffValueFromTargetMgr = true;
+				break;
+			}
+		}
+
+		return isDiffValueFromTargetMgr;
 	}
 
 }

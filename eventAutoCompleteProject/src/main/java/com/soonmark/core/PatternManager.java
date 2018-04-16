@@ -52,7 +52,7 @@ public class PatternManager {
 			Pattern inputPattern = Pattern.compile(pattern);
 			Matcher matcher = inputPattern.matcher(inputText);
 
-			if (matcher.matches()) {
+			while (matcher.find()) {
 				logger.info("패턴 : " + pattern);
 				logger.info("패턴 만족 : " + matcher.group(0));
 

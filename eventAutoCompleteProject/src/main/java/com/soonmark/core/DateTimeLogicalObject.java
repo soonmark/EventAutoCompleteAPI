@@ -9,7 +9,14 @@ import com.soonmark.domain.DayOfWeekByLocale;
 import com.soonmark.domain.Priority;
 
 public class DateTimeLogicalObject {
-	DateTimeDTO dateTimeDTO;
+	private int year;
+	private int month;
+	private int date;
+	private DayOfWeek day;
+	private int hour;
+	private int minute;
+	private boolean isAllDayEvent;
+	
 	private String specialDate;
 	private boolean isFocusOnDay;
 	private boolean[] hasInfo;
@@ -18,7 +25,14 @@ public class DateTimeLogicalObject {
 	private Priority priority;
 
 	public DateTimeLogicalObject() {
-		dateTimeDTO = new DateTimeDTO();
+		this.year = AppConstants.NO_DATA;
+		this.month = AppConstants.NO_DATA;
+		this.date = AppConstants.NO_DATA;
+		this.day = AppConstants.NO_DATA_FOR_DAY;
+		this.hour = AppConstants.NO_DATA;
+		this.minute = AppConstants.NO_DATA;
+		this.isAllDayEvent = false;
+		
 		this.isFocusOnDay = false;
 		this.focusToRepeat = null;
 		specialDate = AppConstants.NO_DATA_FOR_SPECIALDATE;
@@ -28,7 +42,14 @@ public class DateTimeLogicalObject {
 	}
 
 	public DateTimeLogicalObject(int year, int month, int date, DayOfWeek day, int hour, int minute) {
-		dateTimeDTO = new DateTimeDTO(year, month, date, day, hour, minute, false);
+		this.year = year;
+		this.month = month;
+		this.date = date;
+		this.day = day;
+		this.hour = hour;
+		this.minute = minute;
+		this.isAllDayEvent = false;
+		
 		this.isFocusOnDay = false;
 		this.focusToRepeat = null;
 		specialDate = AppConstants.NO_DATA_FOR_SPECIALDATE;
@@ -37,8 +58,15 @@ public class DateTimeLogicalObject {
 		priority = Priority.none;
 	}
 
-	public DateTimeLogicalObject(int year, int month, int date, DayOfWeek day, int hour, int minute, boolean isFocusOnDay) {
-		dateTimeDTO = new DateTimeDTO(year, month, date, day, hour, minute, isFocusOnDay);
+	public DateTimeLogicalObject(int year, int month, int date, DayOfWeek day, int hour, int minute, boolean isAllDayEvent) {
+		this.year =year;
+		this.month =month;
+		this.date = date;
+		this.day = day;
+		this.hour = hour;
+		this.minute = minute;
+		this.isAllDayEvent = isAllDayEvent;
+		
 		this.isFocusOnDay = false;
 		this.focusToRepeat = null;
 		specialDate = AppConstants.NO_DATA_FOR_SPECIALDATE;
@@ -63,7 +91,7 @@ public class DateTimeLogicalObject {
 		this.hasInfo = hasInfo;
 	}
 
-	public void copyEveryPropertyExceptForDayFrom(DateTimeLogicalObject origin) {
+	public void copyAllExceptForDayFrom(DateTimeLogicalObject origin) {
 		for(DateTimeEn dtEn : DateTimeEn.values()) {
 			if(dtEn == DateTimeEn.day) {
 				this.setDay(null);
@@ -87,12 +115,11 @@ public class DateTimeLogicalObject {
 		this.isLeapYear = isLeapYear;
 	}
 
-	public DateTimeDTO getDateTimeDTO() {
+	public DateTimeDTO toDTO() {
+		DateTimeDTO dateTimeDTO = new DateTimeDTO(year, month, date, day,
+												hour, minute, isAllDayEvent);
+		
 		return dateTimeDTO;
-	}
-
-	public void setDateTimeDTO(DateTimeDTO dateTimeDTO) {
-		this.dateTimeDTO = dateTimeDTO;
 	}
 
 	public DateTimeEn getFocusToRepeat() {
@@ -104,11 +131,11 @@ public class DateTimeLogicalObject {
 	}
 
 	public boolean isAllDayEvent() {
-		return dateTimeDTO.isAllDayEvent();
+		return isAllDayEvent;
 	}
 
 	public void setAllDayEvent(boolean isAllDayEvent) {
-		this.dateTimeDTO.setAllDayEvent(isAllDayEvent);
+		this.isAllDayEvent = isAllDayEvent;
 	}
 
 	public void setAllDate(DateTimeAdjuster cal) {
@@ -229,51 +256,51 @@ public class DateTimeLogicalObject {
 	}
 
 	public int getYear() {
-		return dateTimeDTO.getYear();
+		return this.year;
 	}
 
 	public void setYear(int year) {
-		dateTimeDTO.setYear(year);
+		this.year = year;
 	}
 
 	public int getMonth() {
-		return dateTimeDTO.getMonth();
+		return month;
 	}
 
 	public void setMonth(int month) {
-		dateTimeDTO.setMonth(month);
+		this.month = month;
 	}
 
 	public int getDate() {
-		return dateTimeDTO.getDate();
+		return date;
 	}
 
 	public void setDate(int date) {
-		dateTimeDTO.setDate(date);
+		this.date = date;
 	}
 
 	public DayOfWeek getDay() {
-		return dateTimeDTO.getDay();
+		return day;
 	}
 
 	public void setDay(DayOfWeek day) {
-		dateTimeDTO.setDay(day);
+		this.day = day;
 	}
 
 	public int getHour() {
-		return dateTimeDTO.getHour();
+		return hour;
 	}
 
 	public void setHour(int hour) {
-		dateTimeDTO.setHour(hour);
+		this.hour = hour;
 	}
 
 	public int getMinute() {
-		return dateTimeDTO.getMinute();
+		return minute;
 	}
 
 	public void setMinute(int minute) {
-		dateTimeDTO.setMinute(minute);
+		this.minute = minute;
 	}
 
 	public boolean isDateInfoFull() {
@@ -287,11 +314,11 @@ public class DateTimeLogicalObject {
 
 	public void adjustDay() {
 		if (isDateInfoFull()) {
-			DateTimeAdjuster cal = new DateTimeAdjuster();
-			cal.setYear(dateTimeDTO.getYear());
-			cal.setMonth(dateTimeDTO.getMonth());
-			cal.setDate(dateTimeDTO.getDate());
-			dateTimeDTO.setDay(cal.getDay());
+			DateTimeAdjuster tmpDTAdjuster = new DateTimeAdjuster();
+			tmpDTAdjuster.setYear(year);
+			tmpDTAdjuster.setMonth(month);
+			tmpDTAdjuster.setDate(date);
+			day = tmpDTAdjuster.getDay();
 		}
 	}
 
@@ -302,16 +329,5 @@ public class DateTimeLogicalObject {
 			}
 		}
 		return null;
-	}
-	
-	
-	// 여기 질문
-	public DateTimeDTO toDateTimeDTO() {
-		DateTimeDTO dto = new DateTimeDTO();
-		return dto;
-	}
-
-	public String toString() {
-		return dateTimeDTO.toString();
 	}
 }

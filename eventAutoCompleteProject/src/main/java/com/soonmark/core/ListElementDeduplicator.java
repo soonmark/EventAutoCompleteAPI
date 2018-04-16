@@ -60,13 +60,20 @@ public class ListElementDeduplicator {
 	}
 
 	private void gatherPartialsTo(DateTimeListManager tmpList) {
+		// tmpList 인덱스
+		int j = 0;
 		for (int i = 0; i < afterListMgr.getDtMgrList().size(); i++) {
 			// tmpList에 this 를 넣을 수 있는지 확인
-			if (afterListMgr.ableToPut(tmpList.getElement(0), afterListMgr.getElement(i)) == true) {
+			if (afterListMgr.ableToPut(tmpList.getElement(j), afterListMgr.getElement(i)) == true) {
 				// 합치는 프로세스 시작
 				// tmpList의 y, m, dt 모두 정보가 없으면 tmpList에 빈 객체 추가.
-				if (afterListMgr.isTargetMgrEmpty(tmpList.getElement(0)) == true) {
+				if (afterListMgr.isTargetMgrEmpty(tmpList.getElement(j)) == true) {
 					tmpList.insertDtObj(new DateTimeLogicalObject());
+				}
+				// 기존에 있던 값들과 다른값을 저장할 때
+				else if(afterListMgr.isDiffValueFromTargetMgr(tmpList.getElement(j), afterListMgr.getElement(i))) {
+					tmpList.insertDtObj(new DateTimeLogicalObject());
+					j++;
 				}
 
 				for (DateTimeEn d : DateTimeEn.values()) {
@@ -74,8 +81,8 @@ public class ListElementDeduplicator {
 						continue;
 					}
 					if (afterListMgr.getElement(i).getByDateTimeEn(d) != AppConstants.NO_DATA) {
-						tmpList.getElement(0).setByDateTimeEn(d, afterListMgr.getElement(i).getByDateTimeEn(d));
-						tmpList.getElement(0).setHasInfo(d.ordinal(), true);
+						tmpList.getElement(j).setByDateTimeEn(d, afterListMgr.getElement(i).getByDateTimeEn(d));
+						tmpList.getElement(j).setHasInfo(d.ordinal(), true);
 					}
 				}
 			}
@@ -103,16 +110,24 @@ public class ListElementDeduplicator {
 	}
 
 	private void givePriority() {
+		
+		boolean allExists = true;
 		// 있는 정보 중에
 		for (int i = 0; i < afterListMgr.getDtMgrList().size(); i++) {
 			if (afterListMgr.getElement(i).getByDateTimeEn(DateTimeEn.year) == AppConstants.NO_DATA) {
 				afterListMgr.getElement(i).setPriority(Priority.yearIsMissing);
+				allExists = false;
 			}
 			if (afterListMgr.getElement(i).getByDateTimeEn(DateTimeEn.month) == AppConstants.NO_DATA) {
 				afterListMgr.getElement(i).setPriority(Priority.monthIsMissing);
+				allExists = false;
 			}
 			if (afterListMgr.getElement(i).getByDateTimeEn(DateTimeEn.date) == AppConstants.NO_DATA) {
 				afterListMgr.getElement(i).setPriority(Priority.dateIsMissing);
+				allExists = false;
+			}
+			if(allExists) {
+				afterListMgr.getElement(i).setPriority(Priority.everyTokenExists);
 			}
 		}
 	}

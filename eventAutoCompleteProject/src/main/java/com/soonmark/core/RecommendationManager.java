@@ -25,15 +25,19 @@ public class RecommendationManager {
 
 	String inputText;
 
+	// 리스트에 보여줄 추천 날짜 개수
 	int recomNum;
+	// focus 두고 반복시킬 횟수
+	int focusingRecurNum;
 
 	public RecommendationManager() {
 		// 패턴 생성
 		patternManager = new PatternManager();
+		recomNum = 2;
 	}
 
 	public List<DateTimeDTO> getRecommendations(String inputText) {
-		recomNum = 2;
+		focusingRecurNum = 2;
 		dateTimeListManagerSet = new DateTimeListMgrSet();
 		this.inputText = inputText;
 
@@ -50,6 +54,7 @@ public class RecommendationManager {
 
 			// 기본 날짜 병합
 			dateTimeListManagerSet.deduplicateElements(TokenType.dates);
+			dateTimeListManagerSet.deduplicateElements(TokenType.days);
 			dateTimeListManagerSet.mergeList(TokenType.dates, TokenType.days);
 			dateTimeListManagerSet.mergeList(TokenType.dates, TokenType.special);
 
@@ -142,9 +147,9 @@ public class RecommendationManager {
 	private void addEstimateDateAndTime(boolean isTimeEmpty) {
 		for (int i = 0; i < dateTimeListManagerSet.getTimeList().getDtMgrList().size(); i++) {
 			for (int j = 0; j < dateTimeListManagerSet.getDateList().getDtMgrList().size(); j++) {
-				for (int k = 0; k < recomNum; k++) {
+				for (int k = 0; k < focusingRecurNum; k++) {
 					DateTimeLogicalObject dtObj = new DateTimeLogicalObject();
-					dtObj.copyEveryPropertyExceptForDayFrom(dateTimeListManagerSet.getDateList().getElement(j));
+					dtObj.copyAllExceptForDayFrom(dateTimeListManagerSet.getDateList().getElement(j));
 
 					// 시간정보 없을 땐 종일 로 나타내기
 					estimateTime(isTimeEmpty, dtObj, dateTimeListManagerSet.getTimeList().getElement(i));
@@ -154,7 +159,6 @@ public class RecommendationManager {
 				}
 			}
 		}
-
 	}
 
 	private void estimateDates(DateTimeLogicalObject dtObj, int k) {
@@ -219,7 +223,7 @@ public class RecommendationManager {
 	}
 
 	private void estimateOneDate(DateTimeLogicalObject dtObj) {
-		recomNum = 1;
+		focusingRecurNum = 1;
 		if (dtObj.getMonth() == AppConstants.NO_DATA) {
 			dtObj.setMonth(LocalDate.now().getMonthValue());
 		}
@@ -259,6 +263,7 @@ public class RecommendationManager {
 
 				// 현재 날짜
 				DateTimeAdjuster tmpCal = new DateTimeAdjuster();
+				tmpCal.setHour(dateTimeListManagerSet.getTimeList().getElement(i).getHour(), false);
 
 				// 메소드의 객체가 now 캘린더가 아니면 true 입력
 				if (dateTimeListManagerSet.getTimeList().getElement(i).getMinute() == AppConstants.NO_DATA) {

@@ -94,18 +94,18 @@ public class PatternStorage {
 
 	public void initDayPatterns() {
 		// 요일 패턴
-		dayPatterns.add("^(.*)(?<day>월|화|수|목|금|토|일)요일(.*)$"); // 월요일
+		dayPatterns.add("(?<day>월|화|수|목|금|토|일)요일"); // 월요일
 	}
 
 	public void initSpecialDatePatterns() {
 		// 그 외 특이 패턴
-		specialDatePatterns.add("^(.*)(?<today>오늘)(.*)$"); // 오늘
-		specialDatePatterns.add("^(.*)(?<tomorrow>내일)(.*)$"); // 내일
-		specialDatePatterns.add("^(.*)(?<dayAfterTomorrow>모레)(.*)$"); // 모레
+		specialDatePatterns.add("(?<today>오늘)"); // 오늘
+		specialDatePatterns.add("(?<tomorrow>내일)"); // 내일
+		specialDatePatterns.add("(?<dayAfterTomorrow>모레)$"); // 모레
 
-		specialDatePatterns.add("^(.*)(?<thisWeek>이번주)(.*)$"); // 이번주
+		specialDatePatterns.add("(?<thisWeek>이번주)"); // 이번주
 		specialDatePatterns.add("^(|.*[^다])(?<nextWeek>다음주)(.*)$"); // 다음주
-		specialDatePatterns.add("^(.*)(?<weekAfterNext>다다음주)(.*)$"); // 다다음주
+		specialDatePatterns.add("(?<weekAfterNext>다다음주)"); // 다다음주
 	}
 
 	public List<String> getDatePatterns() {
