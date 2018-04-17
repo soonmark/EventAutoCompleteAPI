@@ -36,7 +36,7 @@ public class ListMerger {
 	private DateTimeListManager simplyMergeBy(DateTimeListManager list) {
 
 		// this <- list 를 병합해 넣을 리스트
-		DateTimeListManager tmpList = new DateTimeListManager();
+ 		DateTimeListManager tmpList = new DateTimeListManager();
 
 		// list가 비었으면 그냥 나가기
 		if (afterListMgr.isListEmpty(list.getDtMgrList()) == true) {
@@ -53,6 +53,7 @@ public class ListMerger {
 
 				DateTimeLogicalObject dateTimeObject = new DateTimeLogicalObject();
 				dateTimeObject.copyAllExceptForDayFrom(afterListMgr.getElement(i));
+				dateTimeObject.setDay(afterListMgr.getElement(i).getDay());
 //				dateTimeObject = afterListMgr.getElement(i);
 				// nonTarget 정보 있으면 담음.
 				for (DateTimeEn dtEn : DateTimeEn.values()) {
@@ -135,10 +136,10 @@ public class ListMerger {
 		// 요일 정보 있으면 재세팅
 		if (day != AppConstants.NO_DATA_FOR_DAY) {
 			dateTimeAdjuster.setTimePoint(dateTimeAdjuster.getTimePoint().with(TemporalAdjusters.nextOrSame(day)));
+			afterListMgr.getElement(i).setFocusToRepeat(null);
 		}
 
 		// 이번주 3일 이런 경우! - 이번주와 일자 다 나오게
-		// 미완
 		if (date != AppConstants.NO_DATA) {
 			adjustDateInfo(date, dateTimeAdjuster, afterListMgr.getElement(i));
 		}
@@ -148,8 +149,8 @@ public class ListMerger {
 		// 요일과 해당 주가 안 맞으면 데이터 추가!
 		// 해당주의 토요일을 저장할 adjuster;
 		LocalDate lastDayOfTheWeek = LocalDate.now();
-		lastDayOfTheWeek.with(dateTimeAdjuster.getTimePoint().toLocalDate());
-		lastDayOfTheWeek.with(TemporalAdjusters.next(DayOfWeek.SATURDAY));
+		lastDayOfTheWeek = lastDayOfTheWeek.with(dateTimeAdjuster.getTimePoint().toLocalDate());
+		lastDayOfTheWeek = lastDayOfTheWeek.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
 		if(date > lastDayOfTheWeek.getDayOfMonth() || date < dateTimeAdjuster.getDate()) {
 			// 일단 해당 데이터에 우선순위 세팅.
 			timeObj.setPriority(Priority.dayWithIncorrectDate);
@@ -163,6 +164,9 @@ public class ListMerger {
 			
 			
 			afterListMgr.insertDtObj(ignoreDayObj);
+		}
+		else {
+			timeObj.setFocusToRepeat(null);
 		}
 	}
 
@@ -178,8 +182,9 @@ public class ListMerger {
 				afterListMgr.getElement(i).setFocusOnDay(false);
 				afterListMgr.getElement(i).setHasInfo(DateTimeEn.day.ordinal(), true);
 				afterListMgr.getElement(i).setPriority(Priority.dateWithIncorrectDay);
-			} else {
+			} else {	// 날짜 정보 없다면 요일에 대해 반복하도록
 				afterListMgr.getElement(i).setFocusOnDay(true);
+				afterListMgr.getElement(i).setFocusToRepeat(DateTimeEn.day);
 			}
 		}
 	}

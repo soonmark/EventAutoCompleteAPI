@@ -2,6 +2,7 @@ package com.soonmark.core;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.soonmark.domain.AppConstants;
 import com.soonmark.domain.DateTimeDTO;
+import com.soonmark.domain.DateTimeEn;
 import com.soonmark.domain.Priority;
 import com.soonmark.domain.TokenType;
 
@@ -155,13 +157,13 @@ public class RecommendationManager {
 					estimateTime(isTimeEmpty, dtObj, dateTimeListManagerSet.getTimeList().getElement(i));
 
 					// 년월일 요일 추정
-					estimateDates(dtObj, k);
+					estimateDates(dtObj, k, dateTimeListManagerSet.getDateList().getElement(j));
 				}
 			}
 		}
 	}
 
-	private void estimateDates(DateTimeLogicalObject dtObj, int k) {
+	private void estimateDates(DateTimeLogicalObject dtObj, int k, DateTimeLogicalObject origin) {
 
 		estimateYear(dtObj);
 
@@ -170,11 +172,11 @@ public class RecommendationManager {
 			estimateOneDate(dtObj);
 		} else {
 			// focus할 게 있으면 그 정보를 기준으로 for문 돌며 여러값 insert
-			estimateMultipleDates(dtObj, k);
+			estimateMultipleDates(dtObj, k, origin);
 		}
 	}
 
-	private void estimateMultipleDates(DateTimeLogicalObject dtObj, int k) {
+	private void estimateMultipleDates(DateTimeLogicalObject dtObj, int k, DateTimeLogicalObject origin) {
 		if (dtObj.getMonth() == AppConstants.NO_DATA) {
 			dtObj.setMonth(1);
 		}
@@ -191,7 +193,7 @@ public class RecommendationManager {
 		}
 		if (dtObj.isFocusOnDay() == true) {
 			// 매주 해당 요일에 맞는 날짜만 뽑도록 구하는 로직
-			setDatesByEveryWeek(dtObj, k);
+			setDatesByEveryWeek(dtObj, k, origin);
 		} else {
 			setDatesByToken(dtObj, k);
 		}
@@ -214,12 +216,40 @@ public class RecommendationManager {
 		dtObj.setProperDay();
 	}
 
-	private void setDatesByEveryWeek(DateTimeLogicalObject dtObj, int k) {
-		LocalDate tmpDate = LocalDate.of(dtObj.getYear(), dtObj.getMonth(), dtObj.getDate());
-		tmpDate = tmpDate.plusWeeks(k);
-		dtObj.setDate(tmpDate.getDayOfMonth());
-		dtObj.setYear(tmpDate.getYear());
-		dtObj.setMonth(tmpDate.getMonthValue());
+	private void setDatesByEveryWeek(DateTimeLogicalObject dtObj, int k, DateTimeLogicalObject origin) {
+		// 날짜 정보 없이 요일만 있을 때
+		if(!dtObj.hasInfo(DateTimeEn.year.ordinal())
+				&& !dtObj.hasInfo(DateTimeEn.month.ordinal())
+				&& !dtObj.hasInfo(DateTimeEn.date.ordinal())) {
+			LocalDate tmpDate = LocalDate.now();
+			tmpDate = tmpDate.with(TemporalAdjusters.nextOrSame(origin.getDay()));
+			tmpDate = tmpDate.plusWeeks(k);
+			dtObj.setDate(tmpDate.getDayOfMonth());
+			dtObj.setYear(tmpDate.getYear());
+			dtObj.setMonth(tmpDate.getMonthValue());
+			dtObj.setDay(tmpDate.getDayOfWeek());
+			if(k == 0) {
+				dtObj.setPriority(Priority.dayOrigin);
+			}
+			else {
+				dtObj.setPriority(Priority.dayClones);
+			}
+		}
+		else { // 날짜도 있는데 요일에 맞춰야할 때
+			LocalDate tmpDate = LocalDate.of(dtObj.getYear(), dtObj.getMonth(), dtObj.getDate());
+			tmpDate = tmpDate.with(TemporalAdjusters.nextOrSame(origin.getDay()));
+			tmpDate = tmpDate.plusWeeks(k);
+			dtObj.setDate(tmpDate.getDayOfMonth());
+			dtObj.setYear(tmpDate.getYear());
+			dtObj.setMonth(tmpDate.getMonthValue());
+			dtObj.setDay(tmpDate.getDayOfWeek());
+			if(k == 0) {
+				dtObj.setPriority(Priority.dayOrigin);
+			}
+			else {
+				dtObj.setPriority(Priority.dayClones);
+			}
+		}
 	}
 
 	private void estimateOneDate(DateTimeLogicalObject dtObj) {
@@ -278,6 +308,7 @@ public class RecommendationManager {
 				dtObj.setAllDate(tmpCal);
 				dtObj.setHour(tmpCal.getHour());
 				dtObj.setMinute(tmpCal.getMinute());
+				dtObj.setPriority(dateTimeListManagerSet.getTimeList().getElement(i).getPriority());
 
 				dateTimeListManagerSet.getResultList().insertDtObj(dtObj);
 			}

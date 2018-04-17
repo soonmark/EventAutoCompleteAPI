@@ -10,6 +10,6 @@ import com.soonmark.domain.DateTimeDTO;
 @Service
 public interface RecommendationService {
 	
-	public List<DateTimeDTO> getRecommendation(String inputText) throws Exception ;
+	public List<DateTimeDTO> getRecommendations(String inputText) throws Exception ;
 	
 }

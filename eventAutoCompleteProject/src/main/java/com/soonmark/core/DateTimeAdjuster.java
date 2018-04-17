@@ -176,9 +176,20 @@ public class DateTimeAdjuster {
 		else if (focus == DateTimeEn.month) {
 			long diff = cal.getTimePoint().getMonthValue() - timePoint.getMonthValue();
 			if(timePoint.getYear() == LocalDateTime.now().getYear()) {
+				if(timePoint.getDayOfMonth() == timePoint.withMonth(LocalDateTime.now().getMonthValue()).getDayOfMonth()) {
 					timePoint = timePoint.withMonth(LocalDateTime.now().getMonthValue());
 				}
-			timePoint = timePoint.plusMonths(diff + plus);
+				else {
+					timePoint = timePoint.withMonth(LocalDateTime.now().getMonthValue())
+							.plusMonths(1).withDayOfMonth(timePoint.getDayOfMonth());
+				}
+			}
+			if(timePoint.plusMonths(diff + plus).getDayOfMonth() == timePoint.getDayOfMonth()) {
+				timePoint = timePoint.plusMonths(diff + plus);
+			}
+			else {
+				timePoint = timePoint.plusMonths(diff + plus + 1);
+			}
 		}
 		else if (focus == DateTimeEn.date) {
 			long diff = cal.getTimePoint().getDayOfMonth() - timePoint.getDayOfMonth();
@@ -197,11 +208,18 @@ public class DateTimeAdjuster {
 		}
 		
 		for(int i = 0 ; i < beforeList.getDtMgrList().size() ; i++) {
-			if(beforeList.getElement(i).getHour() <= 12) {
-				DateTimeLogicalObject dtObj = new DateTimeLogicalObject();
-				dtObj.setAllDate(beforeList.getElement(i));
-				dtObj.setMinute(beforeList.getElement(i).getMinute());
-				dtObj.setHour((beforeList.getElement(i).getHour() + 12) % 24);
+			DateTimeLogicalObject dtObj = new DateTimeLogicalObject();
+			dtObj.setAllDate(beforeList.getElement(i));
+			dtObj.setMinute(beforeList.getElement(i).getMinute());
+			dtObj.setHour((beforeList.getElement(i).getHour() + 12) % 24);
+			if(beforeList.getElement(i).getHour() < 12) {
+				targetList.getElement(i).setPriority(Priority.am);
+				dtObj.setPriority(Priority.pm);
+				targetList.insertDtObj(dtObj);
+			}
+			else if(beforeList.getElement(i).getHour() == 12) {
+				targetList.getElement(i).setPriority(Priority.pm);
+				dtObj.setPriority(Priority.am);
 				targetList.insertDtObj(dtObj);
 			}
 		}

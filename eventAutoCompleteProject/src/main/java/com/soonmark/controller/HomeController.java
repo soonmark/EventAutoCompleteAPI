@@ -47,6 +47,6 @@ public class HomeController {
 		String inputEvent = httpServletRequest.getParameter("inputEventsss");
 		
 		// 서비스에 넘김
-		return recommendationService.getRecommendation(inputEvent);
+		return recommendationService.getRecommendations(inputEvent);
 	}
 }

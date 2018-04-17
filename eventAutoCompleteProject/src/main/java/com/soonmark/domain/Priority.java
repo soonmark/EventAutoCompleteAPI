@@ -8,6 +8,9 @@ public enum Priority {
 	yearIsMissing,
 	dateWithIncorrectDay,
 	dayWithIncorrectDate,
+	multipleDays,
+	dayOrigin,
+	dayClones,
 	am,
 	pm,
 	none
