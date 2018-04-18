@@ -36,7 +36,7 @@ public class DateTimeLogicalObject {
 		this.isFocusOnDay = false;
 		this.focusToRepeat = null;
 		specialDate = AppConstants.NO_DATA_FOR_SPECIALDATE;
-		hasInfo = new boolean[] { false, false, false, false, false, false, false };
+		hasInfo = new boolean[] { false, false, false, false, false, false, false, false };
 		isLeapYear = false;
 		priority = Priority.none;
 	}
@@ -53,7 +53,7 @@ public class DateTimeLogicalObject {
 		this.isFocusOnDay = false;
 		this.focusToRepeat = null;
 		specialDate = AppConstants.NO_DATA_FOR_SPECIALDATE;
-		hasInfo = new boolean[] { false, false, false, false, false, false, false };
+		hasInfo = new boolean[] { false, false, false, false, false, false, false, false };
 		isLeapYear = false;
 		priority = Priority.none;
 	}
@@ -70,7 +70,7 @@ public class DateTimeLogicalObject {
 		this.isFocusOnDay = false;
 		this.focusToRepeat = null;
 		specialDate = AppConstants.NO_DATA_FOR_SPECIALDATE;
-		hasInfo = new boolean[] { false, false, false, false, false, false, false };
+		hasInfo = new boolean[] { false, false, false, false, false, false, false, false };
 		isLeapYear = false;
 		priority = Priority.none;
 	}

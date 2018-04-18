@@ -13,21 +13,15 @@ import com.soonmark.domain.TokenType;
 
 public class DateTimeListManager {
 	private List<DateTimeLogicalObject> dtObjList;
-	private ListElementDeduplicator listElementDeduplicator;
-	private ListMerger listMerger;
 	TokenType listType;
 
 	public DateTimeListManager() {
 		dtObjList = new ArrayList<DateTimeLogicalObject>();
-		listElementDeduplicator = new ListElementDeduplicator();
-		listMerger = new ListMerger();
 		this.listType = null;
 	}
 
 	public DateTimeListManager(TokenType listType) {
 		dtObjList = new ArrayList<DateTimeLogicalObject>();
-		listElementDeduplicator = new ListElementDeduplicator();
-		listMerger = new ListMerger();
 		this.listType = listType;
 	}
 	
@@ -74,7 +68,7 @@ public class DateTimeListManager {
 	}
 
 	void deduplicateElements() {
-		listElementDeduplicator.mergeProcess(this, listType);
+		new ListElementDeduplicator().mergeProcess(this, listType);
 	}
 
 	boolean isTargetMgrEmpty(DateTimeLogicalObject nonTarget) {
@@ -115,7 +109,7 @@ public class DateTimeListManager {
 	// 리스트 간 병합
 	void mergeByList(TokenType tokenType, DateTimeListManager list) {
 		
-		listMerger.listMergeByTokenType(tokenType, this, list);
+		new ListMerger().listMergeByTokenType(tokenType, this, list);
 	}
 	
 	void addPmTime() {

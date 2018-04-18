@@ -90,6 +90,19 @@ public class PatternStorage {
 		// 분 정보 없는 시간
 		timePatterns.add("^(.*)(?<hour>1[0-9]|2[0-3])시([^분]*)$"); // 12시
 		timePatterns.add("^(|.*[^1-2])(?<hour>[1-9])시([^분]*)$"); // 7시
+		
+		// 오전 오후
+		timePatterns.add("(?<ampm>오전)"); // 오전
+		timePatterns.add("(?<ampm>오후)"); // 오후
+		
+		timePatterns.add("(?<ampm>(?i)am)"); // am
+		timePatterns.add("(?<ampm>(?i)pm)"); // pm
+		
+		timePatterns.add("(?<ampm>(?i)a.m)"); // am
+		timePatterns.add("(?<ampm>(?i)p.m)"); // pm
+
+		timePatterns.add("(?<ampm>(?i)AM)"); // am
+		timePatterns.add("(?<ampm>(?i)PM)"); // pm
 	}
 
 	public void initDayPatterns() {
