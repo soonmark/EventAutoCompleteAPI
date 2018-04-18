@@ -64,7 +64,7 @@ public class SampleControllerTest {
 		//
 		// When
 		//
-		List<DateTimeDTO> outputList = recommendationService.getRecommendation(input);
+		List<DateTimeDTO> outputList = recommendationService.getRecommendations(input);
 		
 		//
 		// Then
