@@ -13,6 +13,7 @@ public class DateTimeLogicalObject {
 	private int month;
 	private int date;
 	private DayOfWeek day;
+	private DateTimeEn ampm;
 	private int hour;
 	private int minute;
 	private boolean isAllDayEvent;
@@ -32,11 +33,12 @@ public class DateTimeLogicalObject {
 		this.hour = AppConstants.NO_DATA;
 		this.minute = AppConstants.NO_DATA;
 		this.isAllDayEvent = false;
+		this.ampm = AppConstants.NO_DATA_FOR_AMPM;
 		
 		this.isFocusOnDay = false;
 		this.focusToRepeat = null;
 		specialDate = AppConstants.NO_DATA_FOR_SPECIALDATE;
-		hasInfo = new boolean[] { false, false, false, false, false, false, false, false };
+		hasInfo = new boolean[] { false, false, false, false, false, false, false, false, false };
 		isLeapYear = false;
 		priority = Priority.none;
 	}
@@ -49,11 +51,12 @@ public class DateTimeLogicalObject {
 		this.hour = hour;
 		this.minute = minute;
 		this.isAllDayEvent = false;
+		this.ampm = AppConstants.NO_DATA_FOR_AMPM;
 		
 		this.isFocusOnDay = false;
 		this.focusToRepeat = null;
 		specialDate = AppConstants.NO_DATA_FOR_SPECIALDATE;
-		hasInfo = new boolean[] { false, false, false, false, false, false, false, false };
+		hasInfo = new boolean[] { false, false, false, false, false, false, false, false, false };
 		isLeapYear = false;
 		priority = Priority.none;
 	}
@@ -66,15 +69,24 @@ public class DateTimeLogicalObject {
 		this.hour = hour;
 		this.minute = minute;
 		this.isAllDayEvent = isAllDayEvent;
+		this.ampm = AppConstants.NO_DATA_FOR_AMPM;
 		
 		this.isFocusOnDay = false;
 		this.focusToRepeat = null;
 		specialDate = AppConstants.NO_DATA_FOR_SPECIALDATE;
-		hasInfo = new boolean[] { false, false, false, false, false, false, false, false };
+		hasInfo = new boolean[] { false, false, false, false, false, false, false, false, false };
 		isLeapYear = false;
 		priority = Priority.none;
 	}
 	
+	public DateTimeEn getAmpm() {
+		return ampm;
+	}
+
+	public void setAmpm(DateTimeEn ampm) {
+		this.ampm = ampm;
+	}
+
 	public Priority getPriority() {
 		return priority;
 	}
@@ -200,6 +212,10 @@ public class DateTimeLogicalObject {
 		case day:
 			setDay(DayOfWeek.values()[val]);
 			break;
+		case am:
+		case pm:
+			setAmpm(dt);
+			break;
 		case hour:
 			setHour(val);
 			break;
@@ -240,6 +256,15 @@ public class DateTimeLogicalObject {
 			}
 			else {
 				val = getDay().ordinal();
+			}
+			break;
+		case am:
+		case pm:
+			if(getAmpm() == AppConstants.NO_DATA_FOR_AMPM) {
+				val = AppConstants.NO_DATA;
+			}
+			else {
+				val = getAmpm().ordinal();
 			}
 			break;
 		case hour:

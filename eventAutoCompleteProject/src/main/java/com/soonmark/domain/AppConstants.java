@@ -9,4 +9,5 @@ public class AppConstants {
 	public static final DayOfWeek NO_DATA_FOR_DAY = null;
 	public static final String NO_DATA_FOR_DISPLAYDAY = "";
 	public static final String NO_DATA_FOR_SPECIALDATE = "-1";
+	public static final DateTimeEn NO_DATA_FOR_AMPM = null;
 }

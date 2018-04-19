@@ -92,17 +92,17 @@ public class PatternStorage {
 		timePatterns.add("^(|.*[^1-2])(?<hour>[1-9])시([^분]*)$"); // 7시
 		
 		// 오전 오후
-		timePatterns.add("(?<ampm>오전)"); // 오전
-		timePatterns.add("(?<ampm>오후)"); // 오후
+		timePatterns.add("(?<am>오전)"); // 오전
+		timePatterns.add("(?<pm>오후)"); // 오후
 		
-		timePatterns.add("(?<ampm>(?i)am)"); // am
-		timePatterns.add("(?<ampm>(?i)pm)"); // pm
+		timePatterns.add("(?<am>(?i)am)"); // am
+		timePatterns.add("(?<pm>(?i)pm)"); // pm
 		
-		timePatterns.add("(?<ampm>(?i)a.m)"); // am
-		timePatterns.add("(?<ampm>(?i)p.m)"); // pm
+		timePatterns.add("(?<am>(?i)a.m)"); // am
+		timePatterns.add("(?<pm>(?i)p.m)"); // pm
 
-		timePatterns.add("(?<ampm>(?i)AM)"); // am
-		timePatterns.add("(?<ampm>(?i)PM)"); // pm
+		timePatterns.add("(?<am>(?i)AM)"); // am
+		timePatterns.add("(?<pm>(?i)PM)"); // pm
 	}
 
 	public void initDayPatterns() {

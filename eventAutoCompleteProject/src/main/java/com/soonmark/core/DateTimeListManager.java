@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.soonmark.domain.DateTimeDTO;
 import com.soonmark.domain.DateTimeEn;
+import com.soonmark.domain.Priority;
 import com.soonmark.domain.TokenType;
 
 public class DateTimeListManager {
@@ -24,12 +25,12 @@ public class DateTimeListManager {
 		dtObjList = new ArrayList<DateTimeLogicalObject>();
 		this.listType = listType;
 	}
-	
+
 	public List<DateTimeDTO> getDtDTOList() {
 		List<DateTimeDTO> newList = new ArrayList<DateTimeDTO>();
-		
+
 		Iterator<DateTimeLogicalObject> iter = dtObjList.iterator();
-		while(iter.hasNext()) {
+		while (iter.hasNext()) {
 			newList.add(iter.next().toDTO());
 		}
 		return newList;
@@ -83,7 +84,7 @@ public class DateTimeListManager {
 		}
 		return isEmpty;
 	}
-	
+
 	boolean isListEmpty(List<DateTimeLogicalObject> list) {
 		boolean isEmpty = false;
 		if (list.size() == 0) {
@@ -103,23 +104,52 @@ public class DateTimeListManager {
 			}
 		}
 
+		if (ableToPut == false) {
+			{
+
+				boolean nonTargetOnly = true;
+				for (DateTimeEn d : DateTimeEn.values()) {
+					if (target.hasInfo(d.ordinal()) && !nonTarget.hasInfo(d.ordinal())) {
+						nonTargetOnly = false;
+					}
+				}
+
+				if (nonTargetOnly == true) {
+					ableToPut = true;
+				}
+			}
+			{
+				boolean hasDiffValue = false;
+				for (DateTimeEn d : DateTimeEn.values()) {
+					if (target.hasInfo(d.ordinal()) && nonTarget.hasInfo(d.ordinal())
+							&& target.getByDateTimeEn(d) != nonTarget.getByDateTimeEn(d)) {
+						hasDiffValue = true;
+					}
+				}
+
+				if (hasDiffValue == true) {
+					ableToPut = true;
+				}
+			}
+		}
+
 		return ableToPut;
 	}
 
 	// 리스트 간 병합
 	void mergeByList(TokenType tokenType, DateTimeListManager list) {
-		
+
 		new ListMerger().listMergeByTokenType(tokenType, this, list);
 	}
-	
-	void addPmTime() {
+
+	void adjustForAmPmTime() {
 		DateTimeAdjuster dateTimeAdjuster = new DateTimeAdjuster();
-		dateTimeAdjuster.addPmTime(this);
+		dateTimeAdjuster.adjustForAmPmTime(this);
 	}
 
 	public void sortByPriority() {
 		Ascending ascending = new Ascending();
-        Collections.sort(this.getDtMgrList(), ascending);
+		Collections.sort(this.getDtMgrList(), ascending);
 	}
 
 	public boolean isDiffValueFromTargetMgr(DateTimeLogicalObject target, DateTimeLogicalObject nonTarget) {
@@ -138,7 +168,7 @@ public class DateTimeListManager {
 }
 
 class Ascending implements Comparator<DateTimeLogicalObject> {
-	 
+
 	@Override
 	public int compare(DateTimeLogicalObject o1, DateTimeLogicalObject o2) {
 		return o1.getPriority().compareTo(o2.getPriority());

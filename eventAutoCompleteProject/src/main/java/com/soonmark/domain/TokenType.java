@@ -54,8 +54,33 @@ public enum TokenType {
 		}
 	}, times(2){
 		public void setDtObjInfo(DateTimeLogicalObject dtObj, Matcher matcher) {
-			dtObj.setHour(Integer.parseInt(matcher.group("hour")));
-			dtObj.setHasInfo(DateTimeEn.hour.ordinal(), true);
+			try {
+				if(matcher.group("am") != null) {
+					dtObj.setAmpm(DateTimeEn.am);
+					dtObj.setHasInfo(DateTimeEn.am.ordinal(), true);
+				}
+			} catch(IllegalArgumentException e) {
+			}
+			try {
+				if(matcher.group("pm") != null) {
+					dtObj.setAmpm(DateTimeEn.pm);
+					dtObj.setHasInfo(DateTimeEn.pm.ordinal(), true);
+				}
+			} catch(IllegalArgumentException e) {
+				
+			}
+			try {
+				dtObj.setHour(Integer.parseInt(matcher.group("hour")));
+				dtObj.setHasInfo(DateTimeEn.hour.ordinal(), true);
+			} catch(IllegalArgumentException e) {
+				if(dtObj.getAmpm() == DateTimeEn.am) {
+					dtObj.setHour(9);
+					dtObj.setHasInfo(DateTimeEn.hour.ordinal(), true);
+				}else if(dtObj.getAmpm() == DateTimeEn.pm) {
+					dtObj.setHour(12);
+					dtObj.setHasInfo(DateTimeEn.hour.ordinal(), true);
+				}
+			}
 			try {
 				// 시간 중에 group 명이 minute 이 없는 경우 0으로 세팅
 				dtObj.setMinute(Integer.parseInt(matcher.group("minute")));

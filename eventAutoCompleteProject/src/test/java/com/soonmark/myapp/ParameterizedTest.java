@@ -19,6 +19,7 @@ import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.soonmark.domain.DateTimeDTO;
+import com.soonmark.domain.DateTimeEn;
 import com.soonmark.domain.SpecialDateType;
 import com.soonmark.service.RecommendationService;
 
@@ -103,6 +104,30 @@ public class ParameterizedTest {
 		}
 		second = first.plusHours(12);
 
+		
+		return Arrays.asList(new DateTimeDTO(first.getYear(), first.getMonthValue(), first.getDayOfMonth(),
+				first.getDayOfWeek(), first.getHour(), first.getMinute(), false),
+				new DateTimeDTO(second.getYear(), second.getMonthValue(), second.getDayOfMonth(),
+						second.getDayOfWeek(), second.getHour(), second.getMinute(), false));
+	}
+	
+	static List<DateTimeDTO> setBy24Time(DateTimeEn ampm, int h, int m){
+		LocalDateTime first = LocalDateTime.now();
+		LocalDateTime second = LocalDateTime.now();
+		
+		first = first.withHour(h).withMinute(m);
+		
+		// 오전 19시는 오후 19시로 처리하게 함.
+		// 오후 11시는 23시로 처리
+		if(ampm == DateTimeEn.pm){
+			if(h < 12) {
+				first = first.plusHours(12);
+			}
+		}
+		if(LocalDateTime.now().isAfter(first)) {
+			first = first.plusDays(1);
+		}
+		second = first.plusDays(1);
 		
 		return Arrays.asList(new DateTimeDTO(first.getYear(), first.getMonthValue(), first.getDayOfMonth(),
 				first.getDayOfWeek(), first.getHour(), first.getMinute(), false),
@@ -247,6 +272,11 @@ public class ParameterizedTest {
 		params.add(new Object[] { "00.12.10",
 				Arrays.asList(new DateTimeDTO(2000, 12, 10, LocalDate.of(2000, 12, 10).getDayOfWeek(), -1, -1, true))});
 
+		params.add(new Object[] { "10.10.09",
+				Arrays.asList(new DateTimeDTO(2010, 10, 9, LocalDate.of(2010, 10, 9).getDayOfWeek(), -1, -1, true),
+						new DateTimeDTO(2018, 10, 10, LocalDate.of(2018, 10, 10).getDayOfWeek(), -1, -1, true)) });
+
+		// 10
 		// 년 월
 		params.add(new Object[] { "내 생일 94년 6월 중",
 				Arrays.asList(new DateTimeDTO(1994, 6, 1, LocalDate.of(1994, 6, 1).getDayOfWeek(), -1, -1, true),
@@ -306,6 +336,7 @@ public class ParameterizedTest {
 								tmpDate.plusMonths(1).withDayOfMonth(17).getMonthValue(), 17,
 								tmpDate.plusMonths(1).withDayOfMonth(17).getDayOfWeek(), -1, -1, true)) });
 		
+		// 20
 		params.add(new Object[] { "19일날 가족 외식", Arrays.asList(
 				new DateTimeDTO(tmpDate.withDayOfMonth(19).getYear(), tmpDate.withDayOfMonth(19).getMonthValue(), 19,
 						tmpDate.withDayOfMonth(19).getDayOfWeek(), -1, -1, true),
@@ -319,10 +350,6 @@ public class ParameterizedTest {
 		params.add(new Object[] { "친구보기 30일에", setByMonthSize(30)});
 		
 		params.add(new Object[] { "31일에 불꽃놀이", setByMonthSize(31)});
-		
-		
-		// 시 분
-		params.add(	new Object[] { "12시 30분", setByHalfTime(12, 30)});
 		
 
 		// 월 시
@@ -345,12 +372,11 @@ public class ParameterizedTest {
 						new DateTimeDTO(tmpDate.withMonth(3).withDayOfMonth(5).getYear(), 3, 5,
 								tmpDate.withMonth(3).withDayOfMonth(5).getDayOfWeek(), 23, 20, false)) });
 		
+		// 30
 		// 월 일 요일 시
 		params.add(new Object[] { "4월 9일 월요일 19시",
 				Arrays.asList(new DateTimeDTO(tmpDate.withMonth(4).withDayOfMonth(9).getYear(), 4, 9,
-						tmpDate.withMonth(4).withDayOfMonth(9).getDayOfWeek(), 19, 0, false),
-						new DateTimeDTO(tmpDate.plusYears(1).withMonth(4).withDayOfMonth(9).getYear(), 4, 9,
-								tmpDate.plusYears(1).withMonth(4).withDayOfMonth(9).getDayOfWeek(), 19, 0, false)) });
+						tmpDate.withMonth(4).withDayOfMonth(9).getDayOfWeek(), 19, 0, false)) });
 
 		params.add(new Object[] { "4.18 월요일 10:10",
 				Arrays.asList(new DateTimeDTO(tmpDate.withMonth(4).withDayOfMonth(18).getYear(), 4, 18,
@@ -373,7 +399,8 @@ public class ParameterizedTest {
 						new DateTimeDTO(tmpDate.plusYears(1).withMonth(4).withDayOfMonth(1).getYear(), 4, 1,
 								tmpDate.plusYears(1).withMonth(4).withDayOfMonth(1).getDayOfWeek(), -1, -1, true)) });
 		
-//		params.add(new Object[] { "4-1 일요일", setByDateDay(4, 1, DayOfWeek.SUNDAY)});
+		params.add(new Object[] { "4-1 일요일", Arrays.asList(new DateTimeDTO(tmpDate.withMonth(4).withDayOfMonth(1).getYear(), 4, 1,
+				tmpDate.withMonth(4).withDayOfMonth(1).getDayOfWeek(), -1, -1, true))});
 
 		// 다중 날짜
 //		params.add(new Object[] { "25일에 4.3 추모 행사 참여",
@@ -427,6 +454,7 @@ public class ParameterizedTest {
 				Arrays.asList(new DateTimeDTO(tmpDate.plusDays(1).getYear(), tmpDate.plusDays(1).getMonthValue(), tmpDate.plusDays(1).getDayOfMonth(),
 						tmpDate.plusDays(1).getDayOfWeek(), -1, -1, true)) });
 		
+		// 40
 		// 특수날짜(오늘) 시 분
 		params.add(new Object[] { "오늘 12시 30분에 음원차트 확인",
 				Arrays.asList(new DateTimeDTO(tmpDate.getYear(), tmpDate.getMonthValue(), tmpDate.getDayOfMonth(),
@@ -472,6 +500,31 @@ public class ParameterizedTest {
 						tmpDate.with(TemporalAdjusters.next(DayOfWeek.SUNDAY)).plusWeeks(1).getMonthValue(),
 						tmpDate.with(TemporalAdjusters.next(DayOfWeek.SUNDAY)).plusWeeks(1).getDayOfMonth(),
 						DayOfWeek.SUNDAY, -1, -1, true)) });
+		
+		
+		// 오전 오후  없는 시간
+		params.add(new Object[] { "9시", setByHalfTime(9, 0) });
+		params.add(	new Object[] { "12시 30분", setByHalfTime(12, 30)});
+		
+		// 50
+		// 오전 오후 있는 시간
+		params.add(new Object[] { "오전 9시", setBy24Time(DateTimeEn.am, 9, 0) });
+		params.add(new Object[] { "am 9시", setBy24Time(DateTimeEn.am, 9, 0) });
+		params.add(new Object[] { "AM 9시", setBy24Time(DateTimeEn.am, 9, 0) });
+		params.add(new Object[] { "A.M. 9시", setBy24Time(DateTimeEn.am, 9, 0) });
+		params.add(new Object[] { "19:01", setBy24Time(DateTimeEn.pm, 19, 1) });
+		
+		
+		// 오전/오후
+		params.add(new Object[] { "오전",
+				Arrays.asList(new DateTimeDTO(tmpDate.getYear(), tmpDate.getMonthValue(), tmpDate.getDayOfMonth(), tmpDate.getDayOfWeek(), 9, 0, true),
+						new DateTimeDTO(tmpDate.getYear(), tmpDate.getMonthValue(), tmpDate.getDayOfMonth(), tmpDate.getDayOfWeek(), 10, 0, true)) });
+		params.add(new Object[] { "오후",
+				Arrays.asList(new DateTimeDTO(tmpDate.getYear(), tmpDate.getMonthValue(), tmpDate.getDayOfMonth(), tmpDate.getDayOfWeek(), 12, 0, true),
+						new DateTimeDTO(tmpDate.getYear(), tmpDate.getMonthValue(), tmpDate.getDayOfMonth(), tmpDate.getDayOfWeek(), 13, 0, true)) });
+		params.add(new Object[] { "am",
+				Arrays.asList(new DateTimeDTO(tmpDate.getYear(), tmpDate.getMonthValue(), tmpDate.getDayOfMonth(), tmpDate.getDayOfWeek(), 9, 0, true),
+						new DateTimeDTO(tmpDate.getYear(), tmpDate.getMonthValue(), tmpDate.getDayOfMonth(), tmpDate.getDayOfWeek(), 10, 0, true)) });
 		
 
 		return params;

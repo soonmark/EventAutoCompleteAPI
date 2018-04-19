@@ -101,8 +101,8 @@ public class DateTimeListMgrSet {
 		targetList.mergeByList(tokenType, nonTargetList);
 	}
 	
-	public void addPmTime() {
-		timeList.addPmTime();
+	public void adjustForAmPmTime() {
+		timeList.adjustForAmPmTime();
 	}
 
 }

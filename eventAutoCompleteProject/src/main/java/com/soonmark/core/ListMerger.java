@@ -192,7 +192,7 @@ public class ListMerger {
 	private boolean hasDateInfo(int i) {
 		boolean hasDateInfo = false;
 
-		// 현재 입력받은 데이터 값만 집어넣기
+		// 현재 입력받은 데이터 값만 집어넣기 
 		for (DateTimeEn dtEn : DateTimeEn.values()) {
 			if (dtEn == DateTimeEn.day) {
 				break;

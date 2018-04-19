@@ -35,10 +35,10 @@ public class DateTimeAdjuster {
 	public int getDate() {
 		return timePoint.getDayOfMonth();
 	}
-	
+
 	public int getNextOrSameLeapYear() {
 		int year = 0;
-		for (int i = 0 ; i < 4 ; i++) {
+		for (int i = 0; i < 4; i++) {
 			if (timePoint.plusYears(i).toLocalDate().isLeapYear()) {
 				year = timePoint.plusYears(i).getYear();
 				break;
@@ -172,55 +172,69 @@ public class DateTimeAdjuster {
 			long diff = cal.getTimePoint().getYear() - timePoint.getYear();
 			timePoint = timePoint.plusYears(diff + plus);
 			// 차이만큼 더했는데도 이전이면, 월이나 일을 계산했을 때 이전인 것이므로 한번더 1년을 더해줌.
-		}
-		else if (focus == DateTimeEn.month) {
+		} else if (focus == DateTimeEn.month) {
 			long diff = cal.getTimePoint().getMonthValue() - timePoint.getMonthValue();
-			if(timePoint.getYear() == LocalDateTime.now().getYear()) {
-				if(timePoint.getDayOfMonth() == timePoint.withMonth(LocalDateTime.now().getMonthValue()).getDayOfMonth()) {
+			if (timePoint.getYear() == LocalDateTime.now().getYear()) {
+				if (timePoint.getDayOfMonth() == timePoint.withMonth(LocalDateTime.now().getMonthValue())
+						.getDayOfMonth()) {
 					timePoint = timePoint.withMonth(LocalDateTime.now().getMonthValue());
-				}
-				else {
-					timePoint = timePoint.withMonth(LocalDateTime.now().getMonthValue())
-							.plusMonths(1).withDayOfMonth(timePoint.getDayOfMonth());
+				} else {
+					timePoint = timePoint.withMonth(LocalDateTime.now().getMonthValue()).plusMonths(1)
+							.withDayOfMonth(timePoint.getDayOfMonth());
 				}
 			}
-			if(timePoint.plusMonths(diff + plus).getDayOfMonth() == timePoint.getDayOfMonth()) {
+			if (timePoint.plusMonths(diff + plus).getDayOfMonth() == timePoint.getDayOfMonth()) {
 				timePoint = timePoint.plusMonths(diff + plus);
-			}
-			else {
+			} else {
 				timePoint = timePoint.plusMonths(diff + plus + 1);
 			}
-		}
-		else if (focus == DateTimeEn.date) {
+		} else if (focus == DateTimeEn.date) {
 			long diff = cal.getTimePoint().getDayOfMonth() - timePoint.getDayOfMonth();
-			if(timePoint.getYear() == LocalDateTime.now().getYear()
-				&& timePoint.getMonthValue() == LocalDateTime.now().getMonthValue()) {
+			if (timePoint.getYear() == LocalDateTime.now().getYear()
+					&& timePoint.getMonthValue() == LocalDateTime.now().getMonthValue()) {
 				timePoint = timePoint.withDayOfMonth(LocalDateTime.now().getDayOfMonth());
 			}
 			timePoint = timePoint.plusDays(diff + plus);
 		}
 	}
-	
-	void addPmTime(DateTimeListManager targetList){
+
+	void addPmTime(DateTimeLogicalObject dateTimeLogicalObject) {
+		if(dateTimeLogicalObject.getAmpm() == DateTimeEn.am) {
+			if(dateTimeLogicalObject.getHour() >= 12) {
+				dateTimeLogicalObject.setHour(dateTimeLogicalObject.getHour() - 12);
+			}
+		}
+		else if(dateTimeLogicalObject.getAmpm() == DateTimeEn.pm) {
+			if(dateTimeLogicalObject.getHour() < 12) {
+				dateTimeLogicalObject.setHour(dateTimeLogicalObject.getHour() + 12);
+			}
+		}
+	}
+
+	public void adjustForAmPmTime(DateTimeListManager targetList) {
 		DateTimeListManager beforeList = new DateTimeListManager();
-		for(int i = 0 ; i < targetList.getDtMgrList().size() ; i++) {
+		for (int i = 0; i < targetList.getDtMgrList().size(); i++) {
 			beforeList.insertDtObj(targetList.getElement(i));
 		}
-		
-		for(int i = 0 ; i < beforeList.getDtMgrList().size() ; i++) {
+
+		for (int i = 0; i < beforeList.getDtMgrList().size(); i++) {
 			DateTimeLogicalObject dtObj = new DateTimeLogicalObject();
 			dtObj.setAllDate(beforeList.getElement(i));
 			dtObj.setMinute(beforeList.getElement(i).getMinute());
 			dtObj.setHour((beforeList.getElement(i).getHour() + 12) % 24);
-			if(beforeList.getElement(i).getHour() < 12) {
-				targetList.getElement(i).setPriority(Priority.am);
-				dtObj.setPriority(Priority.pm);
-				targetList.insertDtObj(dtObj);
+			if (beforeList.getElement(i).getAmpm() == AppConstants.NO_DATA_FOR_AMPM) {
+				if (beforeList.getElement(i).getHour() < 12) {
+					targetList.getElement(i).setPriority(Priority.am);
+					dtObj.setPriority(Priority.pm);
+					targetList.insertDtObj(dtObj);
+				} else if (beforeList.getElement(i).getHour() == 12) {
+					targetList.getElement(i).setPriority(Priority.pm);
+					dtObj.setPriority(Priority.am);
+					targetList.insertDtObj(dtObj);
+				}
 			}
-			else if(beforeList.getElement(i).getHour() == 12) {
-				targetList.getElement(i).setPriority(Priority.pm);
-				dtObj.setPriority(Priority.am);
-				targetList.insertDtObj(dtObj);
+			else {
+				addPmTime(targetList.getElement(i));
 			}
 		}
 	}

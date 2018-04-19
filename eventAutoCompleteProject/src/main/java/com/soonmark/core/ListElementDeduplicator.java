@@ -38,9 +38,25 @@ public class ListElementDeduplicator {
 
 		// 윤년있으면 처리
 		setIfIsLeapYear(tmpList);
+		
+		// 빈 토큰 있으면 focus 두도록 하기
+		setElementFocusedIfEmpty(tmpList);
 
 		// 넣은 리스트를 타겟 리스트에 옮겨 넣음.
 		moveDataToTargetList(tmpList);
+	}
+
+	private void setElementFocusedIfEmpty(DateTimeListManager tmpList) {
+		for (int j = 0; j < tmpList.getDtMgrList().size(); j++) {
+			for (DateTimeEn d : DateTimeEn.values()) {
+				if (d.getTypeNum() != listType.getInteger()) {
+					continue;
+				}
+				if (tmpList.getElement(j).getByDateTimeEn(d) == AppConstants.NO_DATA) {
+					tmpList.getElement(j).setFocusToRepeat(d);
+				}
+			}
+		}
 	}
 
 	private void setIfIsLeapYear(DateTimeListManager tmpList) {
@@ -87,26 +103,15 @@ public class ListElementDeduplicator {
 				}
 			}
 		}
-
 	}
 
 	private void moveDataToTargetList(DateTimeListManager tmpList) {
 		// 임시 리스트 -> 타겟 리스트로 데이터 옮기기
 		afterListMgr.clearList();
+		// tmpList의 마지막 element 는 빈 객체라서 빼고 옮김.
 		for (int j = 0; j < tmpList.getDtMgrList().size() - 1; j++) {
 			afterListMgr.insertDtObj(tmpList.getElement(j));
 		}
-		for (int j = 0; j < afterListMgr.getDtMgrList().size(); j++) {
-			for (DateTimeEn d : DateTimeEn.values()) {
-				if (d.getTypeNum() != listType.getInteger()) {
-					continue;
-				}
-				if (afterListMgr.getElement(j).getByDateTimeEn(d) == AppConstants.NO_DATA) {
-					tmpList.getElement(j).setFocusToRepeat(d);
-				}
-			}
-		}
-
 	}
 
 	private void givePriority() {
@@ -156,6 +161,5 @@ public class ListElementDeduplicator {
 				}
 			}
 		}
-
 	}
 }
