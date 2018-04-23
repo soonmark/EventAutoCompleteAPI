@@ -14,8 +14,8 @@ public class RecommendationServiceImpl implements RecommendationService {
 	@Autowired private RecommendationManager recommendationManager;
 
 	@Override
-	public List<DateTimeDTO> getRecommendations(String inputText) throws Exception {
+	public List<DateTimeDTO> getRecommendations(String inputText, String startDate, String endDate) throws Exception {
 		
-		return recommendationManager.getRecommendations(inputText);
+		return recommendationManager.getRecommendations(inputText, startDate, endDate);
 	}
 }

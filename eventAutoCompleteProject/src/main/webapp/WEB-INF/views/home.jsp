@@ -137,11 +137,52 @@ body {
 			var inputEvent = $('#inputEvent');
 
 			var tmpStr = "default";
+			
+			var startDate = "startDate";
+			var endDate = "endDate";
+			
+			function createJsonObj(strDate){
+				var oriStr = strDate;
+				var idVal = "#" + strDate;
+				
+				strDate = new Object();
+				strDate.year = $(idVal).find('#year').text();
+				strDate.month = $(idVal).find('#month').text();
+				strDate.date = $(idVal).find('#date').text();
+				strDate.day = $(idVal).find('#day').text();
+				strDate.hour = $(idVal).find('#hour').text();
+				strDate.minute = $(idVal).find('#minute').text();
+				strDate.isAllDayEvent = $(idVal).find('#isAllDayEvent').text();
+				strDate = JSON.stringify(strDate);
+				console.log(strDate);
+				
+				if(oriStr == "startDate"){
+					startDate = strDate;
+				}
+				if(oriStr == "endDate"){
+					endDate = strDate;
+				}
+			}
+			
 
 			// 입력창에 입력이 될 때마다
 			$(inputEvent).keyup(function() {
 				var prev = tmpStr;
 				tmpStr = inputEvent.val();
+				
+				if($('#startDate').length){
+					if(startDate == "startDate"){
+						createJsonObj(startDate);
+					}
+				}
+				if($('#endDate').length){
+					if(endDate == "endDate"){
+						createJsonObj(endDate);
+					}
+				}
+				console.log("startDate : " + startDate);
+				console.log("endDate : " + endDate);
+				
 
 				// but 이전 입력값과 같으면 얼럿 안 나오게 
 				if (tmpStr != prev)
@@ -167,11 +208,13 @@ body {
 
 				// 뷰 올리기...
 				var settings = {
-					url : 'refresh',
+					url : 'getEvent',
 					type : 'post',
 					dataType : 'json',
 					data : {
-						"inputEventsss" : tmpStr
+						"inputText" : tmpStr,
+ 						"startDate" : startDate,
+						"endDate" : endDate
 					},
 					success : function(data) {
 						var str = "";
@@ -184,42 +227,51 @@ body {
 											if (dataEach.year == INVALID_INPUT_CHARACTER) {
 												alert("., /, -, : 외의 기호는 입력이 불가능합니다.");
 											} else {
+												var infoStr = "";
 												str += "<div class=\"list-group-item\">";
+												
 												if (dataEach.year != NO_DATA) {
 													str += zeroFill(
 															dataEach.year, 4);
+													infoStr += "<div class=\"info\" id=\"year\">" + zeroFill(dataEach.year, 4) + "</div>";
 												}
 												if (dataEach.month != NO_DATA) {
 													str += "/"
 															+ zeroFill(
 																	dataEach.month,
 																	2) + "/";
+													infoStr += "<div class=\"info\" id=\"month\">" + zeroFill(dataEach.month, 2) + "</div>";
 												}
 												if (dataEach.date != NO_DATA) {
 													str += zeroFill(
 															dataEach.date, 2)
 															+ " ";
+													infoStr += "<div class=\"info\" id=\"date\">" + zeroFill(dataEach.date, 2) + "</div>";
 												}
 												if (dataEach.displayDay != NO_DATA_FOR_DAY) {
 													str += dataEach.displayDay
 															+ " ";
+													infoStr += "<div class=\"info\" id=\"day\">" + dataEach.displayDay + "</div>";
 												}
 												if (dataEach.allDayEvent == true) {
 													str += "종일";
+													infoStr += "<div class=\"info\" id=\"isAllDayEvent\">" + dataEach.allDayEvent + "</div>";
 												} else {
 													if (dataEach.hour != NO_DATA) {
 														str += zeroFill(
 																dataEach.hour,
 																2);
+														infoStr += "<div class=\"info\" id=\"hour\">" + dataEach.hour + "</div>";
 													}
 													if (dataEach.minute != NO_DATA) {
 														str += ":"
 																+ zeroFill(
 																		dataEach.minute,
 																		2);
+														infoStr += "<div class=\"info\" id=\"minute\">" + dataEach.minute + "</div>";
 													}
 												}
-												str += "</div>";
+												str += infoStr + "</div>";
 											}
 										});
 
@@ -244,15 +296,39 @@ body {
 			}
 			;
 		});
+		
+		// 리스트 중에서 하나 클릭했을 때 이벤트
 		$(document).on({
 			click : function() {
 /* 				$('.changedText').text("선택한 날짜 : " + $(this).text()); */
 				
-				if ( $('.newly-added').length < 2) {
-					var newEvent = "<li class=\"list-float-left newly-added\"><span>"
-									+ $(this).text() + "</span></li>";
+				if ( $('.newly-added').length == 0) {
+					console.log("text: " + $(this).clone().children().remove().end().text());
+					var newEvent = "<li class=\"list-float-left newly-added\" id=\"startDate\"><span>"
+									+ $(this).clone().children().remove().end().text() + "</span></li>";
+
 					$('.list_eventDates').prepend(newEvent);
-				}	
+					
+					$(this).find(".info").each(
+							function(){
+								$('#startDate').append($(this).clone());
+					});
+				}
+				else if ( $('.newly-added').length == 1) {
+					console.log("text: " + $(this).clone().children().remove().end().text());
+					var newEvent = "<li class=\"list-float-left newly-added\" id=\"endDate\"><span>"
+									+ $(this).clone().children().remove().end().text() + "</span></li>";
+
+					$('.list_eventDates').prepend(newEvent);
+					
+					$(this).find(".info").each(
+							function(){
+								$('#endDate').append($(this).clone());
+					});
+				}
+				
+				
+/* 				checkInput(); */
 			}
 		}, '.list-group-item');
 	</script>

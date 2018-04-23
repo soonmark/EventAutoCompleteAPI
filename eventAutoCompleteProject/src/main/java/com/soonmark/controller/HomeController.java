@@ -39,14 +39,29 @@ public class HomeController {
 
 	// Ajax request 받아서 json 형태로 response.
 	// 시간, 날짜 추천 리스트 보냄
-	@RequestMapping(value = "refresh", method = RequestMethod.POST, produces = "application/json; charset=utf8")
+	@RequestMapping(value = "getEvent", method = RequestMethod.POST, produces = "application/json; charset=utf8")
 	@ResponseBody
 	public List<DateTimeDTO> inputProcess(HttpServletRequest httpServletRequest) throws Exception {
 
 		// 입력값 불러오기
-		String inputEvent = httpServletRequest.getParameter("inputEventsss");
+		String inputEvent = httpServletRequest.getParameter("inputText");
+		String startDate = httpServletRequest.getParameter("startDate");
+		String endDate = httpServletRequest.getParameter("endDate");
+		
+		if(startDate != null) {
+			logger.info(startDate.toString());
+		}
+		else {
+			logger.info("No startDate");
+		}
+		if(endDate != null) {
+			logger.info(endDate.toString());
+		}
+		else {
+			logger.info("No endDate");
+		}
 		
 		// 서비스에 넘김
-		return recommendationService.getRecommendations(inputEvent);
+		return recommendationService.getRecommendations(inputEvent, startDate, endDate);
 	}
 }

@@ -90,3 +90,7 @@ html, body {
 .newly-added{
 	background-color: #0b0;
 }
+
+.info{
+	display:none;
+}

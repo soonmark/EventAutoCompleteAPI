@@ -1,8 +1,5 @@
 package com.soonmark.core;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -11,8 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import com.soonmark.domain.AppConstants;
 import com.soonmark.domain.DateTimeDTO;
-import com.soonmark.domain.DateTimeEn;
-import com.soonmark.domain.Priority;
 import com.soonmark.domain.TokenType;
 
 public class RecommendationManager {
@@ -54,7 +49,7 @@ public class RecommendationManager {
 		this.dateTimeListManagerSet = dateTimeListManagerSet;
 	}
 
-	public List<DateTimeDTO> getRecommendations(String inputText) {
+	public List<DateTimeDTO> getRecommendations(String inputText, String startDate, String endDate) {
 		focusingRecurNum = 2;
 		dateTimeListManagerSet = new DateTimeListMgrSet();
 		this.inputText = inputText;
