@@ -165,6 +165,27 @@ public class DateTimeListManager {
 		return isDiffValueFromTargetMgr;
 	}
 
+	public boolean containsList(DateTimeLogicalObject target, DateTimeLogicalObject nonTarget) {
+		boolean isIncludingTarget = true;
+		for (DateTimeEn d : DateTimeEn.values()) {
+			if (target.hasInfo(d.ordinal()) && nonTarget.hasInfo(d.ordinal())
+					&& target.getByDateTimeEn(d) != nonTarget.getByDateTimeEn(d)) {
+				isIncludingTarget = false;
+				break;
+			}
+		}
+		if(isIncludingTarget == true) {
+			for (DateTimeEn d : DateTimeEn.values()) {
+				if (target.hasInfo(d.ordinal()) && !nonTarget.hasInfo(d.ordinal())) {
+					isIncludingTarget = false;
+					break;
+				}
+			}
+		}
+
+		return isIncludingTarget;
+	}
+
 }
 
 class Ascending implements Comparator<DateTimeLogicalObject> {

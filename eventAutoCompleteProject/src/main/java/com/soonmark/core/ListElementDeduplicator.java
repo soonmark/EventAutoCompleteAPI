@@ -91,6 +91,10 @@ public class ListElementDeduplicator {
 					tmpList.insertDtObj(new DateTimeLogicalObject());
 					j++;
 				}
+//				else if(afterListMgr.containsList(tmpList.getElement(j), afterListMgr.getElement(i))) {
+//					tmpList.insertDtObj(new DateTimeLogicalObject());
+//					j++;
+//				}
 
 				for (DateTimeEn d : DateTimeEn.values()) {
 					if (d.getTypeNum() != listType.getInteger()) {

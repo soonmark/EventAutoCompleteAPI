@@ -6,6 +6,7 @@ import static org.junit.Assert.*;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,15 +50,56 @@ public class ParameterizedTest {
 		this.testContextManager.prepareTestInstance(this);
 	}
 	
+	static List<DateTimeDTO> setByYear(int y){
+		LocalDate first = LocalDate.now();
+		LocalDate second = LocalDate.now();
+		
+		if (LocalDate.now().getYear() != y) {
+			first = first.withYear(y).withMonth(1).withDayOfMonth(1);
+		} else {
+			first = LocalDate.now();
+		}
+		second = first.plusDays(1).withYear(y);
+		
+		return Arrays.asList(new DateTimeDTO(first.getYear(), first.getMonthValue(), first.getDayOfMonth(),
+				first.getDayOfWeek(), -1, -1, true),
+				new DateTimeDTO(second.getYear(), second.getMonthValue(), second.getDayOfMonth(),
+						second.getDayOfWeek(), -1, -1, true));
+	}
+	
+	static List<DateTimeDTO> setByMonthDate(int m, int d){
+		LocalDate first = LocalDate.now();
+		LocalDate second = LocalDate.now();
+		
+		first = first.withMonth(m).withDayOfMonth(d);
+		
+		if (first.getDayOfMonth() != d) {
+			first = first.plusMonths(1).withDayOfMonth(d);
+		} else {
+			if(first.isBefore(LocalDate.now())) {
+				first.plusYears(1);
+			}
+		}
+		if(first.plusMonths(1).getDayOfMonth() != d) {
+			second = first.plusMonths(2).withDayOfMonth(d);
+		}
+		else {
+			second = first.plusMonths(1).withDayOfMonth(d);
+		}
+		
+		return Arrays.asList(new DateTimeDTO(first.getYear(), first.getMonthValue(), first.getDayOfMonth(),
+				first.getDayOfWeek(), -1, -1, true),
+				new DateTimeDTO(second.getYear(), second.getMonthValue(), second.getDayOfMonth(),
+						second.getDayOfWeek(), -1, -1, true));
+	}
+	
 	static List<DateTimeDTO> setByMonth(int month){
 		LocalDate first = LocalDate.now();
 		LocalDate second = LocalDate.now();
 		if (LocalDate.now().getMonthValue() != month) {
 			first = first.withMonth(month).withDayOfMonth(1);
-			second = first.plusDays(1);
-		} else {
-			second = first.plusDays(1).withMonth(month);
 		}
+		second = first.plusDays(1).withMonth(month);
 		
 		return Arrays.asList(new DateTimeDTO(first.getYear(), first.getMonthValue(), first.getDayOfMonth(),
 									first.getDayOfWeek(), -1, -1, true),
@@ -65,17 +107,29 @@ public class ParameterizedTest {
 									second.getDayOfWeek(), -1, -1, true));
 	}
 	
-	static List<DateTimeDTO> setByMonthSize(int date){
+	static List<DateTimeDTO> setByDate(int date){
 		LocalDate first = LocalDate.now();
 		LocalDate second = LocalDate.now();
+		
 		// *일이 들어왔는데 이번달에 *일이 없을 때
+		
 		if (LocalDate.now().with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth() < date) {
 			first = first.plusMonths(1).withDayOfMonth(date);
 		}
 		else {
 			first = first.withDayOfMonth(date);
 		}
-		if(first.getDayOfMonth() == first.plusMonths(1).getDayOfMonth()) {
+		
+		if(first.isBefore(LocalDate.now())) {
+			if(first.plusMonths(1).getDayOfMonth() != date) {
+				first = first.plusMonths(2);
+			}
+			else {
+				first = first.plusMonths(1);
+			}
+		}
+		
+		if(date == first.plusMonths(1).getDayOfMonth()) {
 			second = first.plusMonths(1);
 		}
 		else {
@@ -134,34 +188,17 @@ public class ParameterizedTest {
 				new DateTimeDTO(second.getYear(), second.getMonthValue(), second.getDayOfMonth(),
 						second.getDayOfWeek(), second.getHour(), second.getMinute(), false));
 	}
-	
-//	static List<DateTimeDTO> setByDateDay(int m, int dt, DayOfWeek day){
-//		LocalDateTime first = LocalDateTime.now();
-//		LocalDateTime second = LocalDateTime.now();
-//		
-//		first = first.withMonth(m).withDayOfMonth(dt);
-//		for(int i = 1 ; i < 15 ; i++) {
-//			second = first.plusYears(i);
-//			if(second.getDayOfWeek() == day) {
-//				break;
-//			}
-//		}
-//		
-//		return Arrays.asList(new DateTimeDTO(first.getYear(), first.getMonthValue(), first.getDayOfMonth(),
-//				first.getDayOfWeek(), -1, -1, true),
-//				new DateTimeDTO(second.getYear(), second.getMonthValue(), second.getDayOfMonth(),
-//						second.getDayOfWeek(), -1, -1, true));
-//	}
 
 	static List<DateTimeDTO> setByMonthTime(int month, int h, int min){
 		LocalDate first = LocalDate.now();
 		LocalDate second = LocalDate.now();
+		
 		if (LocalDate.now().getMonthValue() != month) {
 			first = first.withMonth(month).withDayOfMonth(1);
 		}
 		
 		int hPlus12 = h;
-		if(h <= 12) {
+		if(h <= 12 && h > 0) {
 			hPlus12 = (h+12)%24;
 			second = first;
 		}
@@ -175,61 +212,152 @@ public class ParameterizedTest {
 									second.getDayOfWeek(), hPlus12, min, false));
 	}
 	
-	static List<DateTimeDTO> setDateByWeek(int dt, SpecialDateType week){
-		LocalDateTime first = LocalDateTime.now();
-		LocalDateTime second = LocalDateTime.now();
+	static List<DateTimeDTO> setByMonthDateTime(int month, int date, int h, int min){
+		List<DateTimeDTO> setByMDList = setByMonthDate(month, date);
 		
-		int i = 0 ;
-		if(week == SpecialDateType.thisWeek) {
-			if(dt < first.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)).getDayOfMonth()
-				|| dt > first.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY)).getDayOfMonth()) {
-				first = first.withDayOfMonth(dt);
-				second = second.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
-				i = 2;
+		LocalDate first = LocalDate.of(setByMDList.get(0).getYear(), setByMDList.get(0).getMonth(),
+									setByMDList.get(0).getDate());
+		LocalDate second = first;
+		
+		int hPlus12 = h;
+		if(h <= 12 && h > 0) {
+			hPlus12 = (h+12)%24;
+		}
+		else {
+			return Arrays.asList(new DateTimeDTO(first.getYear(), first.getMonthValue(), first.getDayOfMonth(),
+					first.getDayOfWeek(), h, min, false));
+		}
+		
+		return Arrays.asList(new DateTimeDTO(first.getYear(), first.getMonthValue(), first.getDayOfMonth(),
+				first.getDayOfWeek(), h, min, false),
+				new DateTimeDTO(second.getYear(), second.getMonthValue(), second.getDayOfMonth(),
+						second.getDayOfWeek(), hPlus12, min, false));
+	}
+	
+	static List<DateTimeDTO> setByYearMonth(int y, int m){
+		LocalDate first = LocalDate.now();
+		LocalDate second = LocalDate.now();
+		
+		first = first.withYear(y).withMonth(m).withDayOfMonth(1);
+		
+		if(y == LocalDate.now().getYear() && m == LocalDate.now().getMonthValue()) {
+			first = LocalDate.now();
+		}
+		
+		if(first.plusDays(1).getMonthValue() == m) {
+			second = first.plusDays(1);
+		}else {
+			second = first.withDayOfMonth(1);
+		}
+		
+		return Arrays.asList(new DateTimeDTO(first.getYear(), first.getMonthValue(), first.getDayOfMonth(),
+				first.getDayOfWeek(), -1, -1, true),
+				new DateTimeDTO(second.getYear(), second.getMonthValue(), second.getDayOfMonth(),
+						second.getDayOfWeek(), -1, -1, true));
+	}
+	
+	static List<DateTimeDTO> setByYearDate(int y, int d){
+		LocalDate first = LocalDate.now();
+		LocalDate second = LocalDate.now();
+		
+		first = first.withYear(y).withDayOfMonth(d);
+		
+		if(first.isBefore(LocalDate.now())) {
+			if(first.plusMonths(1).getDayOfMonth() == d) {
+				first = first.plusMonths(1);
 			}
 			else {
-				first = first.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
-				i = 1;
+				first = first.plusMonths(2);
+			}
+		}
+		if(first.plusMonths(1).getDayOfMonth() == d) {
+			second = first.plusMonths(1);
+		}
+		else {
+			second = first.plusMonths(2);
+		}
+		
+		return Arrays.asList(new DateTimeDTO(first.getYear(), first.getMonthValue(), first.getDayOfMonth(),
+				first.getDayOfWeek(), -1, -1, true),
+				new DateTimeDTO(second.getYear(), second.getMonthValue(), second.getDayOfMonth(),
+						second.getDayOfWeek(), -1, -1, true));
+	}
+	
+//	static List<DateTimeDTO> setByWeekTime(int dt, SpecialDateType week, int h, int m){
+//		List<DateTimeDTO> list = setByWeekWithDate();
+//	}
+	
+	static boolean isTheDateInWeek(LocalDateTime first, List<DateTimeDTO> list, int dt, LocalDate startDate, LocalDate endDate){
+		boolean isFirstThisWeek = false;
+		for(int j = 0 ; j < 7 ; j++) {
+			LocalDate thisWeek = startDate;
+			// 이번주에 해당일이 있는 경우
+			if(thisWeek.getDayOfMonth() == dt) {
+				first = first.with(thisWeek);
+				isFirstThisWeek = true;
+				list.add(new DateTimeDTO(first.getYear(), first.getMonthValue(), first.getDayOfMonth(),
+					first.getDayOfWeek(), -1, -1, true));
+			}
+			else {
+				thisWeek = thisWeek.plusDays(1);
+			}
+		}
+		
+		return isFirstThisWeek;
+	}
+	
+	static void addAllDaysInWeek(List<DateTimeDTO> list, LocalDate thisWeek, LocalDate endDate) {
+		for(int j = 0 ; j < 7 ; j++) {
+			list.add(new DateTimeDTO(thisWeek.getYear(), thisWeek.getMonthValue(), thisWeek.getDayOfMonth(),
+					thisWeek.getDayOfWeek(), -1, -1, true));
+			thisWeek = thisWeek.plusDays(1);
+			if(thisWeek.isAfter(endDate)) {
+				break;
+			}
+		}
+	}
+	
+	static List<DateTimeDTO> setByWeekWithDate(int dt, SpecialDateType week){
+		LocalDateTime first = LocalDateTime.now();
+		
+		List<DateTimeDTO> list = new ArrayList<DateTimeDTO>();
+		
+		if(week == SpecialDateType.thisWeek) {
+			LocalDate startDate = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+			LocalDate endDate = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
+			boolean isFirstThisWeek = isTheDateInWeek(first, list, dt, startDate, endDate);
+			
+			if(isFirstThisWeek == false) {
+				LocalDate thisWeek = startDate;
+				if(thisWeek.isBefore(LocalDate.now())) {
+					thisWeek = LocalDate.now();
+				}
+				
+				addAllDaysInWeek(list, thisWeek, endDate);
 			}
 		}
 		else if(week == SpecialDateType.nextWeek) {
-			if(dt < first.with(TemporalAdjusters.next(DayOfWeek.SUNDAY)).getDayOfMonth()
-					|| dt > first.with(TemporalAdjusters.next(DayOfWeek.SUNDAY))
-						.with(TemporalAdjusters.next(DayOfWeek.SATURDAY)).getDayOfMonth()) {
-					first = first.withDayOfMonth(dt);
-					second = second.with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
-					i = 2;
-				}
-				else {
-					first = first.with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
-					i = 1;
-				}
+			LocalDate startDate = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)).plusWeeks(1);
+			LocalDate endDate = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY)).plusWeeks(1);
+			boolean isFirstnextWeek = isTheDateInWeek(first, list, dt, startDate, endDate);
+			
+			if(isFirstnextWeek == false) {
+				LocalDate nextWeek = startDate;
+				addAllDaysInWeek(list, nextWeek, endDate);
+			}
 		}
 		else if(week == SpecialDateType.weekAfterNext) {
-			if(dt < first.with(TemporalAdjusters.next(DayOfWeek.SUNDAY)).plusWeeks(1).getDayOfMonth()
-					|| dt > first.with(TemporalAdjusters.next(DayOfWeek.SUNDAY)).plusWeeks(1)
-					.with(TemporalAdjusters.next(DayOfWeek.SATURDAY)).getDayOfMonth()) {
-				first = first.withDayOfMonth(dt);
-				second = second.with(TemporalAdjusters.next(DayOfWeek.SUNDAY)).plusWeeks(1);
-				i = 2;
-			}
-			else {
-				first = first.with(TemporalAdjusters.next(DayOfWeek.SUNDAY)).plusWeeks(1);
-				i = 1;
+			LocalDate startDate = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)).plusWeeks(2);
+			LocalDate endDate = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY)).plusWeeks(2);
+			boolean isFirstWeekAfterNext = isTheDateInWeek(first, list, dt, startDate, endDate);
+			
+			if(isFirstWeekAfterNext == false) {
+				LocalDate weekAfterNext = startDate;
+				addAllDaysInWeek(list, weekAfterNext, endDate);
 			}
 		}
 		
-		if(i == 1) {
-			return Arrays.asList(new DateTimeDTO(first.getYear(), first.getMonthValue(), first.getDayOfMonth(),
-					first.getDayOfWeek(), -1, -1, true));
-		}
-		else if (i == 2){
-			return Arrays.asList(new DateTimeDTO(first.getYear(), first.getMonthValue(), first.getDayOfMonth(),
-					first.getDayOfWeek(), -1, -1, true),
-					new DateTimeDTO(second.getYear(), second.getMonthValue(), second.getDayOfMonth(),
-							second.getDayOfWeek(), -1, -1, true));
-		}
-		return null;
+		return list;
 	}
 
 	//
@@ -259,12 +387,10 @@ public class ParameterizedTest {
 				Arrays.asList(new DateTimeDTO(1999, 1, 1, LocalDate.of(1999, 1, 1).getDayOfWeek(), -1, -1, true))});
 		
 		params.add(new Object[] { "11/3/19",
-				Arrays.asList(new DateTimeDTO(2011, 3, 19, LocalDate.of(2011, 3, 19).getDayOfWeek(), -1, -1, true),
-						new DateTimeDTO(2018, 11, 3, LocalDate.of(2018, 11, 3).getDayOfWeek(), -1, -1, true)) });
+				Arrays.asList(new DateTimeDTO(2011, 3, 19, LocalDate.of(2011, 3, 19).getDayOfWeek(), -1, -1, true)) });
 		
 		params.add(new Object[] { "11/3/1",
-				Arrays.asList(new DateTimeDTO(2011, 3, 1, LocalDate.of(2011, 3, 1).getDayOfWeek(), -1, -1, true),
-						new DateTimeDTO(2018, 11, 3, LocalDate.of(2018, 11, 3).getDayOfWeek(), -1, -1, true)) });
+				Arrays.asList(new DateTimeDTO(2011, 3, 1, LocalDate.of(2011, 3, 1).getDayOfWeek(), -1, -1, true)) });
 		
 		params.add(new Object[] { "2025.2.2",
 				Arrays.asList(new DateTimeDTO(2025, 2, 2, LocalDate.of(2025, 2, 2).getDayOfWeek(), -1, -1, true))});
@@ -273,83 +399,49 @@ public class ParameterizedTest {
 				Arrays.asList(new DateTimeDTO(2000, 12, 10, LocalDate.of(2000, 12, 10).getDayOfWeek(), -1, -1, true))});
 
 		params.add(new Object[] { "10.10.09",
-				Arrays.asList(new DateTimeDTO(2010, 10, 9, LocalDate.of(2010, 10, 9).getDayOfWeek(), -1, -1, true),
-						new DateTimeDTO(2018, 10, 10, LocalDate.of(2018, 10, 10).getDayOfWeek(), -1, -1, true)) });
+				Arrays.asList(new DateTimeDTO(2010, 10, 9, LocalDate.of(2010, 10, 9).getDayOfWeek(), -1, -1, true)) });
 
-		// 10
 		// 년 월
-		params.add(new Object[] { "내 생일 94년 6월 중",
-				Arrays.asList(new DateTimeDTO(1994, 6, 1, LocalDate.of(1994, 6, 1).getDayOfWeek(), -1, -1, true),
-						new DateTimeDTO(1994, 6, 2, LocalDate.of(1994, 6, 2).getDayOfWeek(), -1, -1, true)) });
+		params.add(new Object[] { "벚꽃달인 18년 4월 계획짜기", setByYearMonth(2018, 4) });
+
+		params.add(new Object[] { "내 생일 94년 6월 중", setByYearMonth(1994, 6) });
 
 		// 년 일
-		params.add(new Object[] { "2000년 21일에 여행갔었음.",
-				Arrays.asList(new DateTimeDTO(2000, 1, 21, LocalDate.of(2000, 1, 21).getDayOfWeek(), -1, -1, true),
-						new DateTimeDTO(2000, 2, 21, LocalDate.of(2000, 2, 21).getDayOfWeek(), -1, -1, true)) });
+		params.add(new Object[] { "2000년 21일에 여행갔었음.", setByYearDate(2000, 21) });
+
+		params.add(new Object[] { "2018년 4일에 여행갔었음.", setByYearDate(2018, 4) });
 
 		// 월 일
-		params.add(new Object[] { "4-9",
-				Arrays.asList(
-						new DateTimeDTO(tmpDate.getYear(), 4, 9, tmpDate.withMonth(4).withDayOfMonth(9).getDayOfWeek(),
-								-1, -1, true),
-						new DateTimeDTO(tmpDate.plusYears(1).getYear(), 4, 9,
-								tmpDate.plusYears(1).withMonth(4).withDayOfMonth(9).getDayOfWeek(), -1, -1, true)) });
+		params.add(new Object[] { "4-9", setByMonthDate(4, 9) });
 		
-		params.add(new Object[] { "1/1 신년행사",
-				Arrays.asList(
-						new DateTimeDTO(tmpDate.withMonth(1).withDayOfMonth(1).getYear(), 1, 1, tmpDate.withMonth(1).withDayOfMonth(1).getDayOfWeek(),
-								-1, -1, true),
-						new DateTimeDTO(tmpDate.withMonth(1).withDayOfMonth(1).plusYears(1).getYear(), 1, 1,
-								tmpDate.withMonth(1).withDayOfMonth(1).plusYears(1).getDayOfWeek(), -1, -1, true)) });
+		params.add(new Object[] { "1/1 신년행사", setByMonthDate(1, 1) });
 
 		// 년
-		params.add(new Object[] { "15년",
-				Arrays.asList(new DateTimeDTO(2015, 1, 1, LocalDate.of(2015, 1, 1).getDayOfWeek(), -1, -1, true),
-						new DateTimeDTO(2015, 1, 2, LocalDate.of(2015, 1, 2).getDayOfWeek(), -1, -1, true)) });
+		params.add(new Object[] { "15년", setByYear(2015) });
 
-		params.add(
-				new Object[] { "07년에 중학교 졸업", Arrays.asList(new DateTimeDTO(2007, 1, 1, LocalDate.of(2007, 1, 1).getDayOfWeek(), -1, -1, true),
-						new DateTimeDTO(2007, 1, 2, LocalDate.of(2007, 1, 2).getDayOfWeek(), -1, -1, true)) });
+		params.add(new Object[] { "07년에 중학교 졸업", setByYear(2007) });
 
 		// 월
 		params.add(new Object[] { "2월에 졸업식", setByMonth(2)});
-		
 		
 		params.add(new Object[] { "4월에 벚꽃구경", setByMonth(4)});
 		
 		params.add(new Object[] { "겨울 12월에는 빙어낚시", setByMonth(12)});
 
 		// 일
-		params.add(new Object[] { "9일",
-				Arrays.asList(
-						new DateTimeDTO(tmpDate.withDayOfMonth(9).getYear(), tmpDate.withDayOfMonth(9).getMonthValue(), 9,
-								tmpDate.withDayOfMonth(9).getDayOfWeek(), -1, -1, true),
-						new DateTimeDTO(tmpDate.plusMonths(1).withDayOfMonth(9).getYear(),
-								tmpDate.plusMonths(1).withDayOfMonth(9).getMonthValue(), 9,
-								tmpDate.plusMonths(1).withDayOfMonth(9).getDayOfWeek(), -1, -1, true)) });
+		params.add(new Object[] { "9일", setByDate(9) });
 
-		params.add(new Object[] { "17일 축구동호회",
-				Arrays.asList(
-						new DateTimeDTO(tmpDate.withDayOfMonth(17).getYear(), tmpDate.withDayOfMonth(17).getMonthValue(), 17,
-								tmpDate.withDayOfMonth(17).getDayOfWeek(), -1, -1, true),
-						new DateTimeDTO(tmpDate.plusMonths(1).withDayOfMonth(17).getYear(),
-								tmpDate.plusMonths(1).withDayOfMonth(17).getMonthValue(), 17,
-								tmpDate.plusMonths(1).withDayOfMonth(17).getDayOfWeek(), -1, -1, true)) });
+		params.add(new Object[] { "17일 축구동호회", setByDate(17) });
 		
-		// 20
-		params.add(new Object[] { "19일날 가족 외식", Arrays.asList(
-				new DateTimeDTO(tmpDate.withDayOfMonth(19).getYear(), tmpDate.withDayOfMonth(19).getMonthValue(), 19,
-						tmpDate.withDayOfMonth(19).getDayOfWeek(), -1, -1, true),
-				new DateTimeDTO(tmpDate.withDayOfMonth(19).plusMonths(1).getYear(), tmpDate.withDayOfMonth(19).plusMonths(1).getMonthValue(), 19,
-						tmpDate.withDayOfMonth(19).plusMonths(1).getDayOfWeek(), -1, -1, true)) });
+		params.add(new Object[] { "19일날 가족 외식", setByDate(19) });
 
 
 		// 일 - 4월 31일, 2월 30일 등 범위 이탈에 대한 처리
-		params.add(new Object[] { "가족모임 29일", setByMonthSize(29)});
+		params.add(new Object[] { "가족모임 29일", setByDate(29)});
 
-		params.add(new Object[] { "친구보기 30일에", setByMonthSize(30)});
+		params.add(new Object[] { "친구보기 30일에", setByDate(30)});
 		
-		params.add(new Object[] { "31일에 불꽃놀이", setByMonthSize(31)});
+		params.add(new Object[] { "31일에 불꽃놀이", setByDate(31)});
 		
 
 		// 월 시
@@ -359,48 +451,28 @@ public class ParameterizedTest {
 
 		params.add(new Object[] { "4월 13시 30분", setByMonthTime(4, 13, 30)});
 		
-		// 월 일 시
-		params.add(new Object[] { "4월 3일에 친구 모임 1시 서현",
-				Arrays.asList(new DateTimeDTO(tmpDate.withMonth(4).withDayOfMonth(3).getYear(), 4, 3,
-						tmpDate.withMonth(4).withDayOfMonth(3).getDayOfWeek(), 1, 0, false),
-						new DateTimeDTO(tmpDate.withMonth(4).withDayOfMonth(3).getYear(), 4, 3,
-								tmpDate.withMonth(4).withDayOfMonth(3).getDayOfWeek(), 13, 0, false)) });
+		// 월 일 시간
+		params.add(new Object[] { "4월 3일에 친구 모임 1시 서현", setByMonthDateTime(4, 3, 1, 0) });
 
-		params.add(new Object[] { "3/5에 친구 모임 11시 20분 야탑",
-				Arrays.asList(new DateTimeDTO(tmpDate.withMonth(3).withDayOfMonth(5).getYear(), 3, 5,
-						tmpDate.withMonth(3).withDayOfMonth(5).getDayOfWeek(), 11, 20, false),
-						new DateTimeDTO(tmpDate.withMonth(3).withDayOfMonth(5).getYear(), 3, 5,
-								tmpDate.withMonth(3).withDayOfMonth(5).getDayOfWeek(), 23, 20, false)) });
+		params.add(new Object[] { "3/5에 친구 모임 11시 20분 야탑", setByMonthDateTime(3, 5, 11, 20) });
 		
-		// 30
-		// 월 일 요일 시
-		params.add(new Object[] { "4월 9일 월요일 19시",
-				Arrays.asList(new DateTimeDTO(tmpDate.withMonth(4).withDayOfMonth(9).getYear(), 4, 9,
-						tmpDate.withMonth(4).withDayOfMonth(9).getDayOfWeek(), 19, 0, false)) });
+		params.add(new Object[] { "4.9 12시 30분", setByMonthDateTime(4, 9, 12, 30) });
+		
+		
+		// 월 일 요일 시간
+		params.add(new Object[] { "4월 9일 월요일 19시", setByMonthDateTime(4, 9, 19, 0) });
 
-		params.add(new Object[] { "4.18 월요일 10:10",
-				Arrays.asList(new DateTimeDTO(tmpDate.withMonth(4).withDayOfMonth(18).getYear(), 4, 18,
-						tmpDate.withMonth(4).withDayOfMonth(18).getDayOfWeek(), 10, 10, false),
-						new DateTimeDTO(tmpDate.withMonth(4).withDayOfMonth(18).getYear(), 4, 18,
-								tmpDate.withMonth(4).withDayOfMonth(18).getDayOfWeek(), 22, 10, false)) });
+		params.add(new Object[] { "4.18 월요일 10:10", setByMonthDateTime(4, 18, 10, 10) });
+		
+		params.add(
+				new Object[] { "4/9 화요일 7:00", setByMonthDateTime(4, 9, 7, 0)  });
 		
 		// 월 일 요일
-//		params.add(new Object[] { "4/16 화요일", setByDateDay(4, 16, DayOfWeek.TUESDAY)});
-		params.add(new Object[] { "4/16 화요일",
-				Arrays.asList(new DateTimeDTO(tmpDate.withMonth(4).withDayOfMonth(16).getYear(), 4, 16,
-						tmpDate.withMonth(4).withDayOfMonth(16).getDayOfWeek(), -1, -1, true),
-						new DateTimeDTO(tmpDate.plusYears(1).withMonth(4).withDayOfMonth(16).getYear(), 4, 16,
-								tmpDate.plusYears(1).withMonth(4).withDayOfMonth(16).getDayOfWeek(), -1, -1, true)) });
+		params.add(new Object[] { "4/16 화요일", setByMonthDate(4, 16) });
 		
-//		params.add(new Object[] { "4-1 화요일", setByDateDay(4, 1, DayOfWeek.TUESDAY)});
-		params.add(new Object[] { "4-1 화요일",
-				Arrays.asList(new DateTimeDTO(tmpDate.withMonth(4).withDayOfMonth(1).getYear(), 4, 1,
-						tmpDate.withMonth(4).withDayOfMonth(1).getDayOfWeek(), -1, -1, true),
-						new DateTimeDTO(tmpDate.plusYears(1).withMonth(4).withDayOfMonth(1).getYear(), 4, 1,
-								tmpDate.plusYears(1).withMonth(4).withDayOfMonth(1).getDayOfWeek(), -1, -1, true)) });
+		params.add(new Object[] { "4-1 화요일", setByMonthDate(4, 1) });
 		
-		params.add(new Object[] { "4-1 일요일", Arrays.asList(new DateTimeDTO(tmpDate.withMonth(4).withDayOfMonth(1).getYear(), 4, 1,
-				tmpDate.withMonth(4).withDayOfMonth(1).getDayOfWeek(), -1, -1, true))});
+		params.add(new Object[] { "4-1 일요일", setByMonthDate(4, 1)});
 
 		// 다중 날짜
 //		params.add(new Object[] { "25일에 4.3 추모 행사 참여",
@@ -415,7 +487,7 @@ public class ParameterizedTest {
 
 		// 다중 요일
 		params.add(new Object[] { "월요일날 금요일에 만나요 콘서트",
-				Arrays.asList(new DateTimeDTO(tmpDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)).with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY)).getYear(),
+				Arrays.asList(new DateTimeDTO(tmpDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY)).getYear(),
 						tmpDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY)).getMonthValue(),
 						tmpDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY)).getDayOfMonth(),
 						DayOfWeek.MONDAY, -1, -1, true),
@@ -426,35 +498,20 @@ public class ParameterizedTest {
 
 		// 요일
 		params.add(new Object[] { "금요일에 약속",
-				Arrays.asList(new DateTimeDTO(tmpDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)).with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY)).getYear(),
-								tmpDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)).with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY)).getMonthValue(),
-								tmpDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)).with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY)).getDayOfMonth(),
+				Arrays.asList(new DateTimeDTO(tmpDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY)).getYear(),
+								tmpDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY)).getMonthValue(),
+								tmpDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY)).getDayOfMonth(),
 								DayOfWeek.FRIDAY, -1, -1, true),
-						new DateTimeDTO(tmpDate.with(TemporalAdjusters.next(DayOfWeek.SUNDAY)).with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY)).getYear(),
-								tmpDate.with(TemporalAdjusters.next(DayOfWeek.SUNDAY)).with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY)).getMonthValue(),
-								tmpDate.with(TemporalAdjusters.next(DayOfWeek.SUNDAY)).with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY)).getDayOfMonth(),
+						new DateTimeDTO(tmpDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY)).plusWeeks(1).getYear(),
+								tmpDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY)).plusWeeks(1).getMonthValue(),
+								tmpDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY)).plusWeeks(1).getDayOfMonth(),
 								DayOfWeek.FRIDAY, -1, -1, true)) });
-		
-		// 월 일 요일 시 분
-		params.add(
-				new Object[] { "4/9 화요일 7:00", Arrays.asList(new DateTimeDTO(tmpDate.withMonth(4).withDayOfMonth(9).getYear(), 4, 9,
-						tmpDate.withMonth(4).withDayOfMonth(9).getDayOfWeek(), 7, 0, false),
-						new DateTimeDTO(tmpDate.withMonth(4).withDayOfMonth(9).getYear(), 4, 9,
-								tmpDate.withMonth(4).withDayOfMonth(9).getDayOfWeek(), 19, 0, false)) });
-		
-		// 월 일 시 분
-		params.add(new Object[] { "4.9 12시 30분",
-				Arrays.asList(new DateTimeDTO(tmpDate.withMonth(4).withDayOfMonth(9).getYear(), 4, 9,
-						tmpDate.withMonth(4).withDayOfMonth(9).getDayOfWeek(), 12, 30, false),
-						new DateTimeDTO(tmpDate.withMonth(4).withDayOfMonth(9).getYear(), 4, 9,
-								tmpDate.withMonth(4).withDayOfMonth(9).getDayOfWeek(), 0, 30, false)) });
 
 		// 특수날짜(내일)
 		params.add(new Object[] { "내일 저녁에 회의",
 				Arrays.asList(new DateTimeDTO(tmpDate.plusDays(1).getYear(), tmpDate.plusDays(1).getMonthValue(), tmpDate.plusDays(1).getDayOfMonth(),
 						tmpDate.plusDays(1).getDayOfWeek(), -1, -1, true)) });
 		
-		// 40
 		// 특수날짜(오늘) 시 분
 		params.add(new Object[] { "오늘 12시 30분에 음원차트 확인",
 				Arrays.asList(new DateTimeDTO(tmpDate.getYear(), tmpDate.getMonthValue(), tmpDate.getDayOfMonth(),
@@ -463,19 +520,31 @@ public class ParameterizedTest {
 								tmpDate.getDayOfWeek(), 12, 30, false)) });
 		
 		// 특수날짜(이번주) 일
-		params.add(new Object[] { "이번주 13일", setDateByWeek(13, SpecialDateType.thisWeek)});
+		params.add(new Object[] { "이번주 13일", setByWeekWithDate(13, SpecialDateType.thisWeek)});
 
-		params.add(new Object[] { "이번주 16일", setDateByWeek(16, SpecialDateType.thisWeek)});
+		params.add(new Object[] { "이번주 16일", setByWeekWithDate(16, SpecialDateType.thisWeek)});
 
-		params.add(new Object[] { "이번주 21일", setDateByWeek(21, SpecialDateType.thisWeek)});
+		params.add(new Object[] { "이번주 21일", setByWeekWithDate(21, SpecialDateType.thisWeek)});
 		
+		// 특수날짜(이번주) 시간
+		params.add(new Object[] { "이번주 12시 30분",  setDatesByWeekTime()});
+
+		// 특수날짜(이번주) 날짜 시간
+		params.add(new Object[] { "이번주 13일 12시 30분",  });
+
+		// 특수날짜(이번주) 요일 시간
+		params.add(new Object[] { "이번주 수요일 12시 30분",  });
+
+		// 특수날짜(이번주) 날짜 요일 시간
+		params.add(new Object[] { "이번주 3일 수요일 1시 30분",  });
+
 		// 특수날짜(이번주) 요일
-		params.add(new Object[] { "이번주 영화보기 토요일 조조",
+		params.add(new Object[] { "이번주 영화보기 금요일 조조",
 				Arrays.asList(new DateTimeDTO(
-						tmpDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)).with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY)).getYear(),
-						tmpDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)).with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY)).getMonthValue(),
-						tmpDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)).with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY)).getDayOfMonth(),
-						DayOfWeek.SATURDAY, -1, -1, true)) });
+						tmpDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)).with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY)).getYear(),
+						tmpDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)).with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY)).getMonthValue(),
+						tmpDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)).with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY)).getDayOfMonth(),
+						DayOfWeek.FRIDAY, -1, -1, true)) });
 		
 		// 특수날짜(다음주)
 		params.add(new Object[] { "약속 하나 있다 다음주",
@@ -493,10 +562,14 @@ public class ParameterizedTest {
 						tmpDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)).getDayOfMonth(),
 						DayOfWeek.SUNDAY, -1, -1, true)) });
 		
+		
+
+
+		
 		// 특수날짜(다다음주)
 		params.add(new Object[] { "친구 놀러옴 다다음주에",
 				Arrays.asList(new DateTimeDTO(
-						tmpDate.with(TemporalAdjusters.next(DayOfWeek.SUNDAY)).plusWeeks(1).getYear(),
+						2017,
 						tmpDate.with(TemporalAdjusters.next(DayOfWeek.SUNDAY)).plusWeeks(1).getMonthValue(),
 						tmpDate.with(TemporalAdjusters.next(DayOfWeek.SUNDAY)).plusWeeks(1).getDayOfMonth(),
 						DayOfWeek.SUNDAY, -1, -1, true)) });
@@ -528,6 +601,11 @@ public class ParameterizedTest {
 		
 
 		return params;
+	}
+
+	private static Object setDatesByWeekTime() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Test

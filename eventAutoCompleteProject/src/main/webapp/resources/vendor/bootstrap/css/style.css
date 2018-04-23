@@ -13,8 +13,6 @@ html, body {
 
 .formEvent {
 	text-align: center;
-	padding-top: 10px;
-	padding-bottom: 10px;
 	margin : 0 20% 0 20% ;
 }
 
@@ -65,4 +63,30 @@ html, body {
 
 .wider-width{
 	width: 50%;
+}
+
+.list-float-left{
+	float:left;
+	margin: 2px 10px;
+}
+
+.list_eventDates{
+	text-align:center;
+	list-style-type: none;
+	width:60%;
+	margin:10px auto 10px auto ;
+	padding: 2px 10px 2px 10px;
+	background-color: white;
+	border: 1px solid #ccc;
+	overflow: auto;
+}
+
+#inputEvent{
+	resize:none;
+	border:0px;
+	overflow:hidden;
+}
+
+.newly-added{
+	background-color: #0b0;
 }
