@@ -74,25 +74,25 @@ body {
 	<!-- Page Content -->
 	<div class="jumbotron text-center topConts">
 		<h2>일정</h2>
-		<form>
-			<div class="formEvent form-group">
-				<!-- <label for="inputEvent">일정</label> -->
-				<input type="text" id="inputEvent" name="inputEvent"
-					class="form-control input-lg" placeholder="일정을 입력하세요.">
-			</div>
-		</form>
+		<ul class="list_eventDates">
+			<li class="list-float-left">
+					<textarea id="inputEvent" autocomplete="off" name="inputEvent"
+						rows="1" tabindex="1"></textarea> <!-- class="form-control input-lg" -->
+			</li>
+		</ul>
 		<div class="panel panel-default myPanelMargin">
 			<div class="panel-heading font-bording display-right">
 				<span class="glyphicon glyphicon-chevron-right"></span> <span
 					class="inputText">입력한 일정 : ${message}</span>
 			</div>
-			<div class="panel-body font-bording display-right">
+<!-- 			<div class="panel-body font-bording display-right">
 				<span class="glyphicon glyphicon-chevron-right"></span> <span
 					class="changedText">선택한 날짜 : </span>
-			</div>
+			</div> -->
 		</div>
-		
-		<button type="button" class="btn btn-success wider-width btn-lg disabled">추가</button>
+
+		<button type="button"
+			class="btn btn-success wider-width btn-lg disabled">추가</button>
 	</div>
 	<div class="container"></div>
 
@@ -105,33 +105,34 @@ body {
 	<!-- jquery -->
 	<script type="text/javascript">
 		$(function() {
-			$.ajaxSetup({
-				error : function(jqXHR, exception) {
-					if (jqXHR.status === 0) {
-						alert('Not connect.\n Verify Network.');
-					} else if (jqXHR.status == 400) {
-						alert('Server understood the request, but request content was invalid. [400]');
-					} else if (jqXHR.status == 401) {
-						alert('Unauthorized access. [401]');
-					} else if (jqXHR.status == 403) {
-						alert('Forbidden resource can not be accessed. [403]');
-					} else if (jqXHR.status == 404) {
-						alert('Requested page not found. [404]');
-					} else if (jqXHR.status == 500) {
-						alert('Internal server error. [500]');
-					} else if (jqXHR.status == 503) {
-						alert('Service unavailable. [503]');
-					} else if (exception === 'parsererror') {
-						alert('Requested JSON parse failed. [Failed]');
-					} else if (exception === 'timeout') {
-						alert('Time out error. [Timeout]');
-					} else if (exception === 'abort') {
-						alert('Ajax request aborted. [Aborted]');
-					} else {
-						alert('Uncaught Error.n' + jqXHR.responseText);
-					}
-				}
-			});
+			$
+					.ajaxSetup({
+						error : function(jqXHR, exception) {
+							if (jqXHR.status === 0) {
+								alert('Not connect.\n Verify Network.');
+							} else if (jqXHR.status == 400) {
+								alert('Server understood the request, but request content was invalid. [400]');
+							} else if (jqXHR.status == 401) {
+								alert('Unauthorized access. [401]');
+							} else if (jqXHR.status == 403) {
+								alert('Forbidden resource can not be accessed. [403]');
+							} else if (jqXHR.status == 404) {
+								alert('Requested page not found. [404]');
+							} else if (jqXHR.status == 500) {
+								alert('Internal server error. [500]');
+							} else if (jqXHR.status == 503) {
+								alert('Service unavailable. [503]');
+							} else if (exception === 'parsererror') {
+								alert('Requested JSON parse failed. [Failed]');
+							} else if (exception === 'timeout') {
+								alert('Time out error. [Timeout]');
+							} else if (exception === 'abort') {
+								alert('Ajax request aborted. [Aborted]');
+							} else {
+								alert('Uncaught Error.n' + jqXHR.responseText);
+							}
+						}
+					});
 
 			var inputEvent = $('#inputEvent');
 
@@ -147,6 +148,20 @@ body {
 					checkInput();
 			}); // end keyup
 
+			function zeroFill(number, width) {
+				width -= number.toString().length;
+				if (width > 0) {
+					return new Array(width + (/\./.test(number) ? 2 : 1))
+							.join('0')
+							+ number;
+				}
+				return number + "";
+			}
+
+			const INVALID_INPUT_CHARACTER = -2;
+			const NO_DATA = -1;
+			const NO_DATA_FOR_DAY = "";
+
 			function checkInput() {
 				console.log("tmpStr 내용 : " + tmpStr);
 
@@ -160,63 +175,86 @@ body {
 					},
 					success : function(data) {
 						var str = "";
-						$(data).each(function(idx, dataEach) {
-							console.log("data " + idx + ": " + dataEach.year);
+						$(data)
+								.each(
+										function(idx, dataEach) {
+											console.log("data " + idx + ": "
+													+ dataEach.year);
 
-							if (dataEach.year == "-002") {
-								alert("., /, -, : 외의 기호는 입력이 불가능합니다.");
-							} else {
-								str += "<div class=\"list-group-item\">";
-								if (dataEach.year != "-1") {
-									str += dataEach.year;
-								}
-								if (dataEach.month != "-1") {
-									str += "/" + dataEach.month + "/";
-								}
-								if (dataEach.date != "-1") {
-									str += dataEach.date + " ";
-								}
-								if (dataEach.day != "-1") {
-									str += dataEach.day + " ";
-								}
-								if(dataEach.isAllDayEvent == "true") {
-									str += "종일";
-								}else{
-									if (dataEach.hour != "-1") {
-										str += dataEach.hour;
-									}
-									if (dataEach.minute != "-1") {
-										str += ":" + dataEach.minute;
-									}
-								}
-								str += "</div>";
-							}
-						});
+											if (dataEach.year == INVALID_INPUT_CHARACTER) {
+												alert("., /, -, : 외의 기호는 입력이 불가능합니다.");
+											} else {
+												str += "<div class=\"list-group-item\">";
+												if (dataEach.year != NO_DATA) {
+													str += zeroFill(
+															dataEach.year, 4);
+												}
+												if (dataEach.month != NO_DATA) {
+													str += "/"
+															+ zeroFill(
+																	dataEach.month,
+																	2) + "/";
+												}
+												if (dataEach.date != NO_DATA) {
+													str += zeroFill(
+															dataEach.date, 2)
+															+ " ";
+												}
+												if (dataEach.displayDay != NO_DATA_FOR_DAY) {
+													str += dataEach.displayDay
+															+ " ";
+												}
+												if (dataEach.allDayEvent == true) {
+													str += "종일";
+												} else {
+													if (dataEach.hour != NO_DATA) {
+														str += zeroFill(
+																dataEach.hour,
+																2);
+													}
+													if (dataEach.minute != NO_DATA) {
+														str += ":"
+																+ zeroFill(
+																		dataEach.minute,
+																		2);
+													}
+												}
+												str += "</div>";
+											}
+										});
 
 						$(".list-group").html(str);
 						$('.inputText').text("입력한 일정 : " + tmpStr);
 						console.log("성공");
-						
-						$(document).on({
-							click:function(){ 
-								$('.changedText').text("선택한 날짜 : " + $(this).text());
-							},
-							mouseenter: function () {
-								$(this).addClass("active");
-						    },
-						    mouseleave: function () {
-						    	$(this).removeClass("active");
-						    }
-						}, '.list-group-item');
-						
+
+  						$(document).on(
+								{
+									mouseenter : function() {
+										$(this).addClass("active");
+									},
+									mouseleave : function() {
+										$(this).removeClass("active");
+									}
+								}, '.list-group-item');
 
 					}
 				}
 
 				$.ajax(settings);
-			};
-			
+			}
+			;
 		});
+		$(document).on({
+			click : function() {
+/* 				$('.changedText').text("선택한 날짜 : " + $(this).text()); */
+				
+				if ( $('.newly-added').length < 2) {
+					var newEvent = "<li class=\"list-float-left newly-added\"><span>"
+									+ $(this).text() + "</span></li>";
+					$('.list_eventDates').prepend(newEvent);
+				}	
+			}
+		}, '.list-group-item');
 	</script>
 
 
