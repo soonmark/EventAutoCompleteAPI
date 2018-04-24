@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.soonmark.domain.DateTimeDTO;
+import com.soonmark.domain.OldDateTimeDTO;
 import com.soonmark.service.RecommendationService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -57,9 +58,9 @@ public class SampleControllerTest {
 		// Given
 		//
 		String input = "4월 9일 월요일 19시";
-		List<DateTimeDTO> expectedList = new ArrayList<DateTimeDTO>();
-		expectedList.add(new DateTimeDTO(2018, 4, 9, DayOfWeek.MONDAY, 19, 0, false));
-		expectedList.add(new DateTimeDTO(2019, 4, 9, DayOfWeek.TUESDAY, 19, 0, false));
+		List<OldDateTimeDTO> expectedList = new ArrayList<OldDateTimeDTO>();
+		expectedList.add(new OldDateTimeDTO(2018, 4, 9, DayOfWeek.MONDAY, 19, 0, false));
+		expectedList.add(new OldDateTimeDTO(2019, 4, 9, DayOfWeek.TUESDAY, 19, 0, false));
 		
 		//
 		// When

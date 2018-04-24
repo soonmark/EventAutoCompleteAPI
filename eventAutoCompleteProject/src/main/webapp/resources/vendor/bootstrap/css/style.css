@@ -2,7 +2,7 @@ html, body {
 /* 	pading: 10px;
 	margin: 10px; */
 	font-family: "나눔고딕", "맑은 고딕", san-serif, "굴림", arial;
-	background-color:#343434;
+	background-color:white;
 }
 
 .recommendations {
@@ -41,7 +41,7 @@ html, body {
 }
 
 .topConts{
-	background-image: url('../../../scheduler.jpg');
+/* 	background-image: url('../../../scheduler.jpg'); */
 	background-size: cover;
 	padding-top: 48px;
 	padding-bottom: 48px;
@@ -93,4 +93,35 @@ html, body {
 
 .info{
 	display:none;
+}
+
+.dateTime{
+	background-color: white;
+	border: 1px solid #ccc;
+	height: 30px;
+	width: 30%;
+	margin: 2px 10px;
+	float:left;
+	left: 50%;
+}
+
+.tit{
+	float:left;
+	margin: 2px 10px;
+	text-align: center;
+	left: 50%;
+}
+.article{
+	width: 100%;
+	height: 50px;
+	text-align: center;
+	padding: 5px;
+	margin: 0 15%;
+	font-weight: bold;
+}
+
+.works-color{
+	color: white;
+	background-color: #00C73C;
+	border: #00C73C;
 }

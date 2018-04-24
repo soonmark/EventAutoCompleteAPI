@@ -1,11 +1,15 @@
 package com.soonmark.core;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.soonmark.domain.AppConstants;
 import com.soonmark.domain.DateTimeDTO;
 import com.soonmark.domain.TokenType;
@@ -21,6 +25,9 @@ public class RecommendationManager {
 	private DateTimeListMgrSet dateTimeListManagerSet;
 
 	String inputText;
+	DateTimeDTO startDate;
+	DateTimeDTO endDate;
+	
 
 	// 리스트에 보여줄 추천 날짜 개수
 	int recomNum;
@@ -49,10 +56,13 @@ public class RecommendationManager {
 		this.dateTimeListManagerSet = dateTimeListManagerSet;
 	}
 
-	public List<DateTimeDTO> getRecommendations(String inputText, String startDate, String endDate) {
+	public List<DateTimeDTO> getRecommendations(String inputText, String startDate, String endDate) throws JsonParseException, JsonMappingException, IOException {
 		focusingRecurNum = 2;
 		dateTimeListManagerSet = new DateTimeListMgrSet();
 		this.inputText = inputText;
+		
+		this.startDate = getObjectFromJson(startDate);
+		this.endDate = getObjectFromJson(endDate);
 
 		logger.info("입력받은 일정 : " + inputText);
 
@@ -120,5 +130,16 @@ public class RecommendationManager {
 		for (int i = recomNum; i < dateTimeListManagerSet.getResultList().getDtDTOList().size();) {
 			dateTimeListManagerSet.getResultList().deleteDtObj(i);
 		}
+	}
+	
+	public DateTimeDTO getObjectFromJson(String date) throws JsonParseException, JsonMappingException, IOException {
+
+		DateTimeDTO dto = null;
+		ObjectMapper objectMapper = new ObjectMapper();
+		if(!date.equals("startDate") && !date.equals("endDate")) {
+			dto = objectMapper.readValue(date, DateTimeDTO.class);
+		}
+		
+		return dto;
 	}
 }

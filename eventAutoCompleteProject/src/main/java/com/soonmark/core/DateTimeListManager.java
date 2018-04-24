@@ -9,7 +9,6 @@ import java.util.List;
 
 import com.soonmark.domain.DateTimeDTO;
 import com.soonmark.domain.DateTimeEn;
-import com.soonmark.domain.Priority;
 import com.soonmark.domain.TokenType;
 
 public class DateTimeListManager {

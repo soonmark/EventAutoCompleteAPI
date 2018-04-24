@@ -50,11 +50,10 @@ body {
 <body>
 
 	<!-- Navigation -->
-	<nav class="navbar navbar-inverse navbar-fixed-top">
+	<nav class="navbar navbar-inverse navbar-fixed-top works-color">
 		<div class="container-fluid">
 			<div class="navbar-header">
-				<button type="button" class="navbar-toggle" data-toggle="collapse"
-					data-target="#myNavbar">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
 					<span class="icon-bar"></span> <span class="icon-bar"></span> <span
 						class="icon-bar"></span>
 				</button>
@@ -75,17 +74,32 @@ body {
 	<div class="jumbotron text-center topConts">
 		<h2>일정</h2>
 		<ul class="list_eventDates">
-			<li class="list-float-left">
-					<textarea id="inputEvent" autocomplete="off" name="inputEvent"
-						rows="1" tabindex="1"></textarea> <!-- class="form-control input-lg" -->
-			</li>
+			<li class="list-float-left"><textarea id="inputEvent"
+					autocomplete="off" name="inputEvent" rows="1" tabindex="1"></textarea>
+				<!-- class="form-control input-lg" --></li>
 		</ul>
+		
+		<div class="article">
+			<span class="tit">일시</span>
+			<div class="cont">
+				<div class="dateTime">
+					<div id="startDate"></div>
+				</div>
+			</div>
+			<div class="cont">
+				<div class="dateTime">
+					<div id="endDate"></div>
+				</div>
+			</div>
+		</div>
+		
+		
 		<div class="panel panel-default myPanelMargin">
 			<div class="panel-heading font-bording display-right">
 				<span class="glyphicon glyphicon-chevron-right"></span> <span
 					class="inputText">입력한 일정 : ${message}</span>
 			</div>
-<!-- 			<div class="panel-body font-bording display-right">
+			<!-- 			<div class="panel-body font-bording display-right">
 				<span class="glyphicon glyphicon-chevron-right"></span> <span
 					class="changedText">선택한 날짜 : </span>
 			</div> -->
@@ -104,233 +118,203 @@ body {
 
 	<!-- jquery -->
 	<script type="text/javascript">
-		$(function() {
-			$
-					.ajaxSetup({
-						error : function(jqXHR, exception) {
-							if (jqXHR.status === 0) {
-								alert('Not connect.\n Verify Network.');
-							} else if (jqXHR.status == 400) {
-								alert('Server understood the request, but request content was invalid. [400]');
-							} else if (jqXHR.status == 401) {
-								alert('Unauthorized access. [401]');
-							} else if (jqXHR.status == 403) {
-								alert('Forbidden resource can not be accessed. [403]');
-							} else if (jqXHR.status == 404) {
-								alert('Requested page not found. [404]');
-							} else if (jqXHR.status == 500) {
-								alert('Internal server error. [500]');
-							} else if (jqXHR.status == 503) {
-								alert('Service unavailable. [503]');
-							} else if (exception === 'parsererror') {
-								alert('Requested JSON parse failed. [Failed]');
-							} else if (exception === 'timeout') {
-								alert('Time out error. [Timeout]');
-							} else if (exception === 'abort') {
-								alert('Ajax request aborted. [Aborted]');
-							} else {
-								alert('Uncaught Error.n' + jqXHR.responseText);
-							}
-						}
-					});
-
-			var inputEvent = $('#inputEvent');
-
-			var tmpStr = "default";
-			
-			var startDate = "startDate";
-			var endDate = "endDate";
-			
-			function createJsonObj(strDate){
-				var oriStr = strDate;
-				var idVal = "#" + strDate;
-				
-				strDate = new Object();
-				strDate.year = $(idVal).find('#year').text();
-				strDate.month = $(idVal).find('#month').text();
-				strDate.date = $(idVal).find('#date').text();
-				strDate.day = $(idVal).find('#day').text();
-				strDate.hour = $(idVal).find('#hour').text();
-				strDate.minute = $(idVal).find('#minute').text();
-				strDate.isAllDayEvent = $(idVal).find('#isAllDayEvent').text();
-				strDate = JSON.stringify(strDate);
-				console.log(strDate);
-				
-				if(oriStr == "startDate"){
-					startDate = strDate;
-				}
-				if(oriStr == "endDate"){
-					endDate = strDate;
-				}
-			}
-			
-
-			// 입력창에 입력이 될 때마다
-			$(inputEvent).keyup(function() {
-				var prev = tmpStr;
-				tmpStr = inputEvent.val();
-				
-				if($('#startDate').length){
-					if(startDate == "startDate"){
-						createJsonObj(startDate);
+		$.ajaxSetup({
+				error : function(jqXHR, exception) {
+					if (jqXHR.status === 0) {
+						alert('Not connect.\n Verify Network.');
+					} else if (jqXHR.status == 400) {
+						alert('Server understood the request, but request content was invalid. [400]');
+					} else if (jqXHR.status == 401) {
+						alert('Unauthorized access. [401]');
+					} else if (jqXHR.status == 403) {
+						alert('Forbidden resource can not be accessed. [403]');
+					} else if (jqXHR.status == 404) {
+						alert('Requested page not found. [404]');
+					} else if (jqXHR.status == 500) {
+						alert('Internal server error. [500]');
+					} else if (jqXHR.status == 503) {
+						alert('Service unavailable. [503]');
+					} else if (exception === 'parsererror') {
+						alert('Requested JSON parse failed. [Failed]');
+					} else if (exception === 'timeout') {
+						alert('Time out error. [Timeout]');
+					} else if (exception === 'abort') {
+						alert('Ajax request aborted. [Aborted]');
+					} else {
+						alert('Uncaught Error.n' + jqXHR.responseText);
 					}
 				}
-				if($('#endDate').length){
-					if(endDate == "endDate"){
-						createJsonObj(endDate);
-					}
-				}
-				console.log("startDate : " + startDate);
-				console.log("endDate : " + endDate);
-				
-
-				// but 이전 입력값과 같으면 얼럿 안 나오게 
-				if (tmpStr != prev)
-					checkInput();
-			}); // end keyup
-
-			function zeroFill(number, width) {
-				width -= number.toString().length;
-				if (width > 0) {
-					return new Array(width + (/\./.test(number) ? 2 : 1))
-							.join('0')
-							+ number;
-				}
-				return number + "";
-			}
-
-			const INVALID_INPUT_CHARACTER = -2;
-			const NO_DATA = -1;
-			const NO_DATA_FOR_DAY = "";
-
-			function checkInput() {
-				console.log("tmpStr 내용 : " + tmpStr);
-
-				// 뷰 올리기...
-				var settings = {
-					url : 'getEvent',
-					type : 'post',
-					dataType : 'json',
-					data : {
-						"inputText" : tmpStr,
- 						"startDate" : startDate,
-						"endDate" : endDate
-					},
-					success : function(data) {
-						var str = "";
-						$(data)
-								.each(
-										function(idx, dataEach) {
-											console.log("data " + idx + ": "
-													+ dataEach.year);
-
-											if (dataEach.year == INVALID_INPUT_CHARACTER) {
-												alert("., /, -, : 외의 기호는 입력이 불가능합니다.");
-											} else {
-												var infoStr = "";
-												str += "<div class=\"list-group-item\">";
-												
-												if (dataEach.year != NO_DATA) {
-													str += zeroFill(
-															dataEach.year, 4);
-													infoStr += "<div class=\"info\" id=\"year\">" + zeroFill(dataEach.year, 4) + "</div>";
-												}
-												if (dataEach.month != NO_DATA) {
-													str += "/"
-															+ zeroFill(
-																	dataEach.month,
-																	2) + "/";
-													infoStr += "<div class=\"info\" id=\"month\">" + zeroFill(dataEach.month, 2) + "</div>";
-												}
-												if (dataEach.date != NO_DATA) {
-													str += zeroFill(
-															dataEach.date, 2)
-															+ " ";
-													infoStr += "<div class=\"info\" id=\"date\">" + zeroFill(dataEach.date, 2) + "</div>";
-												}
-												if (dataEach.displayDay != NO_DATA_FOR_DAY) {
-													str += dataEach.displayDay
-															+ " ";
-													infoStr += "<div class=\"info\" id=\"day\">" + dataEach.displayDay + "</div>";
-												}
-												if (dataEach.allDayEvent == true) {
-													str += "종일";
-													infoStr += "<div class=\"info\" id=\"isAllDayEvent\">" + dataEach.allDayEvent + "</div>";
-												} else {
-													if (dataEach.hour != NO_DATA) {
-														str += zeroFill(
-																dataEach.hour,
-																2);
-														infoStr += "<div class=\"info\" id=\"hour\">" + dataEach.hour + "</div>";
-													}
-													if (dataEach.minute != NO_DATA) {
-														str += ":"
-																+ zeroFill(
-																		dataEach.minute,
-																		2);
-														infoStr += "<div class=\"info\" id=\"minute\">" + dataEach.minute + "</div>";
-													}
-												}
-												str += infoStr + "</div>";
-											}
-										});
-
-						$(".list-group").html(str);
-						$('.inputText').text("입력한 일정 : " + tmpStr);
-						console.log("성공");
-
-  						$(document).on(
-								{
-									mouseenter : function() {
-										$(this).addClass("active");
-									},
-									mouseleave : function() {
-										$(this).removeClass("active");
-									}
-								}, '.list-group-item');
-
-					}
-				}
-
-				$.ajax(settings);
-			}
-			;
 		});
+
+		var inputEvent = $('#inputEvent');
+
+		var tmpStr = "default";
+		
+		var startDate = "startDate";
+		var endDate = "endDate";
+		
+		function createJsonObj(strDate){
+			var oriStr = strDate;
+			var idVal = "#" + strDate;
+			
+			strDate = new Object();
+			strDate.date = $(idVal).find('#date').text();
+			strDate.time = $(idVal).find('#time').text();
+			strDate.allDayEvent = $(idVal).find('#allDayEvent').text();
+			strDate = JSON.stringify(strDate);
+			console.log(strDate);
+			
+			if(oriStr == "startDate"){
+				startDate = strDate;
+			}
+			if(oriStr == "endDate"){
+				endDate = strDate;
+			}
+		}
+		
+
+		// 입력창에 입력이 될 때마다
+		$(inputEvent).keyup(function() {
+			var prev = tmpStr;
+			tmpStr = inputEvent.val();
+			
+			if($('#startDate').text() != ""){
+				if(startDate == "startDate"){
+					createJsonObj(startDate);
+				}
+			}
+			if($('#endDate').text() != ""){
+				if(endDate == "endDate"){
+					createJsonObj(endDate);
+				}
+			}
+			console.log("startDate : " + startDate);
+			console.log("endDate : " + endDate);
+			
+
+			// but 이전 입력값과 같으면 얼럿 안 나오게 
+			if (tmpStr != prev)
+				checkInput();
+		}); // end keyup
+		
+		
+
+		function zeroFill(number, width) {
+			width -= number.toString().length;
+			if (width > 0) {
+				return new Array(width + (/\./.test(number) ? 2 : 1))
+						.join('0')
+						+ number;
+			}
+			return number + "";
+		}
+
+		const INVALID_INPUT_CHARACTER = -2;
+		const NO_DATA = -1;
+		const NO_DATA_FOR_DAY = "";
+
+
 		
 		// 리스트 중에서 하나 클릭했을 때 이벤트
 		$(document).on({
 			click : function() {
 /* 				$('.changedText').text("선택한 날짜 : " + $(this).text()); */
 				
-				if ( $('.newly-added').length == 0) {
+				if ( $('#startDate').text() == "") {
 					console.log("text: " + $(this).clone().children().remove().end().text());
-					var newEvent = "<li class=\"list-float-left newly-added\" id=\"startDate\"><span>"
-									+ $(this).clone().children().remove().end().text() + "</span></li>";
 
-					$('.list_eventDates').prepend(newEvent);
+					$('#startDate').text($(this).clone().children().remove().end().text());
 					
 					$(this).find(".info").each(
 							function(){
 								$('#startDate').append($(this).clone());
 					});
 				}
-				else if ( $('.newly-added').length == 1) {
+				else if ( $('#endDate').text() == "") {
 					console.log("text: " + $(this).clone().children().remove().end().text());
-					var newEvent = "<li class=\"list-float-left newly-added\" id=\"endDate\"><span>"
-									+ $(this).clone().children().remove().end().text() + "</span></li>";
 
-					$('.list_eventDates').prepend(newEvent);
-					
+					$('#endDate').text($(this).clone().children().remove().end().text());
+									
 					$(this).find(".info").each(
 							function(){
 								$('#endDate').append($(this).clone());
 					});
 				}
 				
-				
-/* 				checkInput(); */
+ 				checkInput();
 			}
 		}, '.list-group-item');
+		
+		
+		// ajax request 
+		function checkInput() {
+			// 뷰 올리기...
+			var settings = {
+				url : 'autoCompletion',
+				type : 'post',
+				dataType : 'json',
+				data : {
+					"inputText" : tmpStr,
+					"startDate" : startDate,
+					"endDate" : endDate
+				},
+				success : function(data) {
+					var str = "";
+					$(data).each(
+							function(idx, dataEach) {
+								console.log("data " + idx + ": "
+										+ dataEach.date + " " + dataEach.time);
+
+								if (dataEach.date == INVALID_INPUT_CHARACTER) {
+									alert("., /, -, : 외의 기호는 입력이 불가능합니다.");
+								} else {
+									var infoStr = "";
+									str += "<div class=\"list-group-item\">";
+									
+									if (dataEach.date != NO_DATA) {
+										str += dataEach.date + " ";
+										infoStr += "<div class=\"info\" id=\"date\">" + dataEach.date + "</div>";
+										var day = new Date(dataEach.date);
+										var days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
+										str += days[day.getDay()] + " " ;
+									}
+									if (dataEach.allDayEvent == true) {
+										str += "종일";
+										infoStr += "<div class=\"info\" id=\"allDayEvent\">" + dataEach.allDayEvent + "</div>";
+									} else {
+										if (dataEach.time != NO_DATA) {
+											str += dataEach.time ;
+											infoStr += "<div class=\"info\" id=\"time\">" + dataEach.time + "</div>";
+										}
+									}
+									str += infoStr + "</div>";
+								}
+							}
+					);
+
+					$(".list-group").html(str);
+					$('.inputText').text("입력한 일정 : " + tmpStr);
+					console.log("성공");
+
+						$(document).on(
+							{
+								mouseenter : function() {
+									$(this).addClass("active");
+								},
+								mouseleave : function() {
+									$(this).removeClass("active");
+								}
+							},
+						'.list-group-item');
+
+				}
+			}
+			
+			console.log("request :");
+			console.log(settings.data);
+
+			$.ajax(settings);
+		};
 	</script>
 
 

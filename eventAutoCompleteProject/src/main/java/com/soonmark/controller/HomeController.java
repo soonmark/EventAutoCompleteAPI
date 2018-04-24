@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.soonmark.domain.DateTimeDTO;
+import com.soonmark.domain.EventDTO;
 import com.soonmark.service.RecommendationService;
 
 /**
@@ -39,9 +40,9 @@ public class HomeController {
 
 	// Ajax request 받아서 json 형태로 response.
 	// 시간, 날짜 추천 리스트 보냄
-	@RequestMapping(value = "getEvent", method = RequestMethod.POST, produces = "application/json; charset=utf8")
+	@RequestMapping(value = "autoCompletion", method = RequestMethod.POST, produces = "application/json; charset=utf8")
 	@ResponseBody
-	public List<DateTimeDTO> inputProcess(HttpServletRequest httpServletRequest) throws Exception {
+	public EventDTO inputProcess(HttpServletRequest httpServletRequest) throws Exception {
 
 		// 입력값 불러오기
 		String inputEvent = httpServletRequest.getParameter("inputText");
@@ -62,6 +63,6 @@ public class HomeController {
 		}
 		
 		// 서비스에 넘김
-		return recommendationService.getRecommendations(inputEvent, startDate, endDate);
+		return recommendationService.autoCompleteEvent(inputEvent, startDate, endDate);
 	}
 }

@@ -1,6 +1,9 @@
 package com.soonmark.core;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 import com.soonmark.domain.AppConstants;
 import com.soonmark.domain.DateTimeDTO;
@@ -128,8 +131,24 @@ public class DateTimeLogicalObject {
 	}
 
 	public DateTimeDTO toDTO() {
-		DateTimeDTO dateTimeDTO = new DateTimeDTO(year, month, date, day,
-												hour, minute, isAllDayEvent);
+		
+		String formattedDate = year + "";
+		if(year != AppConstants.INVALID_INPUT_CHARACTER) {
+			LocalDate localDate = LocalDate.of(year,  month,  date);
+		
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			formattedDate = localDate.format(formatter);
+		}
+		
+		String formattedTime = hour + "";
+		if(isAllDayEvent == false && hour != -1) {
+			LocalTime localTime = LocalTime.of(hour,  minute);
+			
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm");
+			formattedTime = localTime.format(formatter);
+		}
+		
+		DateTimeDTO dateTimeDTO = new DateTimeDTO(formattedDate, formattedTime, isAllDayEvent);
 		
 		return dateTimeDTO;
 	}

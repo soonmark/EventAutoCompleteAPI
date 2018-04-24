@@ -1,112 +1,78 @@
 package com.soonmark.domain;
 
-import java.time.DayOfWeek;
-import java.time.format.TextStyle;
-import java.util.Locale;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class DateTimeDTO {
-	private int year;
-	private int month;
-	private int date;
-	private String displayDay;
-	private int hour;
-	private int minute;
-	private boolean isAllDayEvent;
 
+	private String date;
+	private String time;
+	private boolean allDayEvent;
+	
 	public DateTimeDTO() {
-		this.year = AppConstants.NO_DATA;
-		this.month = AppConstants.NO_DATA;
-		this.date = AppConstants.NO_DATA;
-		this.setDisplayDay(AppConstants.NO_DATA_FOR_DISPLAYDAY);
-		this.hour = AppConstants.NO_DATA;
-		this.minute = AppConstants.NO_DATA;
-		this.isAllDayEvent = false;
+		this.date = "";
+		this.time = "";
+		this.allDayEvent = true;
 	}
 
-	public DateTimeDTO(int year, int month, int date, DayOfWeek day, int hour, int minute, boolean isAllDayEvent) {
-		this.year = year;
-		this.month = month;
+	public DateTimeDTO(String date, String time, boolean allDayEvent) {
 		this.date = date;
-		setDay(day);
-		this.hour = hour;
-		this.minute = minute;
-		this.isAllDayEvent = isAllDayEvent;
+		this.time = time;
+		this.allDayEvent = allDayEvent;
 	}
 
-	public int getYear() {
-		return year;
-	}
-
-	public void setYear(int year) {
-		this.year = year;
-	}
-
-	public int getMonth() {
-		return month;
-	}
-
-	public void setMonth(int month) {
-		this.month = month;
-	}
-
-	public int getDate() {
+	public String getDate() {
 		return date;
 	}
 
-	public void setDate(int date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 
-	public void setDay(DayOfWeek day) {
-		if (day != AppConstants.NO_DATA_FOR_DAY) {
-			this.setDisplayDay(day.getDisplayName(TextStyle.FULL, Locale.KOREA));
-		} else {
-			this.setDisplayDay(AppConstants.NO_DATA_FOR_DISPLAYDAY);
-		}
+	public String getTime() {
+		return time;
 	}
 
-	public int getHour() {
-		return hour;
-	}
-
-	public void setHour(int hour) {
-		this.hour = hour;
-	}
-
-	public int getMinute() {
-		return minute;
-	}
-
-	public void setMinute(int minute) {
-		this.minute = minute;
+	public void setTime(String time) {
+		this.time = time;
 	}
 
 	public boolean isAllDayEvent() {
-		return isAllDayEvent;
+		return allDayEvent;
 	}
 
-	public void setAllDayEvent(boolean isAllDayEvent) {
-		this.isAllDayEvent = isAllDayEvent;
+	public void setAllDayEvent(boolean allDayEvent) {
+		this.allDayEvent = allDayEvent;
 	}
 
-	public String getDisplayDay() {
-		return displayDay;
+	public LocalDate toLocalDate() {
+		LocalDate localDate = null;
+		try {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+			localDate = LocalDate.parse(this.date, formatter);
+		} catch (DateTimeParseException exc) {
+		}
+		return localDate;
 	}
 
-	public void setDisplayDay(String displayDay) {
-		this.displayDay = displayDay;
+	public LocalTime toLocalTime() {
+		LocalTime localTime = null;
+		try {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm");
+			localTime = LocalTime.parse(this.time, formatter);
+		}catch(DateTimeParseException exc) {
+		}
+		return localTime;
 	}
-
+	
 	@Override
 	public String toString() {
 		String jsonString = "";
-		jsonString = "{\"year\":\"" + String.format("%04d", this.year)
-				+ "\", \"month\":\"" + String.format("%02d", this.month)
-				+ "\", \"date\":\"" + String.format("%02d", this.date)
-				+ "\", \"day\":\"" + this.displayDay
-				+ "\", \"isAllDayEvent\":\"" + this.isAllDayEvent
-				+ "\", \"hour\":\"" + String.format("%02d", this.hour)
-				+ "\", \"minute\":\"" + String.format("%02d", this.minute) + "\"}";
+		jsonString = "{\"date\":\"" + this.date
+				+ "\", \"time\":\"" + this.time
+				+ "\", \"allDayEvent\":\"" + this.allDayEvent + "\"}";
 
 		return jsonString;
 	}
