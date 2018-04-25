@@ -25,6 +25,7 @@ public class RecommendationManager {
 	private DateTimeListMgrSet dateTimeListManagerSet;
 
 	String inputText;
+
 	DateTimeDTO startDate;
 	DateTimeDTO endDate;
 	
@@ -56,14 +57,15 @@ public class RecommendationManager {
 		this.dateTimeListManagerSet = dateTimeListManagerSet;
 	}
 
-	public List<DateTimeDTO> getRecommendations(String inputText, String startDate, String endDate) throws JsonParseException, JsonMappingException, IOException {
+	public List<DateTimeDTO> getRecommendations(String inputText, DateTimeDTO startDate, DateTimeDTO endDate) throws JsonParseException, JsonMappingException, IOException {
 		focusingRecurNum = 2;
 		dateTimeListManagerSet = new DateTimeListMgrSet();
-		this.inputText = inputText;
 		
-		this.startDate = getObjectFromJson(startDate);
-		this.endDate = getObjectFromJson(endDate);
-
+		this.inputText = inputText;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		
+		
 		logger.info("입력받은 일정 : " + inputText);
 
 		if (blockInvalidCharacters() == true) {
@@ -116,7 +118,7 @@ public class RecommendationManager {
 	}
 	
 	private void fillEmptyDatas() {
-		dateTimeListManagerSet.setResultList(new DateTimeEstimator(dateTimeListManagerSet.getTimeList(), dateTimeListManagerSet.getDateList()).fillEmptyDatas());
+		dateTimeListManagerSet.setResultList(new DateTimeEstimator(dateTimeListManagerSet.getTimeList(), dateTimeListManagerSet.getDateList()).fillEmptyDatas(startDate, endDate));
 	}
 	
 	private void sortByPriority() {
@@ -136,7 +138,7 @@ public class RecommendationManager {
 
 		DateTimeDTO dto = null;
 		ObjectMapper objectMapper = new ObjectMapper();
-		if(!date.equals("startDate") && !date.equals("endDate")) {
+		if(date != null) {
 			dto = objectMapper.readValue(date, DateTimeDTO.class);
 		}
 		

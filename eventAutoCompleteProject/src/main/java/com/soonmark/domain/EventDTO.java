@@ -47,13 +47,21 @@ public class EventDTO {
 		this.recommendations = recommendations;
 	}
 	
-/*	@Override
+	@Override
 	public String toString() {
 		String jsonString = "";
-		jsonString = "{\"parsedText\":\"" + this.parsedText
-				+ "\", \"startDate\":\"" + this.startDate.toString()
-				+ "\", \"endDate\":\"" + this.endDate.toString()
-				+ "\", \"recommendations\":\"" + this.recommendations.toString() + "\"}";
+		jsonString = "{\"parsedText\":\"" + this.parsedText;
+			if(this.startDate != null) {	
+				jsonString += "\", \"startDate\":\"" + this.startDate.toString();
+			}/*else {
+				jsonString += "\", \"startDate\":\"" + "";
+			}*/
+			if(this.endDate != null) {
+				jsonString += "\", \"endDate\":\"" + this.endDate.toString();
+			}/*else {
+				jsonString += "\", \"endDate\":\"" + this.endDate;
+			}*/
+			jsonString += "\", \"recommendations\":" + this.recommendations.toString() + "}";
 		return jsonString;
-	}*/
+	}
 }

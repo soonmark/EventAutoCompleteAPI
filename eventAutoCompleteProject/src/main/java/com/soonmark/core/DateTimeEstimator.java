@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.soonmark.domain.AppConstants;
+import com.soonmark.domain.DateTimeDTO;
 import com.soonmark.domain.DateTimeEn;
 import com.soonmark.domain.Priority;
 
@@ -28,7 +29,7 @@ public class DateTimeEstimator {
 		focusingRecurNum = 2;
 	}
 
-	public DateTimeListManager fillEmptyDatas() {
+	public DateTimeListManager fillEmptyDatas(DateTimeDTO startDate, DateTimeDTO endDate) {
 		boolean isDateEmpty = false;
 		boolean isTimeEmpty = false;
 
@@ -50,7 +51,7 @@ public class DateTimeEstimator {
 		}
 
 		if (isDateEmpty) {
-			setTimeToCloseFutureTime();
+			setTimeToCloseFutureTime(startDate, endDate);
 			setPriorityForTimeWithoutDate();
 		} else {
 			// 월간 일수 차이에 대한 예외처리
@@ -90,14 +91,27 @@ public class DateTimeEstimator {
 		resultList.getElement(closestIdx).setPriority(Priority.timeWithFirstEstimateDate);
 	}
 	
-	private void setTimeToCloseFutureTime() {
+	private void setTimeToCloseFutureTime(DateTimeDTO startDate, DateTimeDTO endDate) {
+
+		boolean startDateExists = false ;
+		boolean endDateExists  = false ;
+		
+		// startDate, endDate 존재여부 확인
+		if(startDate != null) {
+			startDateExists = true;
+		}
+		
+		if(endDate != null) {
+			endDateExists = true;
+		}
+		
 		logger.info("날짜 정보없음");
 		for (int i = 0; i < timeList.getDtMgrList().size(); i++) {
 			for (int j = 0; j < dateList.getDtMgrList().size(); j++) {
 				// 날짜 정보가 없으면 가장 근접한 미래날짜로 세팅.
 				DateTimeLogicalObject dtObj = new DateTimeLogicalObject();
 
-				// 현재 날짜
+				// 현재 날짜 혹은 startDate이나 endDate에 맞출 것.
 				DateTimeAdjuster tmpCal = new DateTimeAdjuster();
 				tmpCal.setHour(timeList.getElement(i).getHour(), false);
 
@@ -108,9 +122,15 @@ public class DateTimeEstimator {
 					tmpCal.setMinute(timeList.getElement(i).getMinute());
 				}
 
-				if (tmpCal.getTimePoint().toLocalTime().isBefore(LocalTime.now())) {
-					tmpCal.plusDate(1);
-				}
+//				if(startDateExists) {
+//					if (tmpCal.getTimePoint().toLocalTime().isBefore(now)) {
+//						tmpCal.plusDate(1);
+//					}
+//				}else {
+					if (tmpCal.getTimePoint().toLocalTime().isBefore(LocalTime.now())) {
+						tmpCal.plusDate(1);
+					}
+//				}
 				dtObj.setAllDate(tmpCal);
 				dtObj.setHour(tmpCal.getHour());
 				dtObj.setMinute(tmpCal.getMinute());

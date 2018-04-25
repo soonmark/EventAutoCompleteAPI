@@ -125,3 +125,7 @@ html, body {
 	background-color: #00C73C;
 	border: #00C73C;
 }
+
+.parsedText{
+	display:none;
+}

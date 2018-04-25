@@ -79,21 +79,22 @@ body {
 				<!-- class="form-control input-lg" --></li>
 		</ul>
 		
-		<div class="article">
+<!-- 		<div class="article">
 			<span class="tit">일시</span>
 			<div class="cont">
 				<div class="dateTime">
 					<div id="startDate"></div>
 				</div>
 			</div>
+			<div class="list-float-left">~</div>
 			<div class="cont">
 				<div class="dateTime">
 					<div id="endDate"></div>
 				</div>
 			</div>
-		</div>
+		</div> -->
 		
-		
+<%-- 		
 		<div class="panel panel-default myPanelMargin">
 			<div class="panel-heading font-bording display-right">
 				<span class="glyphicon glyphicon-chevron-right"></span> <span
@@ -103,7 +104,7 @@ body {
 				<span class="glyphicon glyphicon-chevron-right"></span> <span
 					class="changedText">선택한 날짜 : </span>
 			</div> -->
-		</div>
+		</div> --%>
 
 		<button type="button"
 			class="btn btn-success wider-width btn-lg disabled">추가</button>
@@ -147,6 +148,7 @@ body {
 		});
 
 		var inputEvent = $('#inputEvent');
+		inputEvent.focus();
 
 		var tmpStr = "default";
 		
@@ -172,26 +174,26 @@ body {
 			}
 		}
 		
+		function determineInputText(){
+			if(endDate == "endDate" && startDate == "startDate"){
+				tmpStr = inputEvent.val();
+			}
+			else if(endDate != "endDate"){
+				tmpStr = inputEvent.val().replace($('#startDate').find('.parsedText').text(), '');
+				tmpStr = tmpStr.replace($('#endDate').find('.parsedText').text(), '');
+			}
+			else if(startDate != "startDate"){
+				tmpStr = inputEvent.val().replace($('#startDate').find('.parsedText').text(), '');
+			}
+			console.log("split : " + tmpStr);
+		}
+		
 
 		// 입력창에 입력이 될 때마다
 		$(inputEvent).keyup(function() {
 			var prev = tmpStr;
-			tmpStr = inputEvent.val();
+			determineInputText();
 			
-			if($('#startDate').text() != ""){
-				if(startDate == "startDate"){
-					createJsonObj(startDate);
-				}
-			}
-			if($('#endDate').text() != ""){
-				if(endDate == "endDate"){
-					createJsonObj(endDate);
-				}
-			}
-			console.log("startDate : " + startDate);
-			console.log("endDate : " + endDate);
-			
-
 			// but 이전 입력값과 같으면 얼럿 안 나오게 
 			if (tmpStr != prev)
 				checkInput();
@@ -220,7 +222,34 @@ body {
 			click : function() {
 /* 				$('.changedText').text("선택한 날짜 : " + $(this).text()); */
 				
-				if ( $('#startDate').text() == "") {
+					if ( $('.newly-added').length == 0) {
+					console.log("text: " + $(this).clone().children().remove().end().text());
+					var newEvent = "<li class=\"list-float-left newly-added\" id=\"startDate\"><span>"
+									+ $(this).clone().children().remove().end().text() + "</span></li>";
+					$('.list_eventDates').prepend(newEvent);
+					
+					$(this).find(".info").each(
+							function(){
+								$('#startDate').append($(this).clone());
+					});
+					
+					$('#startDate').append($('.list-group').find('.parsedText').clone());
+				}
+				else if ( $('.newly-added').length == 1) {
+					console.log("text: " + $(this).clone().children().remove().end().text());
+					var newEvent = "<li class=\"list-float-left newly-added\" id=\"endDate\"><span>"
+									+ $(this).clone().children().remove().end().text() + "</span></li>";
+					$('.list_eventDates').prepend(newEvent);
+					
+					$(this).find(".info").each(
+							function(){
+								$('#endDate').append($(this).clone());
+					});
+					
+					$('#endDate').append($('.list-group').find('.parsedText').clone());
+				}
+				
+/* 				if ( $('#startDate').text() == "") {
 					console.log("text: " + $(this).clone().children().remove().end().text());
 
 					$('#startDate').text($(this).clone().children().remove().end().text());
@@ -229,6 +258,8 @@ body {
 							function(){
 								$('#startDate').append($(this).clone());
 					});
+					
+					$('#startDate').append($('.list-group').find('.parsedText').clone());
 				}
 				else if ( $('#endDate').text() == "") {
 					console.log("text: " + $(this).clone().children().remove().end().text());
@@ -239,28 +270,69 @@ body {
 							function(){
 								$('#endDate').append($(this).clone());
 					});
+					
+					$('#endDate').append($('.list-group').find('.parsedText').clone());
+				}
+				 */
+				if($('#startDate').text() != ""){
+					if(startDate == "startDate"){
+						createJsonObj(startDate);
+					}
+				}
+				if($('#endDate').text() != ""){
+					if(endDate == "endDate"){
+						createJsonObj(endDate);
+					}
 				}
 				
+				determineInputText();
+				
  				checkInput();
+ 				
+ 				// 포인터 포커스 일정 입력창에..
+ 				inputEvent.val('');
+ 				inputEvent.focus();
 			}
 		}, '.list-group-item');
+		
+		// request data 세팅
+		function setRequestData(data){
+			data = {
+				inputText : tmpStr
+			};
+			if(startDate != "startDate"){
+				data = {
+					inputText : tmpStr,
+					startDate : startDate
+				};
+			}
+			
+			if(endDate != "endDate"){
+				data = {
+						inputText : tmpStr,
+						startDate : startDate,
+						endDate : endDate
+				};
+			}
+			
+			return data;
+		}
+		
 		
 		
 		// ajax request 
 		function checkInput() {
+			var requestData = setRequestData(requestData);
+			
 			// 뷰 올리기...
 			var settings = {
 				url : 'autoCompletion',
 				type : 'post',
 				dataType : 'json',
-				data : {
-					"inputText" : tmpStr,
-					"startDate" : startDate,
-					"endDate" : endDate
-				},
+				data : requestData,
 				success : function(data) {
 					var str = "";
-					$(data).each(
+					$(data.recommendations).each(
 							function(idx, dataEach) {
 								console.log("data " + idx + ": "
 										+ dataEach.date + " " + dataEach.time);
@@ -291,7 +363,9 @@ body {
 								}
 							}
 					);
-
+					
+					str += "<div class=\"parsedText\">" + data.parsedText + "</div>";
+					
 					$(".list-group").html(str);
 					$('.inputText').text("입력한 일정 : " + tmpStr);
 					console.log("성공");
@@ -309,11 +383,12 @@ body {
 
 				}
 			}
-			
+
 			console.log("request :");
 			console.log(settings.data);
-
+			
 			$.ajax(settings);
+			
 		};
 	</script>
 
