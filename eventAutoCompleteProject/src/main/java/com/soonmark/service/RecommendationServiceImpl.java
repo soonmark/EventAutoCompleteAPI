@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.soonmark.core.RecommendationManager;
 import com.soonmark.domain.DateTimeDTO;
 import com.soonmark.domain.EventDTO;
+import com.soonmark.domain.RecomResultDTO;
 
 @Service
 public class RecommendationServiceImpl implements RecommendationService {
@@ -19,22 +20,22 @@ public class RecommendationServiceImpl implements RecommendationService {
 	private Logger logger = LoggerFactory.getLogger(RecommendationServiceImpl.class);
 	
 	@Override
-	public EventDTO autoCompleteEvent(String inputEvent, String start, String end) throws Exception {
+	public RecomResultDTO autoCompleteEvent(String inputEvent, String start, String end) throws Exception {
 		
 		DateTimeDTO startDate = recommendationManager.getObjectFromJson(start);
 		DateTimeDTO endDate = recommendationManager.getObjectFromJson(end);
 		
-		List<DateTimeDTO> list = getRecommendations(inputEvent, startDate, endDate);
+		List<EventDTO> list = getRecommendations(inputEvent, startDate, endDate);
 		
-		EventDTO event = new EventDTO(inputEvent, startDate, endDate, list);
+		RecomResultDTO recomResult = new RecomResultDTO(inputEvent, list);
 		
-		logger.info("최종 response : " + event.toString());
+		logger.info("최종 response : " + recomResult.toString());
 		
-		return event;
+		return recomResult;
 	}
 	
 	@Override
-	public List<DateTimeDTO> getRecommendations(String inputText, DateTimeDTO startDate, DateTimeDTO endDate) throws Exception {
+	public List<EventDTO> getRecommendations(String inputText, DateTimeDTO startDate, DateTimeDTO endDate) throws Exception {
 		
 		return recommendationManager.getRecommendations(inputText, startDate, endDate);
 	}

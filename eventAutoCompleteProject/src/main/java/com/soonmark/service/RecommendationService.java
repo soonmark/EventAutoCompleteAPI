@@ -6,13 +6,14 @@ import org.springframework.stereotype.Service;
 
 import com.soonmark.domain.DateTimeDTO;
 import com.soonmark.domain.EventDTO;
+import com.soonmark.domain.RecomResultDTO;
 
 
 @Service
 public interface RecommendationService {
 	
-	public List<DateTimeDTO> getRecommendations(String inputText, DateTimeDTO startDate, DateTimeDTO endDate) throws Exception ;
+	public List<EventDTO> getRecommendations(String inputText, DateTimeDTO startDate, DateTimeDTO endDate) throws Exception ;
 
-	public EventDTO autoCompleteEvent(String inputEvent, String startDate, String endDate) throws Exception ;
+	public RecomResultDTO autoCompleteEvent(String inputEvent, String startDate, String endDate) throws Exception ;
 	
 }

@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.soonmark.domain.AppConstants;
 import com.soonmark.domain.DateTimeDTO;
+import com.soonmark.domain.EventDTO;
 import com.soonmark.domain.TokenType;
 
 public class RecommendationManager {
@@ -57,7 +58,7 @@ public class RecommendationManager {
 		this.dateTimeListManagerSet = dateTimeListManagerSet;
 	}
 
-	public List<DateTimeDTO> getRecommendations(String inputText, DateTimeDTO startDate, DateTimeDTO endDate) throws JsonParseException, JsonMappingException, IOException {
+	public List<EventDTO> getRecommendations(String inputText, DateTimeDTO startDate, DateTimeDTO endDate) throws JsonParseException, JsonMappingException, IOException {
 		focusingRecurNum = 2;
 		dateTimeListManagerSet = new DateTimeListMgrSet();
 		
@@ -90,9 +91,9 @@ public class RecommendationManager {
 			createRecommendations();
 		}
 
-		logger.info("JSON 값  : " + dateTimeListManagerSet.getResultList().getDtDTOList().toString());
-
-		return dateTimeListManagerSet.getResultList().getDtDTOList();
+		logger.info("JSON 값  : " + dateTimeListManagerSet.getResultList().getEventDTOList());
+		
+		return dateTimeListManagerSet.getResultList().getEventDTOList();
 	}
 
 	// 특수기호 예외처리
@@ -129,7 +130,7 @@ public class RecommendationManager {
 
 	private void removeAllAfterRecomNum() {
 		// 2개만 남기고 다 지우기
-		for (int i = recomNum; i < dateTimeListManagerSet.getResultList().getDtDTOList().size();) {
+		for (int i = recomNum; i < dateTimeListManagerSet.getResultList().getEventDTOList().size();) {
 			dateTimeListManagerSet.getResultList().deleteDtObj(i);
 		}
 	}

@@ -9,18 +9,15 @@ public class DateTimeDTO {
 
 	private String date;
 	private String time;
-	private boolean allDayEvent;
 	
 	public DateTimeDTO() {
 		this.date = "";
 		this.time = "";
-		this.allDayEvent = true;
 	}
 
-	public DateTimeDTO(String date, String time, boolean allDayEvent) {
+	public DateTimeDTO(String date, String time) {
 		this.date = date;
 		this.time = time;
-		this.allDayEvent = allDayEvent;
 	}
 
 	public String getDate() {
@@ -37,14 +34,6 @@ public class DateTimeDTO {
 
 	public void setTime(String time) {
 		this.time = time;
-	}
-
-	public boolean isAllDayEvent() {
-		return allDayEvent;
-	}
-
-	public void setAllDayEvent(boolean allDayEvent) {
-		this.allDayEvent = allDayEvent;
 	}
 
 	public LocalDate toLocalDate() {
@@ -71,8 +60,7 @@ public class DateTimeDTO {
 	public String toString() {
 		String jsonString = "";
 		jsonString = "{\"date\":\"" + this.date
-				+ "\", \"time\":\"" + this.time
-				+ "\", \"allDayEvent\":\"" + this.allDayEvent + "\"}";
+				+ "\", \"time\":\"" + this.time + "\"}";
 
 		return jsonString;
 	}

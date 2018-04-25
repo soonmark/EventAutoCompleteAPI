@@ -9,6 +9,7 @@ import com.soonmark.domain.AppConstants;
 import com.soonmark.domain.DateTimeDTO;
 import com.soonmark.domain.DateTimeEn;
 import com.soonmark.domain.DayOfWeekByLocale;
+import com.soonmark.domain.EventDTO;
 import com.soonmark.domain.Priority;
 
 public class DateTimeLogicalObject {
@@ -130,7 +131,7 @@ public class DateTimeLogicalObject {
 		this.isLeapYear = isLeapYear;
 	}
 
-	public DateTimeDTO toDTO() {
+	public DateTimeDTO toDtDTO() {
 		
 		String formattedDate = year + "";
 		if(year != AppConstants.INVALID_INPUT_CHARACTER) {
@@ -148,9 +149,16 @@ public class DateTimeLogicalObject {
 			formattedTime = localTime.format(formatter);
 		}
 		
-		DateTimeDTO dateTimeDTO = new DateTimeDTO(formattedDate, formattedTime, isAllDayEvent);
+		DateTimeDTO dateTimeDTO = new DateTimeDTO(formattedDate, formattedTime);
 		
 		return dateTimeDTO;
+	}
+	
+	public EventDTO toEventDTO() {
+		DateTimeDTO dateTimeDTO = toDtDTO();
+		EventDTO eventDTO = new EventDTO(dateTimeDTO, dateTimeDTO, isAllDayEvent, "");
+		
+		return eventDTO;
 	}
 
 	public DateTimeEn getFocusToRepeat() {

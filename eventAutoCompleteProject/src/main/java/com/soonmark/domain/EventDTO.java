@@ -1,26 +1,16 @@
 package com.soonmark.domain;
 
-import java.util.List;
-
 public class EventDTO {
-	String parsedText;
-	DateTimeDTO startDate;
-	DateTimeDTO endDate;
-	List<DateTimeDTO> recommendations;
-
-	public EventDTO(String parsedText, DateTimeDTO startDate, DateTimeDTO endDate, List<DateTimeDTO> recommendations) {
-		this.parsedText = parsedText;
+	private DateTimeDTO startDate;
+	private DateTimeDTO endDate;
+	private boolean allDayEvent;
+	private String displayName;
+	
+	public EventDTO(DateTimeDTO startDate, DateTimeDTO endDate, boolean allDayEvent, String displayName) {
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.recommendations = recommendations;
-	}
-
-	public String getParsedText() {
-		return parsedText;
-	}
-
-	public void setParsedText(String parsedText) {
-		this.parsedText = parsedText;
+		this.allDayEvent = allDayEvent;
+		this.displayName = displayName;
 	}
 
 	public DateTimeDTO getStartDate() {
@@ -38,30 +28,42 @@ public class EventDTO {
 	public void setEndDate(DateTimeDTO endDate) {
 		this.endDate = endDate;
 	}
-
-	public List<DateTimeDTO> getRecommendations() {
-		return recommendations;
-	}
-
-	public void setRecommendations(List<DateTimeDTO> recommendations) {
-		this.recommendations = recommendations;
+	
+	public boolean isAllDayEvent() {
+		return allDayEvent;
 	}
 	
+	public void setAllDayEvent(boolean allDayEvent) {
+		this.allDayEvent = allDayEvent;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
 	@Override
 	public String toString() {
+		boolean dateExists = false;
 		String jsonString = "";
-		jsonString = "{\"parsedText\":\"" + this.parsedText;
-			if(this.startDate != null) {	
-				jsonString += "\", \"startDate\":\"" + this.startDate.toString();
-			}/*else {
-				jsonString += "\", \"startDate\":\"" + "";
-			}*/
-			if(this.endDate != null) {
-				jsonString += "\", \"endDate\":\"" + this.endDate.toString();
-			}/*else {
-				jsonString += "\", \"endDate\":\"" + this.endDate;
-			}*/
-			jsonString += "\", \"recommendations\":" + this.recommendations.toString() + "}";
+		
+		if(this.startDate != null) {	
+			jsonString += "{\"startDate\":\"" + this.startDate.toString();
+			dateExists = true;
+		}
+		if(this.endDate != null) {
+			jsonString += "\", \"endDate\":\"" + this.endDate.toString();
+			dateExists = true;
+		}
+		if(dateExists) {
+			jsonString += "\", \"allDayEvent\":" + this.allDayEvent;
+			jsonString += "\", \"displayName\":" + this.displayName;
+			jsonString += "\"}";
+		}
+		
 		return jsonString;
 	}
 }

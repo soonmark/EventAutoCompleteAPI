@@ -78,33 +78,6 @@ body {
 					autocomplete="off" name="inputEvent" rows="1" tabindex="1"></textarea>
 				<!-- class="form-control input-lg" --></li>
 		</ul>
-		
-<!-- 		<div class="article">
-			<span class="tit">일시</span>
-			<div class="cont">
-				<div class="dateTime">
-					<div id="startDate"></div>
-				</div>
-			</div>
-			<div class="list-float-left">~</div>
-			<div class="cont">
-				<div class="dateTime">
-					<div id="endDate"></div>
-				</div>
-			</div>
-		</div> -->
-		
-<%-- 		
-		<div class="panel panel-default myPanelMargin">
-			<div class="panel-heading font-bording display-right">
-				<span class="glyphicon glyphicon-chevron-right"></span> <span
-					class="inputText">입력한 일정 : ${message}</span>
-			</div>
-			<!-- 			<div class="panel-body font-bording display-right">
-				<span class="glyphicon glyphicon-chevron-right"></span> <span
-					class="changedText">선택한 날짜 : </span>
-			</div> -->
-		</div> --%>
 
 		<button type="button"
 			class="btn btn-success wider-width btn-lg disabled">추가</button>
@@ -162,7 +135,7 @@ body {
 			strDate = new Object();
 			strDate.date = $(idVal).find('#date').text();
 			strDate.time = $(idVal).find('#time').text();
-			strDate.allDayEvent = $(idVal).find('#allDayEvent').text();
+/* 			strDate.allDayEvent = $(idVal).find('#allDayEvent').text(); */
 			strDate = JSON.stringify(strDate);
 			console.log(strDate);
 			
@@ -249,31 +222,7 @@ body {
 					$('#endDate').append($('.list-group').find('.parsedText').clone());
 				}
 				
-/* 				if ( $('#startDate').text() == "") {
-					console.log("text: " + $(this).clone().children().remove().end().text());
-
-					$('#startDate').text($(this).clone().children().remove().end().text());
-					
-					$(this).find(".info").each(
-							function(){
-								$('#startDate').append($(this).clone());
-					});
-					
-					$('#startDate').append($('.list-group').find('.parsedText').clone());
-				}
-				else if ( $('#endDate').text() == "") {
-					console.log("text: " + $(this).clone().children().remove().end().text());
-
-					$('#endDate').text($(this).clone().children().remove().end().text());
-									
-					$(this).find(".info").each(
-							function(){
-								$('#endDate').append($(this).clone());
-					});
-					
-					$('#endDate').append($('.list-group').find('.parsedText').clone());
-				}
-				 */
+				
 				if($('#startDate').text() != ""){
 					if(startDate == "startDate"){
 						createJsonObj(startDate);
@@ -334,29 +283,27 @@ body {
 					var str = "";
 					$(data.recommendations).each(
 							function(idx, dataEach) {
-								console.log("data " + idx + ": "
-										+ dataEach.date + " " + dataEach.time);
-
-								if (dataEach.date == INVALID_INPUT_CHARACTER) {
+								
+								if (dataEach.startDate.date == INVALID_INPUT_CHARACTER) {
 									alert("., /, -, : 외의 기호는 입력이 불가능합니다.");
 								} else {
 									var infoStr = "";
 									str += "<div class=\"list-group-item\">";
 									
-									if (dataEach.date != NO_DATA) {
-										str += dataEach.date + " ";
-										infoStr += "<div class=\"info\" id=\"date\">" + dataEach.date + "</div>";
-										var day = new Date(dataEach.date);
+									if (dataEach.startDate.date != NO_DATA) {
+										str += dataEach.startDate.date + " ";
+										infoStr += "<div class=\"info\" id=\"date\">" + dataEach.startDate.date + "</div>";
+										var day = new Date(dataEach.startDate.date);
 										var days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
 										str += days[day.getDay()] + " " ;
 									}
 									if (dataEach.allDayEvent == true) {
 										str += "종일";
-										infoStr += "<div class=\"info\" id=\"allDayEvent\">" + dataEach.allDayEvent + "</div>";
+/* 										infoStr += "<div class=\"info\" id=\"allDayEvent\">" + dataEach.allDayEvent + "</div>"; */
 									} else {
-										if (dataEach.time != NO_DATA) {
-											str += dataEach.time ;
-											infoStr += "<div class=\"info\" id=\"time\">" + dataEach.time + "</div>";
+										if (dataEach.startDate.time != NO_DATA) {
+											str += dataEach.startDate.time ;
+											infoStr += "<div class=\"info\" id=\"time\">" + dataEach.startDate.time + "</div>";
 										}
 									}
 									str += infoStr + "</div>";
@@ -370,17 +317,16 @@ body {
 					$('.inputText').text("입력한 일정 : " + tmpStr);
 					console.log("성공");
 
-						$(document).on(
-							{
-								mouseenter : function() {
-									$(this).addClass("active");
-								},
-								mouseleave : function() {
-									$(this).removeClass("active");
-								}
+					$(document).on(
+						{
+							mouseenter : function() {
+								$(this).addClass("active");
 							},
-						'.list-group-item');
-
+							mouseleave : function() {
+								$(this).removeClass("active");
+							}
+						},
+					'.list-group-item');
 				}
 			}
 
@@ -388,7 +334,6 @@ body {
 			console.log(settings.data);
 			
 			$.ajax(settings);
-			
 		};
 	</script>
 

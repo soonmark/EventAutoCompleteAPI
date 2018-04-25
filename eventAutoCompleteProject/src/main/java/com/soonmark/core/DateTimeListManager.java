@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.soonmark.domain.DateTimeDTO;
 import com.soonmark.domain.DateTimeEn;
+import com.soonmark.domain.EventDTO;
 import com.soonmark.domain.TokenType;
 
 public class DateTimeListManager {
@@ -24,16 +25,26 @@ public class DateTimeListManager {
 		dtObjList = new ArrayList<DateTimeLogicalObject>();
 		this.listType = listType;
 	}
-
-	public List<DateTimeDTO> getDtDTOList() {
-		List<DateTimeDTO> newList = new ArrayList<DateTimeDTO>();
-
+	
+	public List<EventDTO> getEventDTOList() {
+		List<EventDTO> newList = new ArrayList<EventDTO>();
+		
 		Iterator<DateTimeLogicalObject> iter = dtObjList.iterator();
 		while (iter.hasNext()) {
-			newList.add(iter.next().toDTO());
+			newList.add(iter.next().toEventDTO());
 		}
 		return newList;
 	}
+
+//		public List<DateTimeDTO> getDtDTOList() {
+//		List<DateTimeDTO> newList = new ArrayList<DateTimeDTO>();
+//
+//		Iterator<DateTimeLogicalObject> iter = dtObjList.iterator();
+//		while (iter.hasNext()) {
+//			newList.add(iter.next().toDTO());
+//		}
+//		return newList;
+//	}
 
 	public List<DateTimeLogicalObject> getDtMgrList() {
 		return dtObjList;
