@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.soonmark.domain.AppConstants;
 import com.soonmark.domain.DateTimeDTO;
+import com.soonmark.domain.StringDateTimeDTO;
 import com.soonmark.domain.EventDTO;
 import com.soonmark.domain.TokenType;
 
@@ -70,7 +71,7 @@ public class RecommendationManager {
 		logger.info("입력받은 일정 : " + inputText);
 
 		if (blockInvalidCharacters() == true) {
-			DateTimeLogicalObject dtObj = new DateTimeLogicalObject();
+			InvalidDateTimeObj dtObj = new InvalidDateTimeObj();
 			// -2는 잘못된 기호나 문자 입력 시 에러 코드
 			dtObj.setYear(AppConstants.INVALID_INPUT_CHARACTER);
 			dateTimeListManagerSet.getResultList().insertDtObj(dtObj);
@@ -119,7 +120,9 @@ public class RecommendationManager {
 	}
 	
 	private void fillEmptyDatas() {
-		dateTimeListManagerSet.setResultList(new DateTimeEstimator(dateTimeListManagerSet.getTimeList(), dateTimeListManagerSet.getDateList()).fillEmptyDatas(startDate, endDate));
+		dateTimeListManagerSet.setResultList(
+				new DateTimeEstimator(dateTimeListManagerSet.getTimeList(), dateTimeListManagerSet.getDateList())
+					.fillEmptyDatas(startDate, endDate));
 	}
 	
 	private void sortByPriority() {
@@ -135,12 +138,12 @@ public class RecommendationManager {
 		}
 	}
 	
-	public DateTimeDTO getObjectFromJson(String date) throws JsonParseException, JsonMappingException, IOException {
+	public StringDateTimeDTO getObjectFromJson(String date) throws JsonParseException, JsonMappingException, IOException {
 
-		DateTimeDTO dto = null;
+		StringDateTimeDTO dto = null;
 		ObjectMapper objectMapper = new ObjectMapper();
 		if(date != null) {
-			dto = objectMapper.readValue(date, DateTimeDTO.class);
+			dto = objectMapper.readValue(date, StringDateTimeDTO.class);
 		}
 		
 		return dto;

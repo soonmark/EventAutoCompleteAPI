@@ -4,11 +4,11 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.regex.Matcher;
 
-import com.soonmark.core.DateTimeLogicalObject;
+import com.soonmark.core.InvalidDateTimeObj;
 
 public enum TokenType {
 	dates(0){
-		public void setDtObjInfo(DateTimeLogicalObject dtObj, Matcher matcher) {
+		public void setDtObjInfo(InvalidDateTimeObj dtObj, Matcher matcher) {
 			try {
 				dtObj.setYear(Integer.parseInt(matcher.group("year")));
 				int year = dtObj.getYear();
@@ -41,7 +41,7 @@ public enum TokenType {
 			}
 		}
 	}, days(1){
-		public void setDtObjInfo(DateTimeLogicalObject dtObj, Matcher matcher) {
+		public void setDtObjInfo(InvalidDateTimeObj dtObj, Matcher matcher) {
 			// month와 date 에 해당하는 group 만 따로 읽어 저장
 			try {
 				// getDayOfWeekByLocale
@@ -53,7 +53,7 @@ public enum TokenType {
 			}
 		}
 	}, times(2){
-		public void setDtObjInfo(DateTimeLogicalObject dtObj, Matcher matcher) {
+		public void setDtObjInfo(InvalidDateTimeObj dtObj, Matcher matcher) {
 			try {
 				if(matcher.group("am") != null) {
 					dtObj.setAmpm(DateTimeEn.am);
@@ -91,7 +91,7 @@ public enum TokenType {
 			}
 		}
 	}, special(3){
-		public void setDtObjInfo(DateTimeLogicalObject dtObj, Matcher matcher) {
+		public void setDtObjInfo(InvalidDateTimeObj dtObj, Matcher matcher) {
 			//enum 
 			for(SpecialDateType sdt : SpecialDateType.values()) {
 				try {
@@ -115,5 +115,5 @@ public enum TokenType {
 	}
 		
 	// 추상 메소드
-	abstract public void setDtObjInfo(DateTimeLogicalObject vo, Matcher matcher);
+	abstract public void setDtObjInfo(InvalidDateTimeObj vo, Matcher matcher);
 }

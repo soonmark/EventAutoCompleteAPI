@@ -3,10 +3,11 @@ package com.soonmark.domain;
 import java.util.List;
 
 public class RecomResultDTO {
-	private String parsedText;
-	private List<EventDTO> recommendations;
-	
+	String parsedText;
+	List<EventDTO> recommendations;
+
 	public RecomResultDTO(String parsedText, List<EventDTO> recommendations) {
+		super();
 		this.parsedText = parsedText;
 		this.recommendations = recommendations;
 	}
@@ -26,13 +27,13 @@ public class RecomResultDTO {
 	public void setRecommendations(List<EventDTO> recommendations) {
 		this.recommendations = recommendations;
 	}
-	
+
 	@Override
 	public String toString() {
 		String jsonString = "";
-		
-		jsonString = "{\"parsedText\":\"" + this.parsedText;
-		jsonString += "\", \"recommendations\":" + this.recommendations.toString() + "}";
+
+		jsonString += "{\"parsedText\":\"" + this.parsedText;
+		jsonString += "\", \"recommendations\":" + this.recommendations.toString() + "\"}";
 
 		return jsonString;
 	}

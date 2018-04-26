@@ -6,13 +6,13 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import com.soonmark.domain.AppConstants;
-import com.soonmark.domain.DateTimeDTO;
+import com.soonmark.domain.StringDateTimeDTO;
 import com.soonmark.domain.DateTimeEn;
 import com.soonmark.domain.DayOfWeekByLocale;
 import com.soonmark.domain.EventDTO;
 import com.soonmark.domain.Priority;
 
-public class DateTimeLogicalObject {
+public class InvalidDateTimeObj {
 	private int year;
 	private int month;
 	private int date;
@@ -29,7 +29,7 @@ public class DateTimeLogicalObject {
 	private boolean isLeapYear;
 	private Priority priority;
 
-	public DateTimeLogicalObject() {
+	public InvalidDateTimeObj() {
 		this.year = AppConstants.NO_DATA;
 		this.month = AppConstants.NO_DATA;
 		this.date = AppConstants.NO_DATA;
@@ -47,7 +47,7 @@ public class DateTimeLogicalObject {
 		priority = Priority.none;
 	}
 
-	public DateTimeLogicalObject(int year, int month, int date, DayOfWeek day, int hour, int minute) {
+	public InvalidDateTimeObj(int year, int month, int date, DayOfWeek day, int hour, int minute) {
 		this.year = year;
 		this.month = month;
 		this.date = date;
@@ -65,7 +65,7 @@ public class DateTimeLogicalObject {
 		priority = Priority.none;
 	}
 
-	public DateTimeLogicalObject(int year, int month, int date, DayOfWeek day, int hour, int minute, boolean isAllDayEvent) {
+	public InvalidDateTimeObj(int year, int month, int date, DayOfWeek day, int hour, int minute, boolean isAllDayEvent) {
 		this.year =year;
 		this.month =month;
 		this.date = date;
@@ -107,7 +107,7 @@ public class DateTimeLogicalObject {
 		this.hasInfo = hasInfo;
 	}
 
-	public void copyAllExceptForDayFrom(DateTimeLogicalObject origin) {
+	public void copyAllExceptForDayFrom(InvalidDateTimeObj origin) {
 		for(DateTimeEn dtEn : DateTimeEn.values()) {
 			if(dtEn == DateTimeEn.day) {
 				this.setDay(null);
@@ -131,7 +131,7 @@ public class DateTimeLogicalObject {
 		this.isLeapYear = isLeapYear;
 	}
 
-	public DateTimeDTO toDtDTO() {
+	public StringDateTimeDTO toDtDTO() {
 		
 		String formattedDate = year + "";
 		if(year != AppConstants.INVALID_INPUT_CHARACTER) {
@@ -141,7 +141,7 @@ public class DateTimeLogicalObject {
 			formattedDate = localDate.format(formatter);
 		}
 		
-		String formattedTime = hour + "";
+		String formattedTime = "";
 		if(isAllDayEvent == false && hour != -1) {
 			LocalTime localTime = LocalTime.of(hour,  minute);
 			
@@ -149,13 +149,13 @@ public class DateTimeLogicalObject {
 			formattedTime = localTime.format(formatter);
 		}
 		
-		DateTimeDTO dateTimeDTO = new DateTimeDTO(formattedDate, formattedTime);
+		StringDateTimeDTO dateTimeDTO = new StringDateTimeDTO(formattedDate, formattedTime);
 		
 		return dateTimeDTO;
 	}
 	
 	public EventDTO toEventDTO() {
-		DateTimeDTO dateTimeDTO = toDtDTO();
+		StringDateTimeDTO dateTimeDTO = toDtDTO();
 		EventDTO eventDTO = new EventDTO(dateTimeDTO, dateTimeDTO, isAllDayEvent, "");
 		
 		return eventDTO;
@@ -193,7 +193,7 @@ public class DateTimeLogicalObject {
 		setDay(tmpCal.getDay());
 	}
 
-	public void setAllDate(DateTimeLogicalObject dtObj) {
+	public void setAllDate(InvalidDateTimeObj dtObj) {
 		setDay(dtObj.getDay());
 		setYear(dtObj.getYear());
 		setMonth(dtObj.getMonth());

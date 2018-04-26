@@ -3,8 +3,6 @@ package com.soonmark.core;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.TextStyle;
-import java.util.Locale;
 
 import com.soonmark.domain.AppConstants;
 import com.soonmark.domain.DateTimeEn;
@@ -200,7 +198,7 @@ public class DateTimeAdjuster {
 		}
 	}
 
-	void addPmTime(DateTimeLogicalObject dateTimeLogicalObject) {
+	void addPmTime(InvalidDateTimeObj dateTimeLogicalObject) {
 		if(dateTimeLogicalObject.getAmpm() == DateTimeEn.am) {
 			if(dateTimeLogicalObject.getHour() >= 12) {
 				dateTimeLogicalObject.setHour(dateTimeLogicalObject.getHour() - 12);
@@ -220,7 +218,7 @@ public class DateTimeAdjuster {
 		}
 
 		for (int i = 0; i < beforeList.getDtMgrList().size(); i++) {
-			DateTimeLogicalObject dtObj = new DateTimeLogicalObject();
+			InvalidDateTimeObj dtObj = new InvalidDateTimeObj();
 			dtObj.setAllDate(beforeList.getElement(i));
 			dtObj.setMinute(beforeList.getElement(i).getMinute());
 			dtObj.setHour((beforeList.getElement(i).getHour() + 12) % 24);

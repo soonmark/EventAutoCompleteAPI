@@ -2,66 +2,34 @@ package com.soonmark.domain;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 public class DateTimeDTO {
+	LocalDate date;
+	LocalTime time;
 
-	private String date;
-	private String time;
-	
 	public DateTimeDTO() {
-		this.date = "";
-		this.time = "";
+		this.date = null;
+		this.time = null;
 	}
-
-	public DateTimeDTO(String date, String time) {
+	
+	public DateTimeDTO(LocalDate date, LocalTime time) {
 		this.date = date;
 		this.time = time;
 	}
 
-	public String getDate() {
+	public LocalDate getDate() {
 		return date;
 	}
 
-	public void setDate(String date) {
+	public void setDate(LocalDate date) {
 		this.date = date;
 	}
 
-	public String getTime() {
+	public LocalTime getTime() {
 		return time;
 	}
 
-	public void setTime(String time) {
+	public void setTime(LocalTime time) {
 		this.time = time;
-	}
-
-	public LocalDate toLocalDate() {
-		LocalDate localDate = null;
-		try {
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-			localDate = LocalDate.parse(this.date, formatter);
-		} catch (DateTimeParseException exc) {
-		}
-		return localDate;
-	}
-
-	public LocalTime toLocalTime() {
-		LocalTime localTime = null;
-		try {
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm");
-			localTime = LocalTime.parse(this.time, formatter);
-		}catch(DateTimeParseException exc) {
-		}
-		return localTime;
-	}
-	
-	@Override
-	public String toString() {
-		String jsonString = "";
-		jsonString = "{\"date\":\"" + this.date
-				+ "\", \"time\":\"" + this.time + "\"}";
-
-		return jsonString;
 	}
 }

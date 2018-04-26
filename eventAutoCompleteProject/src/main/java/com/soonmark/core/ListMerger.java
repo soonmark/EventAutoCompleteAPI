@@ -45,13 +45,13 @@ public class ListMerger {
 
 		// 빈 값일 때도 for문 돌아야 하므로 빈 객체 삽입.
 		if (afterListMgr.isListEmpty(afterListMgr.getDtMgrList()) == true) {
-			afterListMgr.insertDtObj(new DateTimeLogicalObject());
+			afterListMgr.insertDtObj(new InvalidDateTimeObj());
 		}
 
 		for (int i = 0; i < afterListMgr.getDtMgrList().size(); i++) {
 			for (int j = 0; j < list.getDtMgrList().size(); j++) {
 
-				DateTimeLogicalObject dateTimeObject = new DateTimeLogicalObject();
+				InvalidDateTimeObj dateTimeObject = new InvalidDateTimeObj();
 				dateTimeObject.copyAllExceptForDayFrom(afterListMgr.getElement(i));
 				dateTimeObject.setDay(afterListMgr.getElement(i).getDay());
 //				dateTimeObject = afterListMgr.getElement(i);
@@ -145,7 +145,7 @@ public class ListMerger {
 		}
 	}
 
-	private void adjustDateInfo(int date, DateTimeAdjuster dateTimeAdjuster, DateTimeLogicalObject timeObj) {
+	private void adjustDateInfo(int date, DateTimeAdjuster dateTimeAdjuster, InvalidDateTimeObj timeObj) {
 		// 요일과 해당 주가 안 맞으면 데이터 추가!
 		// 해당주의 토요일을 저장할 adjuster;
 		LocalDate lastDayOfTheWeek = LocalDate.now();
@@ -157,7 +157,7 @@ public class ListMerger {
 			timeObj.setFocusToRepeat(null);
 			
 			// 요일 무시한 날짜데이터를 추가하기
-			DateTimeLogicalObject ignoreDayObj = new DateTimeLogicalObject();
+			InvalidDateTimeObj ignoreDayObj = new InvalidDateTimeObj();
 			ignoreDayObj.copyAllExceptForDayFrom(timeObj);
 			ignoreDayObj.setSpecialDate(AppConstants.NO_DATA_FOR_SPECIALDATE);
 			ignoreDayObj.setPriority(Priority.dateWithIncorrectDay);

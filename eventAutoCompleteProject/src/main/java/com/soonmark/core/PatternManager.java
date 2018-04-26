@@ -56,7 +56,7 @@ public class PatternManager {
 				logger.info("패턴 : " + pattern);
 				logger.info("패턴 만족 : " + matcher.group(0));
 
-				DateTimeLogicalObject dtObj = new DateTimeLogicalObject();
+				InvalidDateTimeObj dtObj = new InvalidDateTimeObj();
 
 				// enum의 추상메소드로 바로 감.
 				tokenType.setDtObjInfo(dtObj, matcher);

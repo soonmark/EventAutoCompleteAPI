@@ -1,27 +1,31 @@
 package com.soonmark.core;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
-import java.util.Comparator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.soonmark.domain.AppConstants;
 import com.soonmark.domain.DateTimeDTO;
+import com.soonmark.domain.StringDateTimeDTO;
 import com.soonmark.domain.DateTimeEn;
 import com.soonmark.domain.Priority;
 
 public class DateTimeEstimator {
-	
+
 	private Logger logger = LoggerFactory.getLogger(DateTimeEstimator.class);
 
 	private DateTimeListManager timeList;
 	private DateTimeListManager dateList;
 	private DateTimeListManager resultList;
 	private int focusingRecurNum;
-	
+
+	boolean startDateExists;
+	boolean endDateExists;
+
 	public DateTimeEstimator(DateTimeListManager timeList, DateTimeListManager dateList) {
 		this.timeList = timeList;
 		this.dateList = dateList;
@@ -30,17 +34,20 @@ public class DateTimeEstimator {
 	}
 
 	public DateTimeListManager fillEmptyDatas(DateTimeDTO startDate, DateTimeDTO endDate) {
+		startDateExists = false;
+		endDateExists = false;
+
 		boolean isDateEmpty = false;
 		boolean isTimeEmpty = false;
 
 		// 날짜, 시간 두개의 값이 없을 때도 크로스시켜야 하므로 빈 객체 삽입.
 		if (timeList.getDtMgrList().size() == 0) {
-			timeList.insertDtObj(new DateTimeLogicalObject());
+			timeList.insertDtObj(new InvalidDateTimeObj());
 			isTimeEmpty = true;
 		}
 
 		if (dateList.getDtMgrList().size() == 0) {
-			dateList.insertDtObj(new DateTimeLogicalObject());
+			dateList.insertDtObj(new InvalidDateTimeObj());
 			isDateEmpty = true;
 		}
 
@@ -48,6 +55,15 @@ public class DateTimeEstimator {
 			timeList.deleteDtObj(0);
 			dateList.deleteDtObj(0);
 			return resultList;
+		}
+
+		// startDate, endDate 존재여부 확인
+		if (startDate != null) {
+			startDateExists = true;
+		}
+
+		if (endDate != null) {
+			endDateExists = true;
 		}
 
 		if (isDateEmpty) {
@@ -62,8 +78,6 @@ public class DateTimeEstimator {
 
 		return resultList;
 	}
-	
-	
 
 	private void setPriorityForTimeWithoutDate() {
 		int closestIdx = 0;
@@ -73,7 +87,7 @@ public class DateTimeEstimator {
 		closest.setYear(resultList.getElement(closestIdx).getYear());
 		closest.setHour(resultList.getElement(closestIdx).getHour(), false);
 		closest.setMinute(resultList.getElement(closestIdx).getMinute());
-		
+
 		for (int i = 1; i < resultList.getDtMgrList().size(); i++) {
 			DateTimeAdjuster cur = new DateTimeAdjuster();
 			cur.setDate(resultList.getElement(i).getDate());
@@ -81,8 +95,8 @@ public class DateTimeEstimator {
 			cur.setYear(resultList.getElement(i).getYear());
 			cur.setHour(resultList.getElement(i).getHour(), false);
 			cur.setMinute(resultList.getElement(i).getMinute());
-			
-			if(closest.getTimePoint().isAfter(cur.getTimePoint())) {
+
+			if (closest.getTimePoint().isAfter(cur.getTimePoint())) {
 				closest.setTimePoint(cur.getTimePoint());
 				closestIdx = i;
 			}
@@ -90,47 +104,51 @@ public class DateTimeEstimator {
 
 		resultList.getElement(closestIdx).setPriority(Priority.timeWithFirstEstimateDate);
 	}
-	
-	private void setTimeToCloseFutureTime(DateTimeDTO startDate, DateTimeDTO endDate) {
 
-		boolean startDateExists = false ;
-		boolean endDateExists  = false ;
-		
-		// startDate, endDate 존재여부 확인
-		if(startDate != null) {
-			startDateExists = true;
-		}
-		
-		if(endDate != null) {
-			endDateExists = true;
-		}
-		
+	private void setTimeToCloseFutureTime(DateTimeDTO startDate, DateTimeDTO endDate) {
 		logger.info("날짜 정보없음");
 		for (int i = 0; i < timeList.getDtMgrList().size(); i++) {
 			for (int j = 0; j < dateList.getDtMgrList().size(); j++) {
-				// 날짜 정보가 없으면 가장 근접한 미래날짜로 세팅.
-				DateTimeLogicalObject dtObj = new DateTimeLogicalObject();
-
-				// 현재 날짜 혹은 startDate이나 endDate에 맞출 것.
+				
+				InvalidDateTimeObj dtObj = new InvalidDateTimeObj();
 				DateTimeAdjuster tmpCal = new DateTimeAdjuster();
+				
 				tmpCal.setHour(timeList.getElement(i).getHour(), false);
-
+				
 				// 메소드의 객체가 now 캘린더가 아니면 true 입력
 				if (timeList.getElement(i).getMinute() == AppConstants.NO_DATA) {
 					tmpCal.setMinute(0);
 				} else {
 					tmpCal.setMinute(timeList.getElement(i).getMinute());
 				}
-
-//				if(startDateExists) {
-//					if (tmpCal.getTimePoint().toLocalTime().isBefore(now)) {
+				
+				// 미리 선택된 날짜가 전혀 없을 때
+				if (!startDateExists && !endDateExists) {
+					// 날짜 정보가 없으면 가장 근접한 미래날짜로 세팅.
+//					if (tmpCal.getTimePoint().toLocalTime().isBefore(LocalTime.now())) {
 //						tmpCal.plusDate(1);
 //					}
-//				}else {
-					if (tmpCal.getTimePoint().toLocalTime().isBefore(LocalTime.now())) {
-						tmpCal.plusDate(1);
+				}
+				// 미리 선택된 날짜시간 정보가 있으면
+				else {
+					// 일정 시작 날짜만 있을 때
+					if (startDateExists && !endDateExists) {
+						// 시간이 없을 때
+						if (startDate.getTime() == null) {
+							// 선택된 날짜로 세팅.
+							tmpCal.setYear(startDate.getDate().getYear());
+							tmpCal.setMonth(startDate.getDate().getMonthValue());
+							tmpCal.setDate(startDate.getDate().getDayOfMonth());
+						}
+					} else if (!startDateExists && endDateExists) {
+
 					}
-//				}
+				}
+
+				if (tmpCal.getTimePoint().isBefore(LocalDateTime.now())) {
+					tmpCal.plusDate(1);
+				}
+
 				dtObj.setAllDate(tmpCal);
 				dtObj.setHour(tmpCal.getHour());
 				dtObj.setMinute(tmpCal.getMinute());
@@ -139,9 +157,8 @@ public class DateTimeEstimator {
 				resultList.insertDtObj(dtObj);
 			}
 		}
-
 	}
-	
+
 	private boolean isValidDates() {
 		boolean result = true;
 		for (int j = 0; j < dateList.getDtMgrList().size(); j++) {
@@ -154,13 +171,12 @@ public class DateTimeEstimator {
 		}
 		return result;
 	}
-	
 
 	private void addEstimateDateAndTime(boolean isTimeEmpty) {
 		for (int i = 0; i < timeList.getDtMgrList().size(); i++) {
 			for (int j = 0; j < dateList.getDtMgrList().size(); j++) {
 				for (int k = 0; k < focusingRecurNum; k++) {
-					DateTimeLogicalObject dtObj = new DateTimeLogicalObject();
+					InvalidDateTimeObj dtObj = new InvalidDateTimeObj();
 					dtObj.copyAllExceptForDayFrom(dateList.getElement(j));
 
 					// 시간정보 없을 땐 종일 로 나타내기
@@ -172,9 +188,8 @@ public class DateTimeEstimator {
 			}
 		}
 	}
-	
 
-	private void estimateDates(DateTimeLogicalObject dtObj, int k, DateTimeLogicalObject origin) {
+	private void estimateDates(InvalidDateTimeObj dtObj, int k, InvalidDateTimeObj origin) {
 
 		estimateYear(dtObj);
 
@@ -187,7 +202,7 @@ public class DateTimeEstimator {
 		}
 	}
 
-	private void estimateMultipleDates(DateTimeLogicalObject dtObj, int k, DateTimeLogicalObject origin) {
+	private void estimateMultipleDates(InvalidDateTimeObj dtObj, int k, InvalidDateTimeObj origin) {
 		if (dtObj.getMonth() == AppConstants.NO_DATA) {
 			dtObj.setMonth(1);
 		}
@@ -210,9 +225,8 @@ public class DateTimeEstimator {
 		}
 		resultList.insertDtObj(dtObj);
 	}
-	
-	
-	private void setDatesByToken(DateTimeLogicalObject dtObj, int k) {
+
+	private void setDatesByToken(InvalidDateTimeObj dtObj, int k) {
 		DateTimeAdjuster tmpCal2 = new DateTimeAdjuster();
 		tmpCal2.setYear(dtObj.getYear());
 		tmpCal2.setMonth(dtObj.getMonth());
@@ -228,10 +242,9 @@ public class DateTimeEstimator {
 		dtObj.setProperDay();
 	}
 
-	private void setDatesByEveryWeek(DateTimeLogicalObject dtObj, int k, DateTimeLogicalObject origin) {
+	private void setDatesByEveryWeek(InvalidDateTimeObj dtObj, int k, InvalidDateTimeObj origin) {
 		// 날짜 정보 없이 요일만 있을 때
-		if(!dtObj.hasInfo(DateTimeEn.year.ordinal())
-				&& !dtObj.hasInfo(DateTimeEn.month.ordinal())
+		if (!dtObj.hasInfo(DateTimeEn.year.ordinal()) && !dtObj.hasInfo(DateTimeEn.month.ordinal())
 				&& !dtObj.hasInfo(DateTimeEn.date.ordinal())) {
 			LocalDate tmpDate = LocalDate.now();
 			tmpDate = tmpDate.with(TemporalAdjusters.nextOrSame(origin.getDay()));
@@ -240,14 +253,12 @@ public class DateTimeEstimator {
 			dtObj.setYear(tmpDate.getYear());
 			dtObj.setMonth(tmpDate.getMonthValue());
 			dtObj.setDay(tmpDate.getDayOfWeek());
-			if(k == 0) {
+			if (k == 0) {
 				dtObj.setPriority(Priority.dayOrigin);
-			}
-			else {
+			} else {
 				dtObj.setPriority(Priority.dayClones);
 			}
-		}
-		else { // 날짜도 있는데 요일에 맞춰야할 때
+		} else { // 날짜도 있는데 요일에 맞춰야할 때
 			LocalDate tmpDate = LocalDate.of(dtObj.getYear(), dtObj.getMonth(), dtObj.getDate());
 			tmpDate = tmpDate.with(TemporalAdjusters.nextOrSame(origin.getDay()));
 			tmpDate = tmpDate.plusWeeks(k);
@@ -255,16 +266,15 @@ public class DateTimeEstimator {
 			dtObj.setYear(tmpDate.getYear());
 			dtObj.setMonth(tmpDate.getMonthValue());
 			dtObj.setDay(tmpDate.getDayOfWeek());
-			if(k == 0) {
+			if (k == 0) {
 				dtObj.setPriority(Priority.dayOrigin);
-			}
-			else {
+			} else {
 				dtObj.setPriority(Priority.dayClones);
 			}
 		}
 	}
 
-	private void estimateOneDate(DateTimeLogicalObject dtObj) {
+	private void estimateOneDate(InvalidDateTimeObj dtObj) {
 		focusingRecurNum = 1;
 		if (dtObj.getMonth() == AppConstants.NO_DATA) {
 			dtObj.setMonth(LocalDate.now().getMonthValue());
@@ -280,13 +290,13 @@ public class DateTimeEstimator {
 		resultList.insertDtObj(dtObj);
 	}
 
-	private void estimateYear(DateTimeLogicalObject dtObj) {
+	private void estimateYear(InvalidDateTimeObj dtObj) {
 		if (dtObj.getYear() == AppConstants.NO_DATA) {
 			dtObj.setYear(LocalDate.now().getYear());
 		}
 	}
 
-	private void estimateTime(boolean isTimeEmpty, DateTimeLogicalObject dtObj, DateTimeLogicalObject timeObj) {
+	private void estimateTime(boolean isTimeEmpty, InvalidDateTimeObj dtObj, InvalidDateTimeObj timeObj) {
 		if (isTimeEmpty == true) {
 			dtObj.setAllDayEvent(true);
 		} else { // 날짜와 시간 정보 있을 때

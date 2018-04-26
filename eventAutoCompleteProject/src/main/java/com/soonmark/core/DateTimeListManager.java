@@ -7,29 +7,28 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import com.soonmark.domain.DateTimeDTO;
 import com.soonmark.domain.DateTimeEn;
 import com.soonmark.domain.EventDTO;
 import com.soonmark.domain.TokenType;
 
 public class DateTimeListManager {
-	private List<DateTimeLogicalObject> dtObjList;
+	private List<InvalidDateTimeObj> dtObjList;
 	TokenType listType;
 
 	public DateTimeListManager() {
-		dtObjList = new ArrayList<DateTimeLogicalObject>();
+		dtObjList = new ArrayList<InvalidDateTimeObj>();
 		this.listType = null;
 	}
 
 	public DateTimeListManager(TokenType listType) {
-		dtObjList = new ArrayList<DateTimeLogicalObject>();
+		dtObjList = new ArrayList<InvalidDateTimeObj>();
 		this.listType = listType;
 	}
 	
 	public List<EventDTO> getEventDTOList() {
 		List<EventDTO> newList = new ArrayList<EventDTO>();
 		
-		Iterator<DateTimeLogicalObject> iter = dtObjList.iterator();
+		Iterator<InvalidDateTimeObj> iter = dtObjList.iterator();
 		while (iter.hasNext()) {
 			newList.add(iter.next().toEventDTO());
 		}
@@ -46,7 +45,7 @@ public class DateTimeListManager {
 //		return newList;
 //	}
 
-	public List<DateTimeLogicalObject> getDtMgrList() {
+	public List<InvalidDateTimeObj> getDtMgrList() {
 		return dtObjList;
 	}
 
@@ -58,7 +57,7 @@ public class DateTimeListManager {
 		this.listType = listType;
 	}
 
-	public void insertDtObj(DateTimeLogicalObject dtObj) {
+	public void insertDtObj(InvalidDateTimeObj dtObj) {
 		dtObjList.add(dtObj);
 	}
 
@@ -70,7 +69,7 @@ public class DateTimeListManager {
 		dtObjList.clear();
 	}
 
-	public DateTimeLogicalObject getElement(int index) {
+	public InvalidDateTimeObj getElement(int index) {
 		return dtObjList.get(index);
 	}
 
@@ -82,7 +81,7 @@ public class DateTimeListManager {
 		new ListElementDeduplicator().mergeProcess(this, listType);
 	}
 
-	boolean isTargetMgrEmpty(DateTimeLogicalObject nonTarget) {
+	boolean isTargetMgrEmpty(InvalidDateTimeObj nonTarget) {
 		boolean isEmpty = true;
 		for (DateTimeEn d : DateTimeEn.values()) {
 			if (d.getTypeNum() != listType.getInteger()) {
@@ -95,7 +94,7 @@ public class DateTimeListManager {
 		return isEmpty;
 	}
 
-	boolean isListEmpty(List<DateTimeLogicalObject> list) {
+	boolean isListEmpty(List<InvalidDateTimeObj> list) {
 		boolean isEmpty = false;
 		if (list.size() == 0) {
 			isEmpty = true;
@@ -103,7 +102,7 @@ public class DateTimeListManager {
 		return isEmpty;
 	}
 
-	boolean ableToPut(DateTimeLogicalObject target, DateTimeLogicalObject nonTarget) {
+	boolean ableToPut(InvalidDateTimeObj target, InvalidDateTimeObj nonTarget) {
 		// target 의 원소 중 존재하는 값들이 모두 list 에 없으면 추가
 		boolean ableToPut = true;
 		for (DateTimeEn d : DateTimeEn.values()) {
@@ -162,7 +161,7 @@ public class DateTimeListManager {
 		Collections.sort(this.getDtMgrList(), ascending);
 	}
 
-	public boolean isDiffValueFromTargetMgr(DateTimeLogicalObject target, DateTimeLogicalObject nonTarget) {
+	public boolean isDiffValueFromTargetMgr(InvalidDateTimeObj target, InvalidDateTimeObj nonTarget) {
 		boolean isDiffValueFromTargetMgr = false;
 		for (DateTimeEn d : DateTimeEn.values()) {
 			if (target.hasInfo(d.ordinal()) && nonTarget.hasInfo(d.ordinal())
@@ -175,7 +174,7 @@ public class DateTimeListManager {
 		return isDiffValueFromTargetMgr;
 	}
 
-	public boolean containsList(DateTimeLogicalObject target, DateTimeLogicalObject nonTarget) {
+	public boolean containsList(InvalidDateTimeObj target, InvalidDateTimeObj nonTarget) {
 		boolean isIncludingTarget = true;
 		for (DateTimeEn d : DateTimeEn.values()) {
 			if (target.hasInfo(d.ordinal()) && nonTarget.hasInfo(d.ordinal())
@@ -198,10 +197,10 @@ public class DateTimeListManager {
 
 }
 
-class Ascending implements Comparator<DateTimeLogicalObject> {
+class Ascending implements Comparator<InvalidDateTimeObj> {
 
 	@Override
-	public int compare(DateTimeLogicalObject o1, DateTimeLogicalObject o2) {
+	public int compare(InvalidDateTimeObj o1, InvalidDateTimeObj o2) {
 		return o1.getPriority().compareTo(o2.getPriority());
 	}
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.soonmark.core.RecommendationManager;
+import com.soonmark.domain.StringDateTimeDTO;
 import com.soonmark.domain.DateTimeDTO;
 import com.soonmark.domain.EventDTO;
 import com.soonmark.domain.RecomResultDTO;
@@ -20,23 +21,33 @@ public class RecommendationServiceImpl implements RecommendationService {
 	private Logger logger = LoggerFactory.getLogger(RecommendationServiceImpl.class);
 	
 	@Override
-	public RecomResultDTO autoCompleteEvent(String inputEvent, String start, String end) throws Exception {
+	public List<EventDTO> autoCompleteEvent(String inputEvent, String start, String end) throws Exception {
 		
-		DateTimeDTO startDate = recommendationManager.getObjectFromJson(start);
-		DateTimeDTO endDate = recommendationManager.getObjectFromJson(end);
+		StringDateTimeDTO startStrDate = recommendationManager.getObjectFromJson(start);
+		StringDateTimeDTO endStrDate = recommendationManager.getObjectFromJson(end);
+		
+		DateTimeDTO startDate = null;
+		DateTimeDTO endDate = null;
+		
+		if(startStrDate != null) {
+			startDate = startStrDate.toDateTimeDTO();
+		}
+		if(endStrDate != null) {
+			endDate = endStrDate.toDateTimeDTO();
+		}
 		
 		List<EventDTO> list = getRecommendations(inputEvent, startDate, endDate);
 		
-		RecomResultDTO recomResult = new RecomResultDTO(inputEvent, list);
+//		RecomResultDTO recomResultDTO = new RecomResultDTO(inputEvent, list);
 		
-		logger.info("최종 response : " + recomResult.toString());
+		logger.info("최종 response : " + list.toString());
 		
-		return recomResult;
+		return list;
 	}
 	
 	@Override
 	public List<EventDTO> getRecommendations(String inputText, DateTimeDTO startDate, DateTimeDTO endDate) throws Exception {
-		
+
 		return recommendationManager.getRecommendations(inputText, startDate, endDate);
 	}
 }

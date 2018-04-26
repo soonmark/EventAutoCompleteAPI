@@ -1,31 +1,31 @@
 package com.soonmark.domain;
 
 public class EventDTO {
-	private DateTimeDTO startDate;
-	private DateTimeDTO endDate;
+	private StringDateTimeDTO startDate;
+	private StringDateTimeDTO endDate;
 	private boolean allDayEvent;
 	private String displayName;
 	
-	public EventDTO(DateTimeDTO startDate, DateTimeDTO endDate, boolean allDayEvent, String displayName) {
+	public EventDTO(StringDateTimeDTO startDate, StringDateTimeDTO endDate, boolean allDayEvent, String displayName) {
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.allDayEvent = allDayEvent;
 		this.displayName = displayName;
 	}
 
-	public DateTimeDTO getStartDate() {
+	public StringDateTimeDTO getStartDate() {
 		return startDate;
 	}
 
-	public void setStartDate(DateTimeDTO startDate) {
+	public void setStartDate(StringDateTimeDTO startDate) {
 		this.startDate = startDate;
 	}
 
-	public DateTimeDTO getEndDate() {
+	public StringDateTimeDTO getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(DateTimeDTO endDate) {
+	public void setEndDate(StringDateTimeDTO endDate) {
 		this.endDate = endDate;
 	}
 	
