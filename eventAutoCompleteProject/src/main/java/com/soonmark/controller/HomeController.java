@@ -50,13 +50,13 @@ public class HomeController {
 		String endDate = httpServletRequest.getParameter("endDate");
 		
 		if(startDate != null) {
-			logger.info(startDate.toString());
+			logger.info("startDate" + startDate.toString());
 		}
 		else {
 			logger.info("No startDate");
 		}
 		if(endDate != null) {
-			logger.info(endDate.toString());
+			logger.info("endDate" + endDate.toString());
 		}
 		else {
 			logger.info("No endDate");

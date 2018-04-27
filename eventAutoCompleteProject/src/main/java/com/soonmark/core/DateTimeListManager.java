@@ -25,15 +25,15 @@ public class DateTimeListManager {
 		this.listType = listType;
 	}
 	
-	public List<EventDTO> getEventDTOList() {
-		List<EventDTO> newList = new ArrayList<EventDTO>();
-		
-		Iterator<InvalidDateTimeObj> iter = dtObjList.iterator();
-		while (iter.hasNext()) {
-			newList.add(iter.next().toEventDTO());
-		}
-		return newList;
-	}
+//	public List<EventDTO> getEventDTOList() {
+//		List<EventDTO> newList = new ArrayList<EventDTO>();
+//		
+//		Iterator<InvalidDateTimeObj> iter = dtObjList.iterator();
+//		while (iter.hasNext()) {
+//			newList.add(iter.next().toEventDTO());
+//		}
+//		return newList;
+//	}
 
 //		public List<DateTimeDTO> getDtDTOList() {
 //		List<DateTimeDTO> newList = new ArrayList<DateTimeDTO>();
@@ -195,6 +195,12 @@ public class DateTimeListManager {
 		return isIncludingTarget;
 	}
 
+	// 완성하기!!
+	public EventListManager mergeWith(DateTimeListManager firstList,
+			DateTimeListManager secondList) {
+		return null;
+	}
+
 }
 
 class Ascending implements Comparator<InvalidDateTimeObj> {
@@ -202,5 +208,13 @@ class Ascending implements Comparator<InvalidDateTimeObj> {
 	@Override
 	public int compare(InvalidDateTimeObj o1, InvalidDateTimeObj o2) {
 		return o1.getPriority().compareTo(o2.getPriority());
+	}
+}
+
+class AscendingEvents implements Comparator<InvalidEventObj> {
+	
+	@Override
+	public int compare(InvalidEventObj o1, InvalidEventObj o2) {
+		return o1.getStartDate().getPriority().compareTo(o2.getStartDate().getPriority());
 	}
 }

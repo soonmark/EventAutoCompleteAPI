@@ -1,8 +1,10 @@
 package com.soonmark.core;
 
+import java.time.DateTimeException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 
 import com.soonmark.domain.AppConstants;
 import com.soonmark.domain.DateTimeEn;
@@ -166,6 +168,45 @@ public class DateTimeAdjuster {
 			}
 		}
 	}
+	
+	// 31일이 맞을 때까지 월을 더해서 찾아줌.
+	public LocalDate plusMonthsWithDate(LocalDate dateTime, int plus) {
+		LocalDate tmp = dateTime.plusMonths(plus);
+		while(dateTime.getDayOfMonth() != tmp.getDayOfMonth()) {
+			try {
+				tmp = tmp.plusMonths(1).withDayOfMonth(dateTime.getDayOfMonth());
+			}
+			catch (DateTimeException ex) {
+				tmp = tmp.plusMonths(1).with(TemporalAdjusters.lastDayOfMonth());
+			}
+		}
+		return tmp;
+	}
+
+	public LocalDate plusFromMonthsWithDate(LocalDate dateTime, LocalDate from) {
+		int stdDate = dateTime.getDayOfMonth();
+		LocalDate tmp = from;
+		if(tmp.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth() < stdDate) {
+			tmp = tmp.with(from).with(TemporalAdjusters.lastDayOfMonth());
+		}
+		else {
+			tmp = tmp.withDayOfMonth(stdDate);
+		}
+
+		if(tmp.isBefore(from)) {
+			tmp = tmp.plusMonths(1);
+		}
+		
+		while(dateTime.getDayOfMonth() != tmp.getDayOfMonth()) {
+			try {
+				tmp = tmp.plusMonths(1).withDayOfMonth(stdDate);
+			}
+			catch (DateTimeException ex) {
+				tmp = tmp.plusMonths(1).with(TemporalAdjusters.lastDayOfMonth());
+			}
+		}
+		return tmp;
+	}
 
 	public void setCloseDate(DateTimeAdjuster cal, DateTimeEn focus, int plus) {
 		if (focus == DateTimeEn.year) {
@@ -173,21 +214,17 @@ public class DateTimeAdjuster {
 			timePoint = timePoint.plusYears(diff + plus);
 			// 차이만큼 더했는데도 이전이면, 월이나 일을 계산했을 때 이전인 것이므로 한번더 1년을 더해줌.
 		} else if (focus == DateTimeEn.month) {
-			long diff = cal.getTimePoint().getMonthValue() - timePoint.getMonthValue();
+			// 올해와 년이 같으면
 			if (timePoint.getYear() == LocalDateTime.now().getYear()) {
-				if (timePoint.getDayOfMonth() == timePoint.withMonth(LocalDateTime.now().getMonthValue())
-						.getDayOfMonth()) {
-					timePoint = timePoint.withMonth(LocalDateTime.now().getMonthValue());
-				} else {
-					timePoint = timePoint.withMonth(LocalDateTime.now().getMonthValue()).plusMonths(1)
-							.withDayOfMonth(timePoint.getDayOfMonth());
+				// 오늘보다 이전이라면
+				if(timePoint.toLocalDate().isBefore(LocalDate.now())) {
+					// timPoint의 월을 오늘 이후의 월로 세팅.
+					timePoint = timePoint.with(
+							plusFromMonthsWithDate(timePoint.toLocalDate(), LocalDate.now()));
 				}
 			}
-			if (timePoint.plusMonths(diff + plus).getDayOfMonth() == timePoint.getDayOfMonth()) {
-				timePoint = timePoint.plusMonths(diff + plus);
-			} else {
-				timePoint = timePoint.plusMonths(diff + plus + 1);
-			}
+			// 년도가 다른 경우에도 수행
+			timePoint = timePoint.with(plusMonthsWithDate(timePoint.toLocalDate(), plus));
 		} else if (focus == DateTimeEn.date) {
 			long diff = cal.getTimePoint().getDayOfMonth() - timePoint.getDayOfMonth();
 			if (timePoint.getYear() == LocalDateTime.now().getYear()

@@ -28,6 +28,9 @@ public class PatternManager {
 		
 		Iterator<String> iter;
 		switch(tokenType) {
+		case period:
+			iter = patternStorage.getPeriodPatterns().iterator();
+		break;
 		case dates:
 			iter = patternStorage.getDatePatterns().iterator();
 		break;

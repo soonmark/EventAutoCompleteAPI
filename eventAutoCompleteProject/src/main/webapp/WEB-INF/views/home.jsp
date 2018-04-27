@@ -73,12 +73,12 @@ body {
 		<h2>일정</h2>
 		<div class="article">
 			<ul class="list_eventDates">
-				<li class="list-float-left"><textarea id="inputEvent"
+				<li class="list-float-left input"><textarea id="inputEvent"
 						autocomplete="off" name="inputEvent" rows="1" tabindex="1"></textarea>
 				</li>
 			</ul>
 			<div class="atcp"><!-- hideAtcp -->
-				<ul class="autoEvent list-group">
+				<ul class="list-group">
 				</ul>
 			</div>
 		</div>

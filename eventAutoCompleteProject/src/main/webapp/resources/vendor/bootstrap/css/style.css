@@ -68,7 +68,6 @@ html, body {
 .list-float-left{
 	float:left;
 	margin: 2px 10px;
-	min-width: 40%;
 }
 
 .list_eventDates{
@@ -81,16 +80,21 @@ html, body {
 	overflow: auto;
 }
 
+.input{
+	min-width: 60%;
+}
+
 #inputEvent{
-	max-width: 100%;
 	resize:none;
 	border:0px;
 	overflow:hidden;
+	min-width: 100%;
 }
 
 .newly-added{
 	background-color: #DFF9E3;
 	border: 1px solid #B7E4C2;
+	padding: 2px;
 }
 
 .info{
@@ -147,9 +151,12 @@ html, body {
 	display:none;
 }
 
+.autoEvent{
+	border: 1px solid #ddd;
+}
+
 .atcp-group-item{
 	background-color: white;
-	border: 1px solid #ddd;
     list-style-type: none;
 }
 

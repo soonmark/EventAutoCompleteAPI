@@ -4,20 +4,19 @@ var startDate = "startDate";
 var endDate = "endDate";
 var inputEvent = $('#inputEvent');
 
-
 const INVALID_INPUT_CHARACTER = -2;
 const NO_DATA = "";
 
 var viewingObjId = 0;
 
-$(function(){
+$(function() {
 	defaultSettings();
 });
 
 function defaultSettings() {
 	inputEvent.focus();
 	$('.list_eventDates').addClass('activeInputRange');
-	
+
 	setDefaultClickEvents();
 
 	setKeyEvents();
@@ -26,17 +25,15 @@ function defaultSettings() {
 function setDefaultClickEvents() {
 	$(document).click(function(event) {
 		// 입력창 부분 클릭시
-	    if($(event.target).closest('.article').length) {
-	    	$('.list_eventDates').addClass('activeInputRange');
-	    	inputEvent.focus();
-	    	$('.activeObj').removeClass('activeObj');
-	    }
-	    else{
-	    	$('.list_eventDates').removeClass("activeInputRange");
-	    }
+		if ($(event.target).closest('.article').length) {
+			$('.list_eventDates').addClass('activeInputRange');
+			inputEvent.focus();
+			$('.activeObj').removeClass('activeObj');
+		} else {
+			$('.list_eventDates').removeClass("activeInputRange");
+		}
 	});
 }
-
 
 // 키 이벤트 세팅
 function setKeyEvents() {
@@ -60,25 +57,26 @@ function setKeyEvents() {
 				$('.activeObj').remove();
 				inputEvent.focus();
 			} else {
-				for (var i = 0; i < viewingObjId; i++) {
-					var id = "#" + i;
-					if ($(id).length) {
-						$(id).addClass('activeObj');
-						inputEvent.blur();
-						break;
+				if (inputEvent.val() == '') {
+					for (var i = 0; i < viewingObjId; i++) {
+						var id = "#" + i;
+						if ($(id).length) {
+							$(id).addClass('activeObj');
+							inputEvent.blur();
+							break;
+						}
 					}
 				}
 			}
 		}
-		
-		if(ev.keyCode == 46){
+
+		if (ev.keyCode == 46) {
 			// 선택된 객체가 있으면
 			if ($('.activeObj').length) {
 				$('.activeObj').remove();
 				inputEvent.focus();
 			}
 		}
-		
 
 		// 위쪽 방향키, 왼쪽 방향키 누르면 객체 선택 왼쪽으로 이동.
 		if (ev.keyCode == 37 || ev.keyCode == 38) {
@@ -95,13 +93,15 @@ function setKeyEvents() {
 					}
 				}
 			} else {
-				for (var i = 0; i < viewingObjId; i++) {
-					var id = "#" + i;
-					if ($(id).length) {
-						$(id).addClass('activeObj');
-						inputEvent.val('');
-						inputEvent.blur();
-						break;
+				if (inputEvent.get(0).selectionEnd == 0) {
+					for (var i = 0; i < viewingObjId; i++) {
+						var id = "#" + i;
+						if ($(id).length) {
+							$(id).addClass('activeObj');
+							inputEvent.val('');
+							inputEvent.blur();
+							break;
+						}
 					}
 				}
 			}
@@ -172,7 +172,7 @@ function createJsonObj(strDate) {
 	strDate.time = $(idVal).find('#time').text();
 	/* strDate.allDayEvent = $(idVal).find('#allDayEvent').text(); */
 	strDate = JSON.stringify(strDate);
-	console.log(strDate);
+	console.log("?" + strDate);
 
 	if (oriStr == "startDate") {
 		startDate = strDate;
@@ -190,81 +190,79 @@ function zeroFill(number, width) {
 	}
 	return number + "";
 }
-function addEventDate(ev){
+function addEventDate(ev) {
 	console.log("text: "
 			+ $(ev.target).clone().children().remove().end().text());
-	var newEventDate = "<li class=\"list-float-left newly-added event-date\" id=\"" + viewingObjId++ + "\">";
-	newEventDate += "일시 : ";
-	newEventDate += "<span class=\"startDate\">" + $(ev.target).clone().children().remove().end().text()
-				+ "</span>";
-	
-	newEventDate += "<span class=\"endDate\">" + "</span>";
+	var newEventDate = "<li class=\"list-float-left newly-added event-date\" id=\""
+			+ viewingObjId++ + "\">";
+	newEventDate += "일시 : "
+			+ $(ev.target).clone().children().remove().end().text();
+	newEventDate += "<span class=\"startDate\"></span>";
+	newEventDate += "<span class=\"endDate\"></span>";
 	newEventDate += "</li>";
-	
+
 	$('.list_eventDates').prepend(newEventDate);
 
-	$(ev.target).find(".info").each(function() {
+	$(ev.target).find('.start-date').find(".info").each(function() {
 		$('.startDate').append($(this).clone());
+	});
+	$(ev.target).find('.end-date').find(".info").each(function() {
+		$('.endDate').append($(this).clone());
 	});
 }
 
-function hasEmptyInfos(element){
-	var hasEmptyInfos = true;
-	var startDateFull = false;
-	var endDateFull = false;
+function biggerThan(target, element) {
+	var targetIsBigger = false;
 	
-	if($(element).find(".startDate").find(".info").length == 2){
-		startDateFull = true;
+	var targetStartDateInfoLeng = $(target).find('.start-date').find(".info").length ;
+	var targetEndDateInfoLeng = $(target).find('.end-date').find(".info").length ;
+
+	if (targetStartDateInfoLeng > $(element).find(".startDate").find(".info").length
+			|| targetEndDateInfoLeng > $(element).find(".endDate").find(".info").length) {
+		targetIsBigger = true;
 	}
-	
-	if($(element).find(".endDate").find(".info").length == 2){
-		endDateFull = true;
-	}
-	
-	if(startDateFull && endDateFull){
-		hasEmptyInfos = false;
-	}
-	
-	return hasEmptyInfos;
+
+	return targetIsBigger;
 }
 
 // 리스트 중에서 하나 클릭했을 때 이벤트
-$(document)
-		.on(
-				{
-					click : function(ev) {
-						/* $('.changedText').text("선택한 날짜 : " + $(this).text()); */
+$(document).on({
+	click : function(ev) {
+		/* $('.changedText').text("선택한 날짜 : " + $(this).text()); */
 
-						// 일시 추가
-						if ($('.newly-added, .event-date').length == 0) {
-							addEventDate(ev);
-						}else{
-							if(hasEmptyInfos('.newly-added, .event-date')){
-								$('.newly-added, .event-date').remove();
-								addEventDate(ev);
-							}
-						}
+		// 일시 추가
+		if ($('.newly-added, .event-date').length == 0) {
+			addEventDate(ev);
+		} else {
+			if (biggerThan(ev.target, '.newly-added, .event-date')) {
+				$('.newly-added, .event-date').remove();
+				addEventDate(ev);
+			}
+		}
 
-						if ($('.startDate').text() != "") {
-							if (startDate == "startDate") {
-								createJsonObj(startDate);
-							}
-						}
-						if ($('.endDate').text() != "") {
-							if (endDate == "endDate") {
-								createJsonObj(endDate);
-							}
-						}
+		if ($('.startDate').text() != "") {
+			if (startDate == "startDate") {
+				createJsonObj(startDate);
+			}
+		}
+		if ($('.endDate').text() != "") {
+			if (endDate == "endDate") {
+				createJsonObj(endDate);
+			}
+		}
 
-						inputEvent.val('');
-						tmpStr = inputEvent.val();
+		inputEvent.val('');
+		tmpStr = inputEvent.val();
+		
+		console.log("star : " +startDate);
+		
 
-						checkInput();
+		checkInput();
 
-						// 포인터 포커스 일정 입력창에..
-						inputEvent.focus();
-					}
-				}, '.atcp-group-item');
+		// 포인터 포커스 일정 입력창에..
+		inputEvent.focus();
+	}
+}, '.atcp-group-item');
 
 // request data 세팅
 function setRequestData(data) {
@@ -310,9 +308,11 @@ function checkInput() {
 								} else {
 									var infoStr = "";
 									str += "<li class=\"atcp-group-item\">";
+									str += dataEach.displayName;
 
+									infoStr += "<div class=\"start-date\">";
 									if (dataEach.startDate.date != NO_DATA) {
-										str += dataEach.startDate.date + " ";
+										/* str += dataEach.startDate.date + " "; */
 										infoStr += "<div class=\"info\" id=\"date\">"
 												+ dataEach.startDate.date
 												+ "</div>";
@@ -320,31 +320,72 @@ function checkInput() {
 												dataEach.startDate.date);
 										var days = [ "일요일", "월요일", "화요일",
 												"수요일", "목요일", "금요일", "토요일" ];
-										str += days[day.getDay()] + " ";
+										/* str += days[day.getDay()] + " "; */
 									}
-									if (dataEach.allDayEvent == true) {
-										str += "종일";
-										/*
-										 * infoStr += "<div class=\"info\"
-										 * id=\"allDayEvent\">" +
-										 * dataEach.allDayEvent + "</div>";
-										 */
-									} else {
-										if (dataEach.startDate.time != NO_DATA) {
-											str += dataEach.startDate.time;
+									// if (dataEach.allDayEvent == true) {
+									// /* str += "종일";*/
+									// /*
+									// * infoStr += "<div class=\"info\"
+									// * id=\"allDayEvent\">" +
+									// * dataEach.allDayEvent + "</div>";
+									// */
+									// } else {
+									if (dataEach.startDate.time != NO_DATA) {
+										/* str += dataEach.startDate.time; */
+										infoStr += "<div class=\"info\" id=\"time\">"
+												+ dataEach.startDate.time
+												+ "</div>";
+									}
+									// }
+									infoStr += "</div>";
+
+									// endDate 추가
+									infoStr += "<div class=\"end-date\">";
+									if (dataEach.enDate != null) {
+										if (dataEach.endDate.date != NO_DATA) {
+											/* str += dataEach.endDate.date + " "; */
+											infoStr += "<div class=\"info\" id=\"date\">"
+													+ dataEach.endDate.date
+													+ "</div>";
+											/*
+											 * var day = new Date(
+											 * dataEach.endDate.date); var days = [
+											 * "일요일", "월요일", "화요일", "수요일",
+											 * "목요일", "금요일", "토요일" ]; str +=
+											 * days[day.getDay()] + " ";
+											 */
+										}
+										// if (dataEach.allDayEvent == true) {
+										// /* str += "종일";*/
+										// /*
+										// * infoStr += "<div class=\"info\"
+										// * id=\"allDayEvent\">" +
+										// * dataEach.allDayEvent + "</div>";
+										// */
+										// } else {
+										if (dataEach.endDate.time != NO_DATA) {
+											/* str += dataEach.endDate.time; */
 											infoStr += "<div class=\"info\" id=\"time\">"
-													+ dataEach.startDate.time
+													+ dataEach.endDate.time
 													+ "</div>";
 										}
+										// }
+										infoStr += "</div>";
 									}
 									str += infoStr + "</li>";
 								}
+
 							});
 
-/*			str += "<div class=\"parsedText\">" + data.parsedText + "</div>";*/
+			/* str += "<div class=\"parsedText\">" + data.parsedText + "</div>"; */
 
+			if (str == "") {
+				$('.list-group').removeClass('autoEvent');
+			} else {
+				$('.list-group').addClass('autoEvent');
+			}
 			$(".list-group").html(str);
-			$('.inputText').text("입력한 일정 : " + tmpStr);
+			/* $('.inputText').text("입력한 일정 : " + tmpStr); */
 			console.log("성공");
 
 			$(document).on({

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PatternStorage {
+	// 기간 패턴
+	List<String> periodPatterns = new ArrayList<String>();
 	// 년월일 패턴
 	List<String> datePatterns = new ArrayList<String>();
 	// 요일 패턴
@@ -19,10 +21,18 @@ public class PatternStorage {
 	}
 
 	public void initPatterns() {
+		initPeriodPatterns();
 		initDatePatterns();
 		initTimePatterns();
 		initDayPatterns();
 		initSpecialDatePatterns();
+	}
+
+	private void initPeriodPatterns() {
+		periodPatterns.add("^(.*)(?<from>부터)$");	// 부터
+		periodPatterns.add("^(.*)(?<to>까지)$");	// 까지
+		periodPatterns.add("^(.*)(?<period>~)$");	// 날짜시간 ~ 날짜시간
+		periodPatterns.add("^(.*)(?<for>동안)");	// 3시간동안
 	}
 
 	public void initDatePatterns() {
@@ -119,6 +129,14 @@ public class PatternStorage {
 		specialDatePatterns.add("(?<thisWeek>이번주)"); // 이번주
 		specialDatePatterns.add("^(|.*[^다])(?<nextWeek>다음주)(.*)$"); // 다음주
 		specialDatePatterns.add("(?<weekAfterNext>다다음주)"); // 다다음주
+	}
+
+	public List<String> getPeriodPatterns() {
+		return periodPatterns;
+	}
+	
+	public void setPeriodPatterns(List<String> periodPatterns) {
+		this.periodPatterns = periodPatterns;
 	}
 
 	public List<String> getDatePatterns() {

@@ -7,7 +7,14 @@ import java.util.regex.Matcher;
 import com.soonmark.core.InvalidDateTimeObj;
 
 public enum TokenType {
-	dates(0){
+	period(0){
+		@Override
+		public void setDtObjInfo(InvalidDateTimeObj dtObj, Matcher matcher) {
+			
+		}
+		
+	}, dates(1){
+		@Override
 		public void setDtObjInfo(InvalidDateTimeObj dtObj, Matcher matcher) {
 			try {
 				dtObj.setYear(Integer.parseInt(matcher.group("year")));
@@ -40,7 +47,8 @@ public enum TokenType {
 				dtObj.setDate(AppConstants.NO_DATA);
 			}
 		}
-	}, days(1){
+	}, days(2){
+		@Override
 		public void setDtObjInfo(InvalidDateTimeObj dtObj, Matcher matcher) {
 			// month와 date 에 해당하는 group 만 따로 읽어 저장
 			try {
@@ -52,7 +60,8 @@ public enum TokenType {
 				dtObj.setDay(AppConstants.NO_DATA_FOR_DAY);
 			}
 		}
-	}, times(2){
+	}, times(3){
+		@Override
 		public void setDtObjInfo(InvalidDateTimeObj dtObj, Matcher matcher) {
 			try {
 				if(matcher.group("am") != null) {
@@ -90,7 +99,8 @@ public enum TokenType {
 				dtObj.setHasInfo(DateTimeEn.minute.ordinal(), true);
 			}
 		}
-	}, special(3){
+	}, special(4){
+		@Override
 		public void setDtObjInfo(InvalidDateTimeObj dtObj, Matcher matcher) {
 			//enum 
 			for(SpecialDateType sdt : SpecialDateType.values()) {
@@ -115,5 +125,5 @@ public enum TokenType {
 	}
 		
 	// 추상 메소드
-	abstract public void setDtObjInfo(InvalidDateTimeObj vo, Matcher matcher);
+	abstract public void setDtObjInfo(InvalidDateTimeObj dtObj, Matcher matcher);
 }

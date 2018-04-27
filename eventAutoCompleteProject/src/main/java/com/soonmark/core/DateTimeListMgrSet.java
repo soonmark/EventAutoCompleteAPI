@@ -5,6 +5,9 @@ import com.soonmark.domain.TokenType;
 public class DateTimeListMgrSet {
 	
 	// 앞으로 추천할 날짜 리스트
+	private DateTimeListManager periodList;
+
+	// 앞으로 추천할 날짜 리스트
 	private DateTimeListManager dateList;
 	
 	// 앞으로 추천할 특수 날짜 리스트
@@ -17,16 +20,25 @@ public class DateTimeListMgrSet {
 	private DateTimeListManager timeList;
 
 	// 최종 리스트
-	private DateTimeListManager resultList;
+	private EventListManager resultList;
 
 	public DateTimeListMgrSet() {
+		periodList = new DateTimeListManager(TokenType.period);
 		dateList = new DateTimeListManager(TokenType.dates);
 		specialDateList = new DateTimeListManager(TokenType.special);
 		dayList = new DateTimeListManager(TokenType.days);
 		timeList = new DateTimeListManager(TokenType.times);
-		resultList = new DateTimeListManager();
+		resultList = new EventListManager();
 	}
 	
+	public DateTimeListManager getPeriodList() {
+		return periodList;
+	}
+	
+	public void setPeriodList(DateTimeListManager periodList) {
+		this.periodList = periodList;
+	}
+
 	public DateTimeListManager getDateList() {
 		return dateList;
 	}
@@ -59,11 +71,11 @@ public class DateTimeListMgrSet {
 		this.timeList = timeList;
 	}
 	
-	public DateTimeListManager getResultList() {
+	public EventListManager getResultList() {
 		return resultList;
 	}
 	
-	public void setResultList(DateTimeListManager resultList) {
+	public void setResultList(EventListManager resultList) {
 		this.resultList = resultList;
 	}
 	
@@ -74,6 +86,8 @@ public class DateTimeListMgrSet {
 	public DateTimeListManager getDTListByTokType(TokenType tokenType) {
 		DateTimeListManager list;
 		switch (tokenType) {
+		case period:
+			list = periodList;
 		case dates:
 			list = dateList;
 			break;
@@ -99,6 +113,15 @@ public class DateTimeListMgrSet {
 		
 		// mergeBy 완성하자
 		targetList.mergeByList(tokenType, nonTargetList);
+	}
+
+	public EventListManager mergeList(TokenType periodType, TokenType firstType, TokenType secondType) {
+		DateTimeListManager periodList = getDTListByTokType(periodType);
+		DateTimeListManager firstList = getDTListByTokType(firstType);
+		DateTimeListManager secondList = getDTListByTokType(secondType);
+		
+		// mergeBy 완성하자
+		return periodList.mergeWith(firstList, secondList);
 	}
 	
 	public void adjustForAmPmTime() {

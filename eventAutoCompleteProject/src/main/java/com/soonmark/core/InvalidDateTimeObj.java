@@ -1,11 +1,13 @@
 package com.soonmark.core;
 
+import java.time.DateTimeException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import com.soonmark.domain.AppConstants;
+import com.soonmark.domain.DateTimeDTO;
 import com.soonmark.domain.StringDateTimeDTO;
 import com.soonmark.domain.DateTimeEn;
 import com.soonmark.domain.DayOfWeekByLocale;
@@ -131,7 +133,7 @@ public class InvalidDateTimeObj {
 		this.isLeapYear = isLeapYear;
 	}
 
-	public StringDateTimeDTO toDtDTO() {
+	public StringDateTimeDTO tostrDtDTO() {
 		
 		String formattedDate = year + "";
 		if(year != AppConstants.INVALID_INPUT_CHARACTER) {
@@ -145,7 +147,7 @@ public class InvalidDateTimeObj {
 		if(isAllDayEvent == false && hour != -1) {
 			LocalTime localTime = LocalTime.of(hour,  minute);
 			
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm");
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("a hh:mm");
 			formattedTime = localTime.format(formatter);
 		}
 		
@@ -154,12 +156,39 @@ public class InvalidDateTimeObj {
 		return dateTimeDTO;
 	}
 	
-	public EventDTO toEventDTO() {
-		StringDateTimeDTO dateTimeDTO = toDtDTO();
-		EventDTO eventDTO = new EventDTO(dateTimeDTO, dateTimeDTO, isAllDayEvent, "");
-		
-		return eventDTO;
-	}
+//	public EventDTO toEventDTO() {
+//		StringDateTimeDTO dateTimeDTO = toDtDTO();
+//		
+//		// isAllDayEvent 세팅하기
+//		// displayName 세팅하기
+//		String displayName = createDisplayNameBy(dateTimeDTO, dateTimeDTO, isAllDayEvent);
+//		
+//		EventDTO eventDTO = new EventDTO(dateTimeDTO, dateTimeDTO, isAllDayEvent, displayName);
+//		
+//		return eventDTO;
+//	}
+//
+//	private String createDisplayNameBy(StringDateTimeDTO startDateTime, StringDateTimeDTO endDateTime, boolean isAllDayEvent2) {
+//		String displayName = "";
+//		if(startDateTime.getDate() != null) {
+//			displayName += startDateTime.getDate() + " ";
+//		}
+//		if(startDateTime.getTime() != null) {
+//			displayName += startDateTime.getTime() + " ";
+//		}
+//		displayName += " ~ ";
+//		if(endDateTime.getDate() != null) {
+//			displayName += endDateTime.getDate() + " ";
+//		}
+//		if(endDateTime.getTime() != null) {
+//			displayName += endDateTime.getTime() + " ";
+//		}
+//		if(isAllDayEvent) {
+//			displayName += "종일";
+//		}
+//
+//		return displayName;
+//	}
 
 	public DateTimeEn getFocusToRepeat() {
 		return focusToRepeat;
@@ -381,5 +410,25 @@ public class InvalidDateTimeObj {
 			}
 		}
 		return null;
+	}
+
+	public DateTimeDTO toDtDTO() {
+		LocalDate localDate = null;
+		LocalTime localTime = null;
+		try {
+			localDate = LocalDate.of(year, month, date);
+		}
+		catch(DateTimeException ex) {
+		}
+		
+		try {
+			localTime = LocalTime.of(hour, minute);
+		}
+		catch(DateTimeException ex) {
+		}
+		
+		DateTimeDTO dtDTO = new DateTimeDTO(localDate, localTime);
+
+		return dtDTO;
 	}
 }

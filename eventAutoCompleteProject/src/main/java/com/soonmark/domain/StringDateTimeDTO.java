@@ -49,7 +49,7 @@ public class StringDateTimeDTO {
 	private LocalTime toLocalTime() {
 		LocalTime localTime = null;
 		try {
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm");
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("a hh:mm");
 			localTime = LocalTime.parse(this.time, formatter);
 		}catch(DateTimeParseException exc) {
 		}

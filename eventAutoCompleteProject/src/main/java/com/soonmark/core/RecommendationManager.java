@@ -74,7 +74,8 @@ public class RecommendationManager {
 			InvalidDateTimeObj dtObj = new InvalidDateTimeObj();
 			// -2는 잘못된 기호나 문자 입력 시 에러 코드
 			dtObj.setYear(AppConstants.INVALID_INPUT_CHARACTER);
-			dateTimeListManagerSet.getResultList().insertDtObj(dtObj);
+			InvalidEventObj evObj = new InvalidEventObj(dtObj, null);
+			dateTimeListManagerSet.getResultList().insertDtObj(evObj);
 		} else {
 			// 패턴 매칭
 			patternManager.matchToPatterns(inputText, dateTimeListManagerSet);
@@ -88,8 +89,11 @@ public class RecommendationManager {
 			// 시간
 			dateTimeListManagerSet.deduplicateElements(TokenType.times);
 			dateTimeListManagerSet.adjustForAmPmTime();
+			
+			// 기간, 날짜, 시간 조정
+			EventListManager mergedListMgr = dateTimeListManagerSet.mergeList(TokenType.period, TokenType.dates, TokenType.times);
 
-			createRecommendations();
+			createRecommendations(mergedListMgr);
 		}
 
 		logger.info("JSON 값  : " + dateTimeListManagerSet.getResultList().getEventDTOList());
@@ -108,9 +112,9 @@ public class RecommendationManager {
 	}
 
 	// 수정해야하는 메소드
-	public void createRecommendations() {
+	public void createRecommendations(EventListManager mergedListMgr) {
 		// 빈 토큰 채우기
-		fillEmptyDatas();
+		fillEmptyDatas(mergedListMgr);
 
 		// 우선순위대로 정렬
 		sortByPriority();
@@ -119,14 +123,14 @@ public class RecommendationManager {
 		removeAllAfterRecomNum();
 	}
 	
-	private void fillEmptyDatas() {
+	private void fillEmptyDatas(EventListManager mergedListMgr) {
 		dateTimeListManagerSet.setResultList(
 				new DateTimeEstimator(dateTimeListManagerSet.getTimeList(), dateTimeListManagerSet.getDateList())
 					.fillEmptyDatas(startDate, endDate));
 	}
 	
 	private void sortByPriority() {
-		for (int i = 0; i < dateTimeListManagerSet.getResultList().getDtMgrList().size(); i++) {
+		for (int i = 0; i < dateTimeListManagerSet.getResultList().getEvMgrList().size(); i++) {
 			dateTimeListManagerSet.getResultList().sortByPriority();
 		}
 	}

@@ -3,13 +3,13 @@ package com.soonmark.domain;
 public class EventDTO {
 	private StringDateTimeDTO startDate;
 	private StringDateTimeDTO endDate;
-	private boolean allDayEvent;
+//	private boolean allDayEvent;
 	private String displayName;
 	
-	public EventDTO(StringDateTimeDTO startDate, StringDateTimeDTO endDate, boolean allDayEvent, String displayName) {
+	public EventDTO(StringDateTimeDTO startDate, StringDateTimeDTO endDate/*, boolean allDayEvent*/, String displayName) {
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.allDayEvent = allDayEvent;
+//		this.allDayEvent = allDayEvent;
 		this.displayName = displayName;
 	}
 
@@ -28,14 +28,14 @@ public class EventDTO {
 	public void setEndDate(StringDateTimeDTO endDate) {
 		this.endDate = endDate;
 	}
-	
-	public boolean isAllDayEvent() {
-		return allDayEvent;
-	}
-	
-	public void setAllDayEvent(boolean allDayEvent) {
-		this.allDayEvent = allDayEvent;
-	}
+//	
+//	public boolean isAllDayEvent() {
+//		return allDayEvent;
+//	}
+//	
+//	public void setAllDayEvent(boolean allDayEvent) {
+//		this.allDayEvent = allDayEvent;
+//	}
 
 	public String getDisplayName() {
 		return displayName;
@@ -59,9 +59,8 @@ public class EventDTO {
 			dateExists = true;
 		}
 		if(dateExists) {
-			jsonString += "\", \"allDayEvent\":" + this.allDayEvent;
-			jsonString += "\", \"displayName\":" + this.displayName;
-			jsonString += "\"}";
+//			jsonString += "\", \"allDayEvent\":" + this.allDayEvent;
+			jsonString += "\", \"displayName\":" + this.displayName + "\"}";
 		}
 		
 		return jsonString;
