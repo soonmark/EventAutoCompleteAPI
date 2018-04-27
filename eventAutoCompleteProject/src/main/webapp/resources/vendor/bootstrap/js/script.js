@@ -341,7 +341,7 @@ function checkInput() {
 
 									// endDate 추가
 									infoStr += "<div class=\"end-date\">";
-									if (dataEach.enDate != null) {
+									if (dataEach.endDate != null) {
 										if (dataEach.endDate.date != NO_DATA) {
 											/* str += dataEach.endDate.date + " "; */
 											infoStr += "<div class=\"info\" id=\"date\">"
