@@ -208,7 +208,7 @@ public class DateTimeAdjuster {
 		return tmp;
 	}
 
-	public void setCloseDate(DateTimeAdjuster cal, DateTimeEn focus, int plus) {
+	public void setCloseDate(DateTimeAdjuster cal, DateTimeEn focus, int plus, LocalDate ... sDate) {
 		if (focus == DateTimeEn.year) {
 			long diff = cal.getTimePoint().getYear() - timePoint.getYear();
 			timePoint = timePoint.plusYears(diff + plus);
@@ -218,9 +218,15 @@ public class DateTimeAdjuster {
 			if (timePoint.getYear() == LocalDateTime.now().getYear()) {
 				// 오늘보다 이전이라면
 				if(timePoint.toLocalDate().isBefore(LocalDate.now())) {
-					// timPoint의 월을 오늘 이후의 월로 세팅.
-					timePoint = timePoint.with(
-							plusFromMonthsWithDate(timePoint.toLocalDate(), LocalDate.now()));
+					if(sDate.length > 0) {
+						timePoint = timePoint.with(
+								plusFromMonthsWithDate(timePoint.toLocalDate(), sDate[0]));
+					}
+					else {
+						// timPoint의 월을 오늘 이후의 월로 세팅.
+						timePoint = timePoint.with(
+								plusFromMonthsWithDate(timePoint.toLocalDate(), LocalDate.now()));
+					}
 				}
 			}
 			// 년도가 다른 경우에도 수행

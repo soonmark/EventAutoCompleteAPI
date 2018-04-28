@@ -9,8 +9,8 @@ public class InvalidEventObj {
 	InvalidDateTimeObj endDate;
 
 	public InvalidEventObj() {
-		this.startDate = new InvalidDateTimeObj();
-		this.endDate = new InvalidDateTimeObj();
+		this.startDate = null;
+		this.endDate = null;
 	}
 
 	public InvalidEventObj(InvalidDateTimeObj startDate, InvalidDateTimeObj endDate) {
@@ -83,21 +83,21 @@ public class InvalidEventObj {
 			if (startDateTime.getDate() != null) {
 				displayName += startDateTime.getDate() + " ";
 			}
-			if (startDateTime.getTime() != null) {
+			if (startDateTime.getTime() != null && !startDateTime.getTime().equals("")) {
 				displayName += startDateTime.getTime() + " ";
 			}
 		}
-		displayName += " ~ ";
+		displayName += "~";
 		if (endDateTime != null) {
 			if (endDateTime.getDate() != null) {
-				displayName += endDateTime.getDate() + " ";
+				displayName += " " + endDateTime.getDate();
 			}
-			if (endDateTime.getTime() != null) {
-				displayName += endDateTime.getTime() + " ";
+			if (endDateTime.getTime() != null && !endDateTime.getTime().equals("")) {
+				displayName += " " + endDateTime.getTime();
 			}
 		}
 		if (isAllDayEvent) {
-			displayName += "종일";
+			displayName += " 종일";
 		}
 
 		return displayName;

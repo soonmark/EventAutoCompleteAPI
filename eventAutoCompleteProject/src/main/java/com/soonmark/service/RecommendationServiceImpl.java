@@ -25,7 +25,7 @@ public class RecommendationServiceImpl implements RecommendationService {
 		
 		StringDateTimeDTO startStrDate = recommendationManager.getObjectFromJson(start);
 		StringDateTimeDTO endStrDate = recommendationManager.getObjectFromJson(end);
-		
+		 
 		DateTimeDTO startDate = null;
 		DateTimeDTO endDate = null;
 		

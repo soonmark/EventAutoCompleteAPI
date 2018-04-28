@@ -56,6 +56,10 @@ function setKeyEvents() {
 			if ($('.activeObj').length) {
 				$('.activeObj').remove();
 				inputEvent.focus();
+				if ($('.newly-added, .event-date').length == 0) {
+					startDate = "startDate";
+					endDate = "endDate";
+				}
 			} else {
 				if (inputEvent.val() == '') {
 					for (var i = 0; i < viewingObjId; i++) {
@@ -75,6 +79,10 @@ function setKeyEvents() {
 			if ($('.activeObj').length) {
 				$('.activeObj').remove();
 				inputEvent.focus();
+				if ($('.newly-added, .event-date').length == 0) {
+					startDate = "startDate";
+					endDate = "endDate";
+				}
 			}
 		}
 
@@ -166,6 +174,7 @@ $
 function createJsonObj(strDate) {
 	var oriStr = strDate;
 	var idVal = "." + strDate;
+	console.log(idVal);
 
 	strDate = new Object();
 	strDate.date = $(idVal).find('#date').text();
@@ -229,24 +238,30 @@ function biggerThan(target, element) {
 $(document).on({
 	click : function(ev) {
 		/* $('.changedText').text("선택한 날짜 : " + $(this).text()); */
+		
+		var updated = false;
 
 		// 일시 추가
 		if ($('.newly-added, .event-date').length == 0) {
 			addEventDate(ev);
+			updated = true;
 		} else {
 			if (biggerThan(ev.target, '.newly-added, .event-date')) {
 				$('.newly-added, .event-date').remove();
 				addEventDate(ev);
+				updated = true;
 			}
 		}
 
 		if ($('.startDate').text() != "") {
-			if (startDate == "startDate") {
+			if (updated) {
+				startDate = "startDate";
 				createJsonObj(startDate);
 			}
 		}
 		if ($('.endDate').text() != "") {
-			if (endDate == "endDate") {
+			if (updated) {
+				endDate = "endDate";
 				createJsonObj(endDate);
 			}
 		}
