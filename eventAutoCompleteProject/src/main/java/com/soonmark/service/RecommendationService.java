@@ -4,10 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.soonmark.domain.StringDateTimeDTO;
 import com.soonmark.domain.DateTimeDTO;
 import com.soonmark.domain.EventDTO;
-import com.soonmark.domain.RecomResultDTO;
 
 @Service
 public interface RecommendationService {

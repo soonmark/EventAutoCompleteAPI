@@ -95,6 +95,8 @@ html, body {
 	background-color: #DFF9E3;
 	border: 1px solid #B7E4C2;
 	padding: 2px;
+	padding-left: 5px;
+	padding-right: 5px;
 }
 
 .info{
@@ -168,4 +170,10 @@ html, body {
 	background-color: #F8F8F8;
 	border : 1px solid #CBCBCB;
 	color : black;
+}
+
+.cancel_mark{
+	vertical-align: middle;
+	margin-left: 5px;
+	margin-bottom: 4px;
 }

@@ -3,9 +3,11 @@ package com.soonmark.domain;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import com.soonmark.core.InvalidDateTimeObj;
+
 public class DateTimeDTO {
-	LocalDate date;
-	LocalTime time;
+	private LocalDate date;
+	private LocalTime time;
 
 	public DateTimeDTO() {
 		this.date = null;
@@ -31,5 +33,25 @@ public class DateTimeDTO {
 
 	public void setTime(LocalTime time) {
 		this.time = time;
+	}
+	
+	public InvalidDateTimeObj toInvalidDateTimeObj() {
+		InvalidDateTimeObj obj = new InvalidDateTimeObj();
+		boolean noData = true;
+		if(date != null) {
+			obj.setDate(date.getDayOfMonth());
+			obj.setMonth(date.getMonthValue());
+			obj.setYear(date.getYear());
+			noData = false;
+		}
+		if(time != null) {
+			obj.setHour(time.getHour());
+			obj.setMinute(time.getMinute());
+			noData = false;
+		}
+		if(noData) {
+			return null;
+		}
+		return obj;
 	}
 }

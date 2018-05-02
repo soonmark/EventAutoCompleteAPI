@@ -1,5 +1,8 @@
 package com.soonmark.core;
 
+import java.time.format.TextStyle;
+import java.util.Locale;
+
 import com.soonmark.domain.DateTimeDTO;
 import com.soonmark.domain.EventDTO;
 import com.soonmark.domain.StringDateTimeDTO;
@@ -83,16 +86,18 @@ public class InvalidEventObj {
 		String displayName = "";
 		if (startDateTime != null) {
 			if (startDateTime.getDate() != null) {
-				displayName += startDateTime.getDate() + " ";
+				displayName += startDateTime.getDate() + " ("
+						+ startDateTime.toDateTimeDTO().getDate().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREA) + ")";
 			}
 			if (startDateTime.getTime() != null && !startDateTime.getTime().equals("")) {
-				displayName += startDateTime.getTime() + " ";
+				displayName += " " + startDateTime.getTime();
 			}
 		}
-		displayName += "~";
 		if (endDateTime != null) {
+			displayName += " ~ ";
 			if (endDateTime.getDate() != null) {
-				displayName += " " + endDateTime.getDate();
+				displayName += endDateTime.getDate()
+						+ " (" + endDateTime.toDateTimeDTO().getDate().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREA) + ")";
 			}
 			if (endDateTime.getTime() != null && !endDateTime.getTime().equals("")) {
 				displayName += " " + endDateTime.getTime();

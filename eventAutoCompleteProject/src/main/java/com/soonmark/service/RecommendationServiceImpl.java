@@ -11,7 +11,6 @@ import com.soonmark.core.RecommendationManager;
 import com.soonmark.domain.StringDateTimeDTO;
 import com.soonmark.domain.DateTimeDTO;
 import com.soonmark.domain.EventDTO;
-import com.soonmark.domain.RecomResultDTO;
 
 @Service
 public class RecommendationServiceImpl implements RecommendationService {

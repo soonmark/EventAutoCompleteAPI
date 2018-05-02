@@ -18,7 +18,7 @@ function defaultSettings() {
 	$('.list_eventDates').addClass('activeInputRange');
 
 	setDefaultClickEvents();
-
+	
 	setKeyEvents();
 }
 
@@ -33,6 +33,14 @@ function setDefaultClickEvents() {
 			$('.list_eventDates').removeClass("activeInputRange");
 		}
 	});
+}
+
+function imgOut(){
+	$('.cancel_mark').attr("src", "resources/cancel_mark.png");
+}
+
+function imgEnter(){
+	$('.cancel_mark').attr("src", "resources/cancel_mark_hover.png");
 }
 
 // 키 이벤트 세팅
@@ -206,6 +214,7 @@ function addEventDate(ev) {
 			+ viewingObjId++ + "\">";
 	newEventDate += "일시 : "
 			+ $(ev.target).clone().children().remove().end().text();
+	newEventDate += "<a href=\"#\"><img onclick=\"remove(this)\" onmouseover=\"imgEnter()\" onmouseout=\"imgOut()\" src=\"resources/cancel_mark.png\" class=\"cancel_mark\" width=\"8\" height=\"8\" alt=\"삭제\"></a>";
 	newEventDate += "<span class=\"startDate\"></span>";
 	newEventDate += "<span class=\"endDate\"></span>";
 	newEventDate += "</li>";
@@ -218,6 +227,18 @@ function addEventDate(ev) {
 	$(ev.target).find('.end-date').find(".info").each(function() {
 		$('.endDate').append($(this).clone());
 	});
+}
+
+function remove(element){
+	element.closest('.newly-added, .event-date').remove();
+	if($('.activeObj').length != 0){
+		$('.activeObj').removeClass('activeObj');
+	}
+	inputEvent.focus();
+	if ($('.newly-added, .event-date').length == 0) {
+		startDate = "startDate";
+		endDate = "endDate";
+	}
 }
 
 function biggerThan(target, element) {

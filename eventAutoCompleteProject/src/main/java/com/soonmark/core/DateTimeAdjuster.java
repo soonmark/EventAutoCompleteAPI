@@ -127,6 +127,12 @@ public class DateTimeAdjuster {
 		timePoint = timePoint.withMinute(val);
 	}
 
+	public void setAllDate(InvalidDateTimeObj dtObj) {
+		timePoint.withYear(dtObj.getYear());
+		timePoint.withMonth(dtObj.getMonth());
+		timePoint.withDayOfMonth(dtObj.getDate());
+	}
+	
 	public void setCloseDateOfTheDay(DayOfWeek val) {
 		if (val != AppConstants.NO_DATA_FOR_DAY) {
 
@@ -280,6 +286,10 @@ public class DateTimeAdjuster {
 				addPmTime(targetList.getElement(i));
 			}
 		}
+	}
+
+	public void plusMinute(int i) {
+		timePoint = timePoint.plusMinutes(i);
 	}
 
 }

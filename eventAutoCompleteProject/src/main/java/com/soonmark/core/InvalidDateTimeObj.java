@@ -11,7 +11,6 @@ import com.soonmark.domain.DateTimeDTO;
 import com.soonmark.domain.StringDateTimeDTO;
 import com.soonmark.domain.DateTimeEn;
 import com.soonmark.domain.DayOfWeekByLocale;
-import com.soonmark.domain.EventDTO;
 import com.soonmark.domain.Priority;
 
 public class InvalidDateTimeObj {
@@ -155,40 +154,6 @@ public class InvalidDateTimeObj {
 		
 		return dateTimeDTO;
 	}
-	
-//	public EventDTO toEventDTO() {
-//		StringDateTimeDTO dateTimeDTO = toDtDTO();
-//		
-//		// isAllDayEvent 세팅하기
-//		// displayName 세팅하기
-//		String displayName = createDisplayNameBy(dateTimeDTO, dateTimeDTO, isAllDayEvent);
-//		
-//		EventDTO eventDTO = new EventDTO(dateTimeDTO, dateTimeDTO, isAllDayEvent, displayName);
-//		
-//		return eventDTO;
-//	}
-//
-//	private String createDisplayNameBy(StringDateTimeDTO startDateTime, StringDateTimeDTO endDateTime, boolean isAllDayEvent2) {
-//		String displayName = "";
-//		if(startDateTime.getDate() != null) {
-//			displayName += startDateTime.getDate() + " ";
-//		}
-//		if(startDateTime.getTime() != null) {
-//			displayName += startDateTime.getTime() + " ";
-//		}
-//		displayName += " ~ ";
-//		if(endDateTime.getDate() != null) {
-//			displayName += endDateTime.getDate() + " ";
-//		}
-//		if(endDateTime.getTime() != null) {
-//			displayName += endDateTime.getTime() + " ";
-//		}
-//		if(isAllDayEvent) {
-//			displayName += "종일";
-//		}
-//
-//		return displayName;
-//	}
 
 	public DateTimeEn getFocusToRepeat() {
 		return focusToRepeat;
@@ -228,6 +193,19 @@ public class InvalidDateTimeObj {
 		setMonth(dtObj.getMonth());
 		setDate(dtObj.getDate());
 		setSpecialDate(dtObj.getSpecialDate());
+	}
+	
+	public void setAllTime(InvalidDateTimeObj dtObj) {
+		setHour(dtObj.getHour());
+		setMinute(dtObj.getMinute());
+	}
+	
+	public void setDateTime(InvalidDateTimeObj dtObj) {
+		setYear(dtObj.getYear());
+		setMonth(dtObj.getMonth());
+		setDate(dtObj.getDate());
+		setHour(dtObj.getHour());
+		setMinute(dtObj.getMinute());
 	}
 
 	public String getSpecialDate() {
@@ -430,5 +408,12 @@ public class InvalidDateTimeObj {
 		DateTimeDTO dtDTO = new DateTimeDTO(localDate, localTime);
 
 		return dtDTO;
+	}
+
+	public LocalTime getLocalTime() {
+		return this.toDtDTO().getTime();
+	}
+	public LocalDate getLocalDate() {
+		return this.toDtDTO().getDate();
 	}
 }
