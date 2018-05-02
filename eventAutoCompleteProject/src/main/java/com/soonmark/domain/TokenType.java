@@ -10,9 +10,7 @@ public enum TokenType {
 	period(0){
 		@Override
 		public void setDtObjInfo(InvalidDateTimeObj dtObj, Matcher matcher) {
-			
 		}
-		
 	}, dates(1){
 		@Override
 		public void setDtObjInfo(InvalidDateTimeObj dtObj, Matcher matcher) {

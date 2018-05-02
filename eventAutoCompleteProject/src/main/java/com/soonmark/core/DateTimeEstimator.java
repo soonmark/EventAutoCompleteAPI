@@ -168,13 +168,36 @@ public class DateTimeEstimator {
 							startDtObj.setMinute(startDate.getTime().getMinute());
 							
 							endDtObj = new InvalidDateTimeObj();
-							endDtObj.setAllDate(tmpCal);
+							endDtObj.setYear(startDate.getDate().getYear());
+							endDtObj.setMonth(startDate.getDate().getMonthValue());
+							endDtObj.setDate(startDate.getDate().getDayOfMonth());
 							endDtObj.setHour(tmpCal.getHour());
 							endDtObj.setMinute(tmpCal.getMinute());
 							endDtObj.setPriority(timeList.getElement(i).getPriority());
 						}
 					} else if (!startDateExists && endDateExists) {
 
+					}
+					// 시작시간, 종료시간 존재 시,
+					else if( startDateExists && endDateExists) {
+						startDtObj.setYear(startDate.getDate().getYear());
+						startDtObj.setMonth(startDate.getDate().getMonthValue());
+						startDtObj.setDate(startDate.getDate().getDayOfMonth());
+						startDtObj.setHour(tmpCal.getHour());
+						startDtObj.setMinute(tmpCal.getMinute());
+						
+						endDtObj = new InvalidDateTimeObj();
+//						endDtObj.setAllDate(tmpCal);
+						endDtObj.setYear(endDate.getDate().getYear());
+						endDtObj.setMonth(endDate.getDate().getMonthValue());
+						endDtObj.setDate(endDate.getDate().getDayOfMonth());
+						endDtObj.setHour(tmpCal.getHour());
+						endDtObj.setMinute(tmpCal.getMinute());
+						endDtObj.setPriority(timeList.getElement(i).getPriority());
+					}
+					// 둘다 존재하지 않을 
+					else {
+						
 					}
 				}
 

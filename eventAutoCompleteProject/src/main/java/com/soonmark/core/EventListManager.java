@@ -41,6 +41,10 @@ public class EventListManager {
 		return evObjList;
 	}
 	
+	public void setEvObjList(List<InvalidEventObj> evObjList) {
+		this.evObjList = evObjList;
+	}
+
 	public void sortByPriority() {
 		AscendingEvents ascending = new AscendingEvents();
 		Collections.sort(this.getEvMgrList(), ascending);

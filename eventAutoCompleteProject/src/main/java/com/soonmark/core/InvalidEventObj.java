@@ -66,9 +66,11 @@ public class InvalidEventObj {
 
 		if (startDate != null && end != null) {
 			if (start.getDate().isEqual(end.getDate())) {
-				if (start.getTime().getHour() == 0 && start.getTime().getMinute() == 0 && end.getTime().getHour() == 23
-						&& end.getTime().getMinute() == 59) {
-					return true;
+				if (start.getTime() != null && end.getTime() != null) {
+					if (start.getTime().getHour() == 0 && start.getTime().getMinute() == 0
+							&& end.getTime().getHour() == 23 && end.getTime().getMinute() == 59) {
+						return true;
+					}
 				}
 			}
 		}
