@@ -32,7 +32,7 @@ public class DateTimeEstimator {
 		focusingRecurNum = 2;
 	}
 
-	public EventListManager fillEmptyDatas(InvalidEventObj inputEventObj) {
+	public EventListManager fillEmptyDatas(InvalidEventObj inputEventObj, boolean focusStart) {
 		startDateExists = false;
 		endDateExists = false;
 
@@ -131,12 +131,12 @@ public class DateTimeEstimator {
 		}
 
 		if (isDateEmpty) {
-			setTimeToCloseFutureTime(inputEventObj);
+			setTimeToCloseFutureTime(inputEventObj, focusStart);
 			setPriorityForTimeWithoutDate();
 		} else {
 			// 월간 일수 차이에 대한 예외처리
 			if (isValidDates() == true) {
-				addEstimateDateAndTime(isTimeEmpty, inputEventObj);
+				addEstimateDateAndTime(isTimeEmpty, inputEventObj, focusStart);
 			}
 		}
 
@@ -146,25 +146,14 @@ public class DateTimeEstimator {
 	private void setPriorityForTimeWithoutDate() {
 		int closestIdx = 0;
 		DateTimeAdjuster closest = new DateTimeAdjuster();
-		// closest.setDate(resultList.getElement(closestIdx).getDate());
-		// closest.setMonth(resultList.getElement(closestIdx).getMonth());
-		// closest.setYear(resultList.getElement(closestIdx).getYear());
-		// closest.setHour(resultList.getElement(closestIdx).getHour(), false);
-		// closest.setMinute(resultList.getElement(closestIdx).getMinute());
 		closest.setDate(resultList.getElement(closestIdx).getStartDate().getDate());
 		closest.setMonth(resultList.getElement(closestIdx).getStartDate().getMonth());
 		closest.setYear(resultList.getElement(closestIdx).getStartDate().getYear());
 		closest.setHour(resultList.getElement(closestIdx).getStartDate().getHour(), false);
 		closest.setMinute(resultList.getElement(closestIdx).getStartDate().getMinute());
 
-		// for (int i = 1; i < resultList.getDtMgrList().size(); i++) {
 		for (int i = 1; i < resultList.getEvMgrList().size(); i++) {
 			DateTimeAdjuster cur = new DateTimeAdjuster();
-			// cur.setDate(resultList.getElement(i).getDate());
-			// cur.setMonth(resultList.getElement(i).getMonth());
-			// cur.setYear(resultList.getElement(i).getYear());
-			// cur.setHour(resultList.getElement(i).getHour(), false);
-			// cur.setMinute(resultList.getElement(i).getMinute());
 			cur.setDate(resultList.getElement(i).getStartDate().getDate());
 			cur.setMonth(resultList.getElement(i).getStartDate().getMonth());
 			cur.setYear(resultList.getElement(i).getStartDate().getYear());
@@ -177,11 +166,10 @@ public class DateTimeEstimator {
 			}
 		}
 
-		// resultList.getElement(closestIdx).setPriority(Priority.timeWithFirstEstimateDate);
 		resultList.getElement(closestIdx).getStartDate().setPriority(Priority.timeWithFirstEstimateDate);
 	}
 
-	private void setTimeToCloseFutureTime(InvalidEventObj inputEventObj) {
+	private void setTimeToCloseFutureTime(InvalidEventObj inputEventObj, boolean focusStart) {
 		logger.info("날짜 정보없음");
 		for (int i = 0; i < timeList.getDtMgrList().size(); i++) {
 			for (int j = 0; j < dateList.getDtMgrList().size(); j++) {
@@ -189,7 +177,7 @@ public class DateTimeEstimator {
 				InvalidDateTimeObj startDtObj = new InvalidDateTimeObj();
 				InvalidDateTimeObj endDtObj = null;
 				DateTimeAdjuster tmpCal = new DateTimeAdjuster();
-
+ 
 				tmpCal.setHour(timeList.getElement(i).getHour(), false);
 
 				// 메소드의 객체가 now 캘린더가 아니면 true 입력
@@ -205,6 +193,10 @@ public class DateTimeEstimator {
 					if (tmpCal.getTimePoint().toLocalTime().isBefore(LocalTime.now())) {
 						tmpCal.plusDate(1);
 					}
+					 startDtObj.setAllDate(tmpCal);
+					 startDtObj.setHour(tmpCal.getHour());
+					 startDtObj.setMinute(tmpCal.getMinute());
+					 startDtObj.setPriority(timeList.getElement(i).getPriority());
 				}
 				// 미리 선택된 날짜시간 정보가 있으면
 				else {
@@ -254,10 +246,6 @@ public class DateTimeEstimator {
 					}
 				}
 
-				// startDtObj.setAllDate(tmpCal);
-				// startDtObj.setHour(tmpCal.getHour());
-				// startDtObj.setMinute(tmpCal.getMinute());
-				// startDtObj.setPriority(timeList.getElement(i).getPriority());
 
 				// resultList.insertDtObj(dtObj);
 				InvalidEventObj evObj = new InvalidEventObj(startDtObj, endDtObj);
@@ -279,7 +267,7 @@ public class DateTimeEstimator {
 		return result;
 	}
 
-	private void addEstimateDateAndTime(boolean isTimeEmpty, InvalidEventObj inputEventObj) {
+	private void addEstimateDateAndTime(boolean isTimeEmpty, InvalidEventObj inputEventObj, boolean focusStart) {
 		// request 로 들어온 startDate가 존재할 때,
 		if (startDateExists && !endDateExists) {
 			for (int i = 0; i < timeList.getDtMgrList().size(); i++) {
@@ -344,29 +332,29 @@ public class DateTimeEstimator {
 	private void estimateDates(InvalidEventObj eventObj, boolean fillEnd, int k, InvalidDateTimeObj origin,
 			LocalDate... sDate) {
 
-		estimateYear(eventObj, fillEnd, sDate);
+		boolean isYearEstimated = estimateYear(eventObj, fillEnd, sDate);
 
 		if (fillEnd) {
 			if (eventObj.getEndDate().getFocusToRepeat() == null) {
 				// 반복없이 해당 값만 insert
-				estimateOneDate(eventObj, fillEnd, sDate);
+				estimateOneDate(eventObj, fillEnd, isYearEstimated, sDate);
 			} else {
 				// focus할 게 있으면 그 정보를 기준으로 for문 돌며 여러값 insert
-				estimateMultipleDates(eventObj, fillEnd, k, origin, sDate);
+				estimateMultipleDates(eventObj, fillEnd, k, origin, isYearEstimated, sDate);
 			}
 		} else {
 			if (eventObj.getStartDate().getFocusToRepeat() == null) {
 				// 반복없이 해당 값만 insert
-				estimateOneDate(eventObj, fillEnd, sDate);
+				estimateOneDate(eventObj, fillEnd, isYearEstimated, sDate);
 			} else {
 				// focus할 게 있으면 그 정보를 기준으로 for문 돌며 여러값 insert
-				estimateMultipleDates(eventObj, fillEnd, k, origin, sDate);
+				estimateMultipleDates(eventObj, fillEnd, k, origin, isYearEstimated, sDate);
 			}
 		}
 	}
 
 	private void estimateMultipleDates(InvalidEventObj eventObj, boolean fillEnd, int k, InvalidDateTimeObj origin,
-			LocalDate... sDate) {
+			boolean isYearEstimated, LocalDate... sDate) {
 		if (fillEnd) {
 			if (eventObj.getEndDate().getMonth() == AppConstants.NO_DATA) {
 				eventObj.getEndDate().setMonth(1);
@@ -382,11 +370,30 @@ public class DateTimeEstimator {
 			if (k == 0 && eventObj.getEndDate().isAllDayEvent() != true) {
 				eventObj.getEndDate().setPriority(Priority.timeWithFirstEstimateDate);
 			}
+			
+			
 			if (eventObj.getEndDate().isFocusOnDay() == true) {
 				// 매주 해당 요일에 맞는 날짜만 뽑도록 구하는 로직
 				setDatesByEveryWeek(eventObj.getEndDate(), k, origin);
 			} else {
 				setDatesByToken(eventObj.getEndDate(), k, sDate);
+			}
+
+			if(isYearEstimated) {
+				eventObj.getEndDate().getLocalDate();
+				DateTimeAdjuster now = new DateTimeAdjuster();
+				DateTimeAdjuster dateTimeAdjuster = new DateTimeAdjuster();
+				if(eventObj.getEndDate().getLocalTime() != null) {
+					dateTimeAdjuster.setTimePoint(LocalDateTime.of(eventObj.getEndDate().getLocalDate(),
+							eventObj.getEndDate().getLocalTime()));
+				}else {
+					dateTimeAdjuster.setYear(eventObj.getEndDate().getYear());
+					dateTimeAdjuster.setMonth(eventObj.getEndDate().getMonth());
+					dateTimeAdjuster.setDate(eventObj.getEndDate().getDate());
+				}
+				dateTimeAdjuster.setCloseDate(now, DateTimeEn.year, 0, false);
+				
+				eventObj.getEndDate().setAllDate(dateTimeAdjuster);
 			}
 		} else {
 			if (eventObj.getStartDate().getMonth() == AppConstants.NO_DATA) {
@@ -403,11 +410,30 @@ public class DateTimeEstimator {
 			if (k == 0 && eventObj.getStartDate().isAllDayEvent() != true) {
 				eventObj.getStartDate().setPriority(Priority.timeWithFirstEstimateDate);
 			}
+			
+
 			if (eventObj.getStartDate().isFocusOnDay() == true) {
 				// 매주 해당 요일에 맞는 날짜만 뽑도록 구하는 로직
 				setDatesByEveryWeek(eventObj.getStartDate(), k, origin);
 			} else {
 				setDatesByToken(eventObj.getStartDate(), k);
+			}
+
+			if(isYearEstimated) {
+				eventObj.getStartDate().getLocalDate();
+				DateTimeAdjuster now = new DateTimeAdjuster();
+				DateTimeAdjuster dateTimeAdjuster = new DateTimeAdjuster();
+				if(eventObj.getStartDate().getLocalTime() != null) {
+					dateTimeAdjuster.setTimePoint(LocalDateTime.of(eventObj.getStartDate().getLocalDate(),
+							eventObj.getStartDate().getLocalTime()));
+				}else {
+					dateTimeAdjuster.setYear(eventObj.getStartDate().getYear());
+					dateTimeAdjuster.setMonth(eventObj.getStartDate().getMonth());
+					dateTimeAdjuster.setDate(eventObj.getStartDate().getDate());
+				}
+				dateTimeAdjuster.setCloseDate(now, DateTimeEn.year, 0, false);
+				
+				eventObj.getStartDate().setAllDate(dateTimeAdjuster);
 			}
 		}
 		// resultList.insertDtObj(dtObj);
@@ -420,11 +446,18 @@ public class DateTimeEstimator {
 		tmpCal2.setYear(dtObj.getYear());
 		tmpCal2.setMonth(dtObj.getMonth());
 		tmpCal2.setDate(dtObj.getDate());
+
+		boolean checkTime = false;
+		if(dtObj.getHour() != AppConstants.NO_DATA) {
+			checkTime = true;
+			tmpCal2.setHour(dtObj.getHour(), false);
+			tmpCal2.setMinute(dtObj.getMinute());
+		}
 		// focus 할 해당 정보를 기준으로 더해주기.
 		if (sDate.length > 0) {
-			tmpCal2.setCloseDate(tmpCal2, dtObj.getFocusToRepeat(), k, sDate[0]);
+			tmpCal2.setCloseDate(tmpCal2, dtObj.getFocusToRepeat(), k, checkTime, sDate[0]);
 		} else {
-			tmpCal2.setCloseDate(tmpCal2, dtObj.getFocusToRepeat(), k);
+			tmpCal2.setCloseDate(tmpCal2, dtObj.getFocusToRepeat(), k, checkTime);
 		}
 
 		dtObj.setDate(tmpCal2.getDate());
@@ -467,7 +500,7 @@ public class DateTimeEstimator {
 		}
 	}
 
-	private void estimateOneDate(InvalidEventObj eventObj, boolean fillEnd, LocalDate... sDate) {
+	private void estimateOneDate(InvalidEventObj eventObj, boolean fillEnd, boolean isYearEstimated, LocalDate... sDate) {
 		focusingRecurNum = 1;
 		if (fillEnd) {
 			if (eventObj.getEndDate().getMonth() == AppConstants.NO_DATA) {
@@ -480,6 +513,24 @@ public class DateTimeEstimator {
 				// 날짜에 맞는 요일 구하는 메소드
 				eventObj.getEndDate().setProperDay();
 			}
+			
+			if(isYearEstimated) {
+				eventObj.getEndDate().getLocalDate();
+				DateTimeAdjuster now = new DateTimeAdjuster();
+				DateTimeAdjuster dateTimeAdjuster = new DateTimeAdjuster();
+				if(eventObj.getEndDate().getLocalTime() != null) {
+					dateTimeAdjuster.setTimePoint(LocalDateTime.of(eventObj.getEndDate().getLocalDate(),
+							eventObj.getEndDate().getLocalTime()));
+				}else {
+					dateTimeAdjuster.setYear(eventObj.getEndDate().getYear());
+					dateTimeAdjuster.setMonth(eventObj.getEndDate().getMonth());
+					dateTimeAdjuster.setDate(eventObj.getEndDate().getDate());
+				}
+				dateTimeAdjuster.setCloseDate(now, DateTimeEn.year, 0, false);
+				
+				eventObj.getEndDate().setAllDate(dateTimeAdjuster);
+			}
+			
 		} else {
 			if (eventObj.getStartDate().getMonth() == AppConstants.NO_DATA) {
 				eventObj.getStartDate().setMonth(LocalDate.now().getMonthValue());
@@ -491,6 +542,23 @@ public class DateTimeEstimator {
 				// 날짜에 맞는 요일 구하는 메소드
 				eventObj.getStartDate().setProperDay();
 			}
+
+			if(isYearEstimated) {
+				eventObj.getStartDate().getLocalDate();
+				DateTimeAdjuster now = new DateTimeAdjuster();
+				DateTimeAdjuster dateTimeAdjuster = new DateTimeAdjuster();
+				if(eventObj.getStartDate().getLocalTime() != null) {
+					dateTimeAdjuster.setTimePoint(LocalDateTime.of(eventObj.getStartDate().getLocalDate(),
+							eventObj.getStartDate().getLocalTime()));
+				}else {
+					dateTimeAdjuster.setYear(eventObj.getStartDate().getYear());
+					dateTimeAdjuster.setMonth(eventObj.getStartDate().getMonth());
+					dateTimeAdjuster.setDate(eventObj.getStartDate().getDate());
+				}
+				dateTimeAdjuster.setCloseDate(now, DateTimeEn.year, 0, false);
+				
+				eventObj.getStartDate().setAllDate(dateTimeAdjuster);
+			}
 		}
 
 		// resultList.insertDtObj(dtObj);
@@ -498,13 +566,15 @@ public class DateTimeEstimator {
 		resultList.insertDtObj(evObj);
 	}
 
-	private void estimateYear(InvalidEventObj eventObj, boolean fillEnd, LocalDate... sDate) {
+	private boolean estimateYear(InvalidEventObj eventObj, boolean fillEnd, LocalDate... sDate) {
+		boolean estimated = false;
 		if (fillEnd) {
 			if (eventObj.getEndDate().getYear() == AppConstants.NO_DATA) {
 				if (sDate.length > 0 && sDate[0] != null) {
 					eventObj.getEndDate().setYear(sDate[0].getYear());
 				} else {
 					eventObj.getEndDate().setYear(LocalDate.now().getYear());
+					estimated = true;
 				}
 			}
 		} else {
@@ -513,9 +583,12 @@ public class DateTimeEstimator {
 					eventObj.getStartDate().setYear(sDate[0].getYear());
 				} else {
 					eventObj.getStartDate().setYear(LocalDate.now().getYear());
+					estimated = true;
 				}
 			}
 		}
+		
+		return estimated ;
 	}
 
 	private void estimateTime(boolean isTimeEmpty, InvalidDateTimeObj dtObj, InvalidDateTimeObj timeObj) {

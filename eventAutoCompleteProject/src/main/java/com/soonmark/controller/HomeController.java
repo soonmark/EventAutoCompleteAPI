@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.soonmark.domain.EventDTO;
-import com.soonmark.domain.RecomResultDTO;
 import com.soonmark.service.RecommendationService;
 
 /**

@@ -9,14 +9,16 @@ import com.soonmark.domain.EventDTO;
 
 public class EventListManager {
 	private List<InvalidEventObj> evObjList;
-	
+	private boolean focusStart ;
 	
 	public EventListManager() {
 		this.evObjList = new ArrayList<InvalidEventObj>();
+		focusStart = true;
 	}
 
 	public EventListManager(List<InvalidEventObj> dtObjList) {
 		this.evObjList = dtObjList;
+		focusStart = true;
 	}
 
 	public List<EventDTO> getEventDTOList() {
@@ -27,6 +29,14 @@ public class EventListManager {
 			newList.add(iter.next().toEventDTO());
 		}
 		return newList;
+	}
+	
+	public boolean isFocusStart() {
+		return focusStart;
+	}
+
+	public void setFocusStart(boolean focusStart) {
+		this.focusStart = focusStart;
 	}
 
 	public void insertDtObj(InvalidEventObj dtObj) {

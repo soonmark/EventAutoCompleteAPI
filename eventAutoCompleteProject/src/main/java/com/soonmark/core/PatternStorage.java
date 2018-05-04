@@ -29,8 +29,8 @@ public class PatternStorage {
 	}
 
 	private void initPeriodPatterns() {
-		periodPatterns.add("(?<from>.*?)부터(?<to>.*?)까지");	// 부터 까지
-		periodPatterns.add("(?<from>.*?)~(<?to>.*?)");	// 날짜시간 ~ 날짜시간
+		periodPatterns.add("(?<period>(?<from>.*?)부터(?<to>.*?)까지)");	// 부터 까지
+		periodPatterns.add("^(?<from>.*?)~(?<to>.*?)$");	// 날짜시간 ~ 날짜시간
 //		periodPatterns.add("(?<from>)-(<?to>)");	// 날짜시간 - 날짜시간
 
 		periodPatterns.add("(?<from>.*?)부터");	// 부터

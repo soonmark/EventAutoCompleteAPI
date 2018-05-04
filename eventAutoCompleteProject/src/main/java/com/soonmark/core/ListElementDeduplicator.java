@@ -52,6 +52,9 @@ public class ListElementDeduplicator {
 				if (d.getTypeNum() != listType.getInteger()) {
 					continue;
 				}
+				if(d == DateTimeEn.year) {
+					continue;
+				}
 				if (tmpList.getElement(j).getByDateTimeEn(d) == AppConstants.NO_DATA) {
 					tmpList.getElement(j).setFocusToRepeat(d);
 				}
@@ -141,8 +144,33 @@ public class ListElementDeduplicator {
 		}
 	}
 
+	// 10/10/10 일 때 2010년 10월 10일 빼고는 다 지우기
 	private void removeIrrelevants() {
-
+		// 있는 정보 중에는 모두 같은 거
+		// 리스트 중 최대 존재 정보 개수
+		int minInfoNum = 0;
+		int minInfoIdxNum = 0;
+		for (int j = 0; j < afterListMgr.getDtMgrList().size(); j++) {
+			int infoNum = 0 ;
+			for (DateTimeEn d : DateTimeEn.values()) {
+				if(afterListMgr.getElement(j).hasInfo(d.getInteger())) {
+					infoNum++;
+				}
+			}
+			if(minInfoNum > infoNum) {
+				minInfoNum = infoNum;
+				minInfoIdxNum = j;
+			}
+		}
+		
+		for (int j = 0; j < afterListMgr.getDtMgrList().size();) {
+			if(j > minInfoIdxNum) {
+				afterListMgr.deleteDtObj(j);
+			}
+			else {
+				j++;
+			}
+		}
 	}
 
 	private void elementDeduplicates() {

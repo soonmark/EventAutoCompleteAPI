@@ -213,12 +213,28 @@ public class DateTimeAdjuster {
 		}
 		return tmp;
 	}
-
-	public void setCloseDate(DateTimeAdjuster cal, DateTimeEn focus, int plus, LocalDate ... sDate) {
+	
+	public void plusYearsWithDate(LocalDate std, int plus) {
+		while(std.isAfter(timePoint.toLocalDate())) {
+			if(timePoint.plusYears(1).getDayOfMonth() == timePoint.getDayOfMonth()) {
+				timePoint = timePoint.plusYears(1);
+			}
+			else {
+				timePoint = timePoint.plusYears(2);
+			}
+		}
+		
+		if(timePoint.plusYears(plus).getDayOfMonth() == timePoint.getDayOfMonth()) {
+			timePoint = timePoint.plusYears(plus);
+		}
+		else {
+			timePoint = timePoint.plusYears(plus + 1);
+		}
+	}
+	
+	public void setCloseDate(DateTimeAdjuster cal, DateTimeEn focus, int plus, boolean checkTime, LocalDate ... sDate) {
 		if (focus == DateTimeEn.year) {
-			long diff = cal.getTimePoint().getYear() - timePoint.getYear();
-			timePoint = timePoint.plusYears(diff + plus);
-			// 차이만큼 더했는데도 이전이면, 월이나 일을 계산했을 때 이전인 것이므로 한번더 1년을 더해줌.
+			plusYearsWithDate(cal.getTimePoint().toLocalDate(), plus);
 		} else if (focus == DateTimeEn.month) {
 			// 올해와 년이 같으면
 			if (timePoint.getYear() == LocalDateTime.now().getYear()) {
@@ -242,6 +258,9 @@ public class DateTimeAdjuster {
 			if (timePoint.getYear() == LocalDateTime.now().getYear()
 					&& timePoint.getMonthValue() == LocalDateTime.now().getMonthValue()) {
 				timePoint = timePoint.withDayOfMonth(LocalDateTime.now().getDayOfMonth());
+				if(checkTime) {
+					setCloseDateByTime(cal.getTimePoint());
+				}
 			}
 			timePoint = timePoint.plusDays(diff + plus);
 		}

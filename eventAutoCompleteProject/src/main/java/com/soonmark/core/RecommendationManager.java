@@ -1,6 +1,8 @@
 package com.soonmark.core;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -82,11 +84,14 @@ public class RecommendationManager {
 		List<InvalidEventObj> evObjList = new ArrayList<InvalidEventObj>();
 
 		// 패턴 매칭
+		// 기간 패턴 매칭은 부터, 까지가 한 세트 있으면 바로 끝.
 		patternManager.matchToPatterns(inputText, periodManagerList);
 
 		Iterator<PeriodManager> iter = periodManagerList.iterator();
 		while (iter.hasNext()) {
 			PeriodManager periodManager = iter.next();
+			periodManager.getStartDateListMgr().getResultList().setFocusStart(true);
+			periodManager.getEndDateListMgr().getResultList().setFocusStart(false);
 			
 			// 시작날짜 추천리스트 생성
 			RecommendProcess(periodManager.getStartDateListMgr());
@@ -98,11 +103,21 @@ public class RecommendationManager {
 			evObjList = MergeRecomListBy(periodManager.getStartDateListMgr().getResultList().getEvMgrList(),
 										periodManager.getEndDateListMgr().getResultList().getEvMgrList());
 		}
+		
+		// 최종 리스트에서 뽑을 개수 제외하고 다 지움.
+		removeAllAfterRecomNum(evObjList);
 
 		dateTimeListManagerSet.getResultList().setEvObjList(evObjList);
 		logger.info("JSON 값  : " + dateTimeListManagerSet.getResultList().getEventDTOList());
 
 		return dateTimeListManagerSet.getResultList().getEventDTOList();
+	}
+
+	private void removeAllAfterRecomNum(List<InvalidEventObj> evObjList) {
+		// 2개만 남기고 다 지우기
+		for (int i = recomNum; i < evObjList.size() ;) {
+			evObjList.remove(i);
+		}
 	}
 
 	private void initInputEvent(DateTimeDTO startDate, DateTimeDTO endDate) {
@@ -118,13 +133,44 @@ public class RecommendationManager {
 	private List<InvalidEventObj> MergeRecomListBy(List<InvalidEventObj> evMgrList, List<InvalidEventObj> evMgrList2) {
 		List<InvalidEventObj> evObjList = new ArrayList<InvalidEventObj>();
 		
-		Iterator<InvalidEventObj> iter2 = evMgrList.iterator();
-		while (iter2.hasNext()) {
-			evObjList.add(iter2.next());
-		}
 		Iterator<InvalidEventObj> iter3 = evMgrList2.iterator();
-		while (iter2.hasNext()) {
-			evObjList.add(iter3.next());
+		while(iter3.hasNext()) {
+			InvalidEventObj beingMerged = iter3.next();
+			Iterator<InvalidEventObj> iter2 = evMgrList.iterator();
+			while (iter2.hasNext()) {
+				InvalidEventObj first = iter2.next();
+				
+				// 무조건 startDate에 추천하도록 넣어놨기 때문에 이렇게 비교해야함.
+				if(first.getStartDate() != null && first.getEndDate() == null
+						&& beingMerged.getEndDate() == null && beingMerged.getStartDate() != null) {
+					try {
+						LocalDateTime r = LocalDateTime.of(first.getStartDate().getLocalDate(), first.getStartDate().getLocalTime());
+						LocalDateTime b = LocalDateTime.of(beingMerged.getStartDate().getLocalDate(), beingMerged.getStartDate().getLocalTime());
+						
+						if(!r.isAfter(b)) {
+							evObjList.add(new InvalidEventObj(first.getStartDate(), beingMerged.getStartDate()));
+						}
+					}
+					catch(NullPointerException e) {
+						LocalDate r = first.getStartDate().getLocalDate();
+						LocalDate b = beingMerged.getStartDate().getLocalDate();
+
+						if(!r.isAfter(b)) {
+							evObjList.add(new InvalidEventObj(first.getStartDate(), beingMerged.getStartDate()));
+						}
+					}
+				}
+			}
+			if(evMgrList.size() == 0) {
+				evObjList.add(new InvalidEventObj(beingMerged.getStartDate(), beingMerged.getEndDate()));
+			}
+		}
+		if(evMgrList2.size() == 0) {
+			Iterator<InvalidEventObj> iter2 = evMgrList.iterator();
+			while (iter2.hasNext()) {
+				InvalidEventObj first = iter2.next();
+				evObjList.add(new InvalidEventObj(first.getStartDate(), first.getEndDate()));
+			}
 		}
 		
 		return evObjList;
@@ -144,7 +190,7 @@ public class RecommendationManager {
 		// 기간, 날짜, 시간 조정
 		EventListManager mergedListMgr = dateTimeListMgr.mergeList(TokenType.period,
 				TokenType.dates, TokenType.times);
-
+		
 		createRecommendations(dateTimeListMgr, mergedListMgr);
 	}
 
@@ -155,8 +201,8 @@ public class RecommendationManager {
 		// 우선순위대로 정렬
 		sortByPriority(dateListMgr);
 
-		// 추천수 이상의 노드는 삭제
-		removeAllAfterRecomNum(dateListMgr);
+//		// 추천수 이상의 노드는 삭제
+//		removeAllAfterRecomNum(dateListMgr);
 	}
 
 	private void removeAllAfterRecomNum(DateTimeListMgrSet startDateListMgr) {
@@ -175,7 +221,7 @@ public class RecommendationManager {
 	private void fillEmptyDatas(DateTimeListMgrSet dateListMgr, EventListManager mergedListMgr) {
 		dateListMgr
 				.setResultList(new DateTimeEstimator(dateListMgr.getTimeList(), dateListMgr.getDateList())
-						.fillEmptyDatas(inputEventObj));
+						.fillEmptyDatas(inputEventObj, dateListMgr.getResultList().isFocusStart()));
 
 		if(dateListMgr.getResultList().getEvMgrList().size() > 2) {
 			recomNum = dateListMgr.getResultList().getEvMgrList().size();

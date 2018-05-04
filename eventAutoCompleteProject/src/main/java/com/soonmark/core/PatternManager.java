@@ -84,8 +84,12 @@ public class PatternManager {
 		while(iter.hasNext()) {
 			PeriodManager period = iter.next();
 			if(hasPeriod) {
-				matchToPatterns(period.getFrom(), period.getStartDateListMgr());
-				matchToPatterns(period.getTo(), period.getEndDateListMgr());
+				if(period.getFrom() != null) {
+					matchToPatterns(period.getFrom(), period.getStartDateListMgr());
+				}
+				if(period.getTo() != null) {
+					matchToPatterns(period.getTo(), period.getEndDateListMgr());
+				}
 			}
 		}
 		
@@ -102,37 +106,45 @@ public class PatternManager {
 		
 		Iterator<String> iter = patternStorage.getPeriodPatterns().iterator();
 		
+
+		boolean hasFullPeriodPattern = false;
 		while (iter.hasNext()) {
 			String pattern = iter.next();
 			Pattern inputPattern = Pattern.compile(pattern);
 			Matcher matcher = inputPattern.matcher(inputText);
 
 			while (matcher.find()) {
-				logger.info("패턴 : " + pattern);
-				logger.info("패턴 만족 : " + matcher.group(0));
-				
-				String from = "";
-				String to = "";
+				if(hasFullPeriodPattern == false) {
+					logger.info("패턴 : " + pattern);
+					logger.info("패턴 만족 : " + matcher.group(0));
+					
+					String from = null;
+					String to = null;
 //				String during = "";
-				try {
-					from = matcher.group("from");
-				}
-				catch(IllegalArgumentException e){
-				}
-				try {
-					to = matcher.group("to");
-				}
-				catch(IllegalArgumentException e){
-				}
+					try {
+						from = matcher.group("from");
+					}
+					catch(IllegalArgumentException ev){
+					}
+					try {
+						to = matcher.group("to");
+					}
+					catch(IllegalArgumentException ev){
+					}
 //				try {
 //					during = matcher.group("during");
 //				}
 //				catch(IllegalArgumentException e){
 //				}
-				
-				periodManager.add(new PeriodManager(from, to));
-				
-				hasPattern = true;
+					
+					if(from != null && to != null) {
+						hasFullPeriodPattern = true;
+					}
+					
+					periodManager.add(new PeriodManager(from, to));
+					
+					hasPattern = true;
+				}
 			}
 		}
 		
