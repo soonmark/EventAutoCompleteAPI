@@ -95,7 +95,7 @@ public class PatternManager {
 		
 		// 기간패턴이 없을 때 시작시간으로 보고 처리.
 		if(periodManager.size() == 0) {
-			PeriodManager period = new PeriodManager(inputText, "");
+			PeriodManager period = new PeriodManager(inputText, null);
 			periodManager.add(period);
 			matchToPatterns(period.getFrom(), period.getStartDateListMgr());
 		}

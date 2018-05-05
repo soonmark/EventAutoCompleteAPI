@@ -33,7 +33,7 @@ public class PatternStorage {
 		periodPatterns.add("^(?<from>.*?)~(?<to>.*?)$");	// 날짜시간 ~ 날짜시간
 //		periodPatterns.add("(?<from>)-(<?to>)");	// 날짜시간 - 날짜시간
 
-		periodPatterns.add("(?<from>.*?)부터");	// 부터
+		periodPatterns.add("^(?<from>.*?)부터(?<to>.*?)$");	// 부터
 		periodPatterns.add("(?<to>.*?)까지");	// 까지
 
 		periodPatterns.add("(?<during>.*?)동안");	// 3시간동안

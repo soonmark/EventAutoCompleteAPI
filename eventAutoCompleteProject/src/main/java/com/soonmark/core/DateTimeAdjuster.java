@@ -15,7 +15,8 @@ public class DateTimeAdjuster {
 	private boolean isHalfTime;
 
 	public DateTimeAdjuster() {
-		timePoint = LocalDateTime.now();
+		timePoint = RecommendationManager.curTime;
+//		timePoint = LocalDateTime.now();
 	}
 
 	public LocalDateTime getTimePoint() {
@@ -136,7 +137,8 @@ public class DateTimeAdjuster {
 	public void setCloseDateOfTheDay(DayOfWeek val) {
 		if (val != AppConstants.NO_DATA_FOR_DAY) {
 
-			LocalDate tmpDate = LocalDate.now();
+			LocalDate tmpDate = RecommendationManager.curTime.toLocalDate();
+//			LocalDate tmpDate = LocalDate.now();
 
 			// 일
 			int diff = val.getValue() - tmpDate.getDayOfWeek().getValue();
@@ -237,9 +239,9 @@ public class DateTimeAdjuster {
 			plusYearsWithDate(cal.getTimePoint().toLocalDate(), plus);
 		} else if (focus == DateTimeEn.month) {
 			// 올해와 년이 같으면
-			if (timePoint.getYear() == LocalDateTime.now().getYear()) {
+			if (timePoint.getYear() == RecommendationManager.curTime.getYear()) {
 				// 오늘보다 이전이라면
-				if(timePoint.toLocalDate().isBefore(LocalDate.now())) {
+				if(timePoint.toLocalDate().isBefore(RecommendationManager.curTime.toLocalDate())) {
 					if(sDate.length > 0) {
 						timePoint = timePoint.with(
 								plusFromMonthsWithDate(timePoint.toLocalDate(), sDate[0]));
@@ -247,17 +249,26 @@ public class DateTimeAdjuster {
 					else {
 						// timPoint의 월을 오늘 이후의 월로 세팅.
 						timePoint = timePoint.with(
-								plusFromMonthsWithDate(timePoint.toLocalDate(), LocalDate.now()));
+								plusFromMonthsWithDate(timePoint.toLocalDate(), RecommendationManager.curTime.toLocalDate()));
 					}
+				}
+			}
+			else if(sDate.length > 0 && timePoint.getYear() == sDate[0].getYear()) {
+				if(timePoint.toLocalDate().isBefore(sDate[0])) {
+					timePoint = timePoint.with(
+							plusFromMonthsWithDate(timePoint.toLocalDate(), sDate[0]));
 				}
 			}
 			// 년도가 다른 경우에도 수행
 			timePoint = timePoint.with(plusMonthsWithDate(timePoint.toLocalDate(), plus));
 		} else if (focus == DateTimeEn.date) {
 			long diff = cal.getTimePoint().getDayOfMonth() - timePoint.getDayOfMonth();
-			if (timePoint.getYear() == LocalDateTime.now().getYear()
-					&& timePoint.getMonthValue() == LocalDateTime.now().getMonthValue()) {
-				timePoint = timePoint.withDayOfMonth(LocalDateTime.now().getDayOfMonth());
+			if (timePoint.getYear() == RecommendationManager.curTime.getYear()
+					&& timePoint.getMonthValue() == RecommendationManager.curTime.getMonthValue()) {
+				timePoint = timePoint.withDayOfMonth(RecommendationManager.curTime.getDayOfMonth());
+//			if (timePoint.getYear() == LocalDateTime.now().getYear()
+//					&& timePoint.getMonthValue() == LocalDateTime.now().getMonthValue()) {
+//				timePoint = timePoint.withDayOfMonth(LocalDateTime.now().getDayOfMonth());
 				if(checkTime) {
 					setCloseDateByTime(cal.getTimePoint());
 				}

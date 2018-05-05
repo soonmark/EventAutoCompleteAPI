@@ -5,6 +5,8 @@ import java.time.LocalTime;
 
 import com.soonmark.core.InvalidDateTimeObj;
 
+// 이 클래스는 LocalDate와 LocalTime의 값을 null 허용으로 사용하기 위함.
+// 기존 LocalDateTime 클래스는 LocalDate와 LocalTime 이 not null 임.
 public class DateTimeDTO {
 	private LocalDate date;
 	private LocalTime time;

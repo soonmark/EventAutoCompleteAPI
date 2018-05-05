@@ -148,7 +148,8 @@ public class ListMerger {
 	private void adjustDateInfo(int date, DateTimeAdjuster dateTimeAdjuster, InvalidDateTimeObj timeObj) {
 		// 요일과 해당 주가 안 맞으면 데이터 추가!
 		// 해당주의 토요일을 저장할 adjuster;
-		LocalDate lastDayOfTheWeek = LocalDate.now();
+		LocalDate lastDayOfTheWeek = RecommendationManager.curTime.toLocalDate();
+//		LocalDate lastDayOfTheWeek = LocalDate.now();
 		lastDayOfTheWeek = lastDayOfTheWeek.with(dateTimeAdjuster.getTimePoint().toLocalDate());
 		lastDayOfTheWeek = lastDayOfTheWeek.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
 		if(date > lastDayOfTheWeek.getDayOfMonth() || date < dateTimeAdjuster.getDate()) {

@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.regex.Matcher;
 
 import com.soonmark.core.InvalidDateTimeObj;
+import com.soonmark.core.RecommendationManager;
 
 public enum TokenType {
 	period(0){
@@ -20,8 +21,10 @@ public enum TokenType {
 				if(year >= 0 && year < 100) {
 					// 받은 년도가 2자리수면 처리해줘야함.
 					// 일단 90년 전까지는 19로, 그 전은 20으로 해놓기.
-					if(LocalDate.now().getYear()-(year + 2000) < 90
-							&& LocalDate.now().getYear()-(year + 2000) > -10) {
+					if(RecommendationManager.curTime.toLocalDate().getYear()-(year + 2000) < 90
+							&& RecommendationManager.curTime.toLocalDate().getYear()-(year + 2000) > -10) {
+//					if(LocalDate.now().getYear()-(year + 2000) < 90
+//							&& LocalDate.now().getYear()-(year + 2000) > -10) {
 						year += 2000;
 					}else {
 						year += 1900;

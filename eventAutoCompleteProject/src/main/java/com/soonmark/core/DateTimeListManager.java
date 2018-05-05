@@ -213,6 +213,11 @@ class AscendingEvents implements Comparator<InvalidEventObj> {
 	
 	@Override
 	public int compare(InvalidEventObj o1, InvalidEventObj o2) {
-		return o1.getStartDate().getPriority().compareTo(o2.getStartDate().getPriority());
+		if(o1.getStartDate() != null && o2.getStartDate() != null) {
+			return o1.getStartDate().getPriority().compareTo(o2.getStartDate().getPriority());
+		}
+		else {
+			return o1.getEndDate().getPriority().compareTo(o2.getEndDate().getPriority());
+		}
 	}
 }

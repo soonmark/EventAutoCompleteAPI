@@ -1,6 +1,7 @@
 package com.soonmark.domain;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -57,8 +58,9 @@ public class StringDateTimeDTO {
 	}
 	
 	public DateTimeDTO toDateTimeDTO() {
-		DateTimeDTO dateTimeDto = new DateTimeDTO(this.toLocalDate(), this.toLocalTime());
-		return dateTimeDto;
+		DateTimeDTO dateTimeDTO = new DateTimeDTO(this.toLocalDate(), this.toLocalTime());
+
+		return dateTimeDTO;
 	}
 	
 	@Override
