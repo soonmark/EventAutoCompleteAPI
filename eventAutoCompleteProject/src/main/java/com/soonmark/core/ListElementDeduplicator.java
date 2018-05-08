@@ -38,7 +38,7 @@ public class ListElementDeduplicator {
 
 		// 윤년있으면 처리
 		setIfIsLeapYear(tmpList);
-		
+
 		// 빈 토큰 있으면 focus 두도록 하기
 		setElementFocusedIfEmpty(tmpList);
 
@@ -52,7 +52,7 @@ public class ListElementDeduplicator {
 				if (d.getTypeNum() != listType.getInteger()) {
 					continue;
 				}
-				if(d == DateTimeEn.year) {
+				if (d == DateTimeEn.year) {
 					continue;
 				}
 				if (tmpList.getElement(j).getByDateTimeEn(d) == AppConstants.NO_DATA) {
@@ -85,27 +85,36 @@ public class ListElementDeduplicator {
 			// tmpList에 this 를 넣을 수 있는지 확인
 			if (afterListMgr.ableToPut(tmpList.getElement(j), afterListMgr.getElement(i)) == true) {
 				// 합치는 프로세스 시작
-				// tmpList의 y, m, dt 모두 정보가 없으면 tmpList에 빈 객체 추가.
+				// tmpList의 각 토큰 모두 정보가 없으면 tmpList에 빈 객체 추가.
 				if (afterListMgr.isTargetMgrEmpty(tmpList.getElement(j)) == true) {
 					tmpList.insertDtObj(new InvalidDateTimeObj());
 				}
 				// 기존에 있던 값들과 다른값을 저장할 때
-				else if(afterListMgr.isDiffValueFromTargetMgr(tmpList.getElement(j), afterListMgr.getElement(i))) {
+				else if (afterListMgr.isDiffValueFromTargetMgr(tmpList.getElement(j), afterListMgr.getElement(i))) {
 					tmpList.insertDtObj(new InvalidDateTimeObj());
 					j++;
 				}
-//				else if(afterListMgr.containsList(tmpList.getElement(j), afterListMgr.getElement(i))) {
-//					tmpList.insertDtObj(new DateTimeLogicalObject());
-//					j++;
-//				}
+				// else if(afterListMgr.containsList(tmpList.getElement(j),
+				// afterListMgr.getElement(i))) {
+				// tmpList.insertDtObj(new DateTimeLogicalObject());
+				// j++;
+				// }
 
 				for (DateTimeEn d : DateTimeEn.values()) {
 					if (d.getTypeNum() != listType.getInteger()) {
 						continue;
 					}
 					if (afterListMgr.getElement(i).getByDateTimeEn(d) != AppConstants.NO_DATA) {
-						tmpList.getElement(j).setByDateTimeEn(d, afterListMgr.getElement(i).getByDateTimeEn(d));
-						tmpList.getElement(j).setHasInfo(d.ordinal(), true);
+						int ampm = 0;
+						if(d == DateTimeEn.am || d == DateTimeEn.pm) {
+							ampm = afterListMgr.getElement(i).getByDateTimeEn(d);
+							tmpList.getElement(j).setByDateTimeEn(DateTimeEn.values()[ampm], ampm);
+							tmpList.getElement(j).setHasInfo(ampm, true);
+						}
+						else {
+							tmpList.getElement(j).setByDateTimeEn(d, afterListMgr.getElement(i).getByDateTimeEn(d));
+							tmpList.getElement(j).setHasInfo(d.ordinal(), true);
+						}
 					}
 				}
 			}
@@ -122,7 +131,7 @@ public class ListElementDeduplicator {
 	}
 
 	private void givePriority() {
-		
+
 		boolean allExists = true;
 		// 있는 정보 중에
 		for (int i = 0; i < afterListMgr.getDtMgrList().size(); i++) {
@@ -138,7 +147,7 @@ public class ListElementDeduplicator {
 				afterListMgr.getElement(i).setPriority(Priority.dateIsMissing);
 				allExists = false;
 			}
-			if(allExists) {
+			if (allExists) {
 				afterListMgr.getElement(i).setPriority(Priority.everyTokenExists);
 			}
 		}
@@ -150,24 +159,24 @@ public class ListElementDeduplicator {
 		// 리스트 중 최대 존재 정보 개수
 		int minInfoNum = 0;
 		int minInfoIdxNum = 0;
+
 		for (int j = 0; j < afterListMgr.getDtMgrList().size(); j++) {
-			int infoNum = 0 ;
+			int infoNum = 0;
 			for (DateTimeEn d : DateTimeEn.values()) {
-				if(afterListMgr.getElement(j).hasInfo(d.getInteger())) {
+				if (afterListMgr.getElement(j).hasInfo(d.getInteger())) {
 					infoNum++;
 				}
 			}
-			if(minInfoNum > infoNum) {
+			if (minInfoNum > infoNum) {
 				minInfoNum = infoNum;
 				minInfoIdxNum = j;
 			}
 		}
-		
+
 		for (int j = 0; j < afterListMgr.getDtMgrList().size();) {
-			if(j > minInfoIdxNum) {
+			if (j > minInfoIdxNum) {
 				afterListMgr.deleteDtObj(j);
-			}
-			else {
+			} else {
 				j++;
 			}
 		}

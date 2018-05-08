@@ -170,6 +170,11 @@ public class RecommendationManager {
 						}
 					}
 				}
+				else if(((first.getStartDate() == null && beingMerged.getStartDate() == null) || (first.getStartDate().getLocalDate().isEqual(beingMerged.getStartDate().getLocalDate()) && first.getStartDate().getHour() == beingMerged.getStartDate().getHour() && first.getStartDate().getMinute() == beingMerged.getStartDate().getMinute()))
+						&& ((first.getEndDate() == null && beingMerged.getEndDate() == null) || (first.getEndDate().getLocalDate().isEqual(beingMerged.getEndDate().getLocalDate()) && first.getEndDate().getHour() == beingMerged.getEndDate().getHour() && first.getEndDate().getMinute() == beingMerged.getEndDate().getMinute())))
+						{
+					evObjList.add(new InvalidEventObj(first.getStartDate(), beingMerged.getEndDate()));
+				}
 			}
 			if(evMgrList.size() == 0) {
 				evObjList.add(new InvalidEventObj(beingMerged.getStartDate(), beingMerged.getEndDate()));
@@ -249,6 +254,7 @@ public class RecommendationManager {
 			.setResultList(new DateTimeEstimator(dateListMgr.getTimeList(), dateListMgr.getDateList())
 					.fillEmptyDatas(inputEventObj, dateListMgr.getResultList().isFocusStart()));
 		}
+		
 		if(dateListMgr.getResultList().getEvMgrList().size() > 2) {
 			recomNum = dateListMgr.getResultList().getEvMgrList().size();
 		}

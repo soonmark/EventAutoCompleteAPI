@@ -4,7 +4,9 @@ import java.time.DateTimeException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
+import java.util.Iterator;
 
 import com.soonmark.domain.AppConstants;
 import com.soonmark.domain.DateTimeEn;
@@ -284,7 +286,7 @@ public class DateTimeAdjuster {
 			}
 		}
 		else if(dateTimeLogicalObject.getAmpm() == DateTimeEn.pm) {
-			if(dateTimeLogicalObject.getHour() < 12) {
+			if(dateTimeLogicalObject.getHour() < 12 && dateTimeLogicalObject.getHour() != AppConstants.NO_DATA) {
 				dateTimeLogicalObject.setHour(dateTimeLogicalObject.getHour() + 12);
 			}
 		}
@@ -314,7 +316,35 @@ public class DateTimeAdjuster {
 			}
 			else {
 				addPmTime(targetList.getElement(i));
+				
+				// 오전, 오후만 입력되면 오전 리스트, 오후리스트 추가하기.
+				if(beforeList.getElement(i).getHour() == AppConstants.NO_DATA) {
+					addWholeAmPmList(i, targetList);
+				}
 			}
+		}
+	}
+
+	private void addWholeAmPmList(int i, DateTimeListManager targetList) {
+		int num = 0;
+		TimeStorage times = new TimeStorage();
+		Iterator<LocalTime> iter = times.getTimes(targetList.getElement(i).getAmpm()).iterator();
+		while (iter.hasNext()) {
+			LocalTime thisTime = iter.next();
+			InvalidDateTimeObj dtObj = new InvalidDateTimeObj();
+			dtObj.setAmpm(targetList.getElement(i).getAmpm());
+			dtObj.setHour(thisTime.getHour());
+			dtObj.setMinute(thisTime.getMinute());
+			dtObj.setFocusOnAmPm(true);
+			if(num == 0) {
+				targetList.getElement(i).setHour(dtObj.getHour());
+				targetList.getElement(i).setMinute(dtObj.getMinute());
+				targetList.getElement(i).setFocusOnAmPm(dtObj.isFocusOnAmPm());
+			}
+			else {
+				targetList.insertDtObj(dtObj);
+			}
+			num++;
 		}
 	}
 

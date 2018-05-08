@@ -94,6 +94,19 @@ public class PatternStorage {
 	}
 
 	public void initTimePatterns() {
+		// 오전 오후
+		timePatterns.add("(?<am>오전)"); // 오전
+		timePatterns.add("(?<pm>오후)"); // 오후
+		
+		timePatterns.add("(?<am>(?i)am)"); // am
+		timePatterns.add("(?<pm>(?i)pm)"); // pm
+		
+		timePatterns.add("(?<am>(?i)a.m)"); // am
+		timePatterns.add("(?<pm>(?i)p.m)"); // pm
+		
+		timePatterns.add("(?<am>(?i)AM)"); // am
+		timePatterns.add("(?<pm>(?i)PM)"); // pm
+
 		// 시간 패턴
 		timePatterns.add("^(.*)(?<hour>1[0-9]|2[0-3]):(?<minute>[0-5][0-9])(.*)$"); // 12:01 // 12:1은 안 됨
 		timePatterns.add("^(|.*[^1-2])(?<hour>[1-9]):(?<minute>[0-5][0-9])(.*)$"); // 2:01 // 2:1은 안 됨
@@ -104,19 +117,6 @@ public class PatternStorage {
 		// 분 정보 없는 시간
 		timePatterns.add("^(.*)(?<hour>1[0-9]|2[0-3])시([^분]*)$"); // 12시
 		timePatterns.add("^(|.*[^1-2])(?<hour>[1-9])시([^분]*)$"); // 7시
-		
-		// 오전 오후
-		timePatterns.add("(?<am>오전)"); // 오전
-		timePatterns.add("(?<pm>오후)"); // 오후
-		
-		timePatterns.add("(?<am>(?i)am)"); // am
-		timePatterns.add("(?<pm>(?i)pm)"); // pm
-		
-		timePatterns.add("(?<am>(?i)a.m)"); // am
-		timePatterns.add("(?<pm>(?i)p.m)"); // pm
-
-		timePatterns.add("(?<am>(?i)AM)"); // am
-		timePatterns.add("(?<pm>(?i)PM)"); // pm
 	}
 
 	public void initDayPatterns() {

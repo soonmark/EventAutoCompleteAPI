@@ -82,22 +82,23 @@ public enum TokenType {
 			try {
 				dtObj.setHour(Integer.parseInt(matcher.group("hour")));
 				dtObj.setHasInfo(DateTimeEn.hour.ordinal(), true);
-			} catch(IllegalArgumentException e) {
-				if(dtObj.getAmpm() == DateTimeEn.am) {
-					dtObj.setHour(9);
-					dtObj.setHasInfo(DateTimeEn.hour.ordinal(), true);
-				}else if(dtObj.getAmpm() == DateTimeEn.pm) {
-					dtObj.setHour(12);
-					dtObj.setHasInfo(DateTimeEn.hour.ordinal(), true);
+				
+				try {
+					// 시간 중에 hour가 있는데 group 명이 minute 이 없는 경우 0으로 세팅
+					dtObj.setMinute(Integer.parseInt(matcher.group("minute")));
+					dtObj.setHasInfo(DateTimeEn.minute.ordinal(), true);
+				} catch (IllegalArgumentException e) {
+					dtObj.setMinute(0);
+					dtObj.setHasInfo(DateTimeEn.minute.ordinal(), true);
 				}
-			}
-			try {
-				// 시간 중에 group 명이 minute 이 없는 경우 0으로 세팅
-				dtObj.setMinute(Integer.parseInt(matcher.group("minute")));
-				dtObj.setHasInfo(DateTimeEn.minute.ordinal(), true);
-			} catch (IllegalArgumentException e) {
-				dtObj.setMinute(0);
-				dtObj.setHasInfo(DateTimeEn.minute.ordinal(), true);
+			} catch(IllegalArgumentException e) {
+//				if(dtObj.getAmpm() == DateTimeEn.am) {
+////					dtObj.setHour(7);
+////					dtObj.setHasInfo(DateTimeEn.hour.ordinal(), true);
+//				}else if(dtObj.getAmpm() == DateTimeEn.pm) {
+////					dtObj.setHour(12);
+////					dtObj.setHasInfo(DateTimeEn.hour.ordinal(), true);
+//				}
 			}
 		}
 	}, special(4){

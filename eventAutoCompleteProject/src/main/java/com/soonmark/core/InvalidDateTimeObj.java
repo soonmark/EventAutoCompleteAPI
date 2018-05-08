@@ -29,6 +29,7 @@ public class InvalidDateTimeObj {
 	private DateTimeEn focusToRepeat;
 	private boolean isLeapYear;
 	private Priority priority;
+	private boolean focusOnAmPm;
 
 	public InvalidDateTimeObj() {
 		this.year = AppConstants.NO_DATA;
@@ -46,8 +47,9 @@ public class InvalidDateTimeObj {
 		hasInfo = new boolean[] { false, false, false, false, false, false, false, false, false };
 		isLeapYear = false;
 		priority = Priority.none;
+		focusOnAmPm = false;
 	}
-
+	
 	public InvalidDateTimeObj(int year, int month, int date, DayOfWeek day, int hour, int minute) {
 		this.year = year;
 		this.month = month;
@@ -64,6 +66,7 @@ public class InvalidDateTimeObj {
 		hasInfo = new boolean[] { false, false, false, false, false, false, false, false, false };
 		isLeapYear = false;
 		priority = Priority.none;
+		focusOnAmPm = false;
 	}
 
 	public InvalidDateTimeObj(int year, int month, int date, DayOfWeek day, int hour, int minute, boolean isAllDayEvent) {
@@ -82,8 +85,17 @@ public class InvalidDateTimeObj {
 		hasInfo = new boolean[] { false, false, false, false, false, false, false, false, false };
 		isLeapYear = false;
 		priority = Priority.none;
+		focusOnAmPm = false;
 	}
 	
+	public boolean isFocusOnAmPm() {
+		return focusOnAmPm;
+	}
+
+	public void setFocusOnAmPm(boolean focusOnAmPm) {
+		this.focusOnAmPm = focusOnAmPm;
+	}
+
 	public DateTimeEn getAmpm() {
 		return ampm;
 	}

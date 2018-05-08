@@ -112,6 +112,8 @@ public class ListMerger {
 		DayOfWeek day = AppConstants.NO_DATA_FOR_DAY;
 		int date = AppConstants.NO_DATA;
 		
+		boolean addWholeWeek = true;
+		
 		if (afterListMgr.getElement(i).hasInfo(DateTimeEn.day.ordinal())) {
 			day = afterListMgr.getElement(i).getDay();
 		}
@@ -120,9 +122,9 @@ public class ListMerger {
 		}
 		
 		if (afterListMgr.getElement(i).getSpecialDate().equals("이번주")) {
-			// 무조건 이번주 일요일로 세팅
-			dateTimeAdjuster.setTimePoint(
-					dateTimeAdjuster.getTimePoint().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)));
+			// 무조건 오늘로 세팅
+			dateTimeAdjuster
+					.setTimePoint(dateTimeAdjuster.getTimePoint().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)));
 		} else if (afterListMgr.getElement(i).getSpecialDate().equals("다음주")) {
 			// 무조건 다음주 일요일로 세팅
 			dateTimeAdjuster
@@ -133,42 +135,97 @@ public class ListMerger {
 			dateTimeAdjuster
 					.setTimePoint(dateTimeAdjuster.getTimePoint().with(TemporalAdjusters.next(DayOfWeek.SUNDAY)));
 		}
+		else {
+			addWholeWeek = false;
+		}
 		// 요일 정보 있으면 재세팅
 		if (day != AppConstants.NO_DATA_FOR_DAY) {
 			dateTimeAdjuster.setTimePoint(dateTimeAdjuster.getTimePoint().with(TemporalAdjusters.nextOrSame(day)));
 			afterListMgr.getElement(i).setFocusToRepeat(null);
+			addWholeWeek = false;
+		}
+		else {
+			if (afterListMgr.getElement(i).getSpecialDate().equals("이번주")) {
+				dateTimeAdjuster.setTimePoint(RecommendationManager.curTime);
+			}
 		}
 
 		// 이번주 3일 이런 경우! - 이번주와 일자 다 나오게
 		if (date != AppConstants.NO_DATA) {
-			adjustDateInfo(date, dateTimeAdjuster, afterListMgr.getElement(i));
+			addWholeWeek = adjustDateInfo(date, dateTimeAdjuster, afterListMgr.getElement(i), addWholeWeek);
+		}
+		
+		if(addWholeWeek) {
+			addWholeWeekFromToday(dateTimeAdjuster);
 		}
 	}
 
-	private void adjustDateInfo(int date, DateTimeAdjuster dateTimeAdjuster, InvalidDateTimeObj timeObj) {
+	private void addWholeWeekFromToday(DateTimeAdjuster dateTimeAdjuster) {
+		// 해당 요일 다음날부터 해당 주 마지막날까지 날짜데이터를 추가하기
+		
+		LocalDate lastDayOfTheWeek = dateTimeAdjuster.getTimePoint().toLocalDate();
+		lastDayOfTheWeek = lastDayOfTheWeek.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
+
+		LocalDate tmpDate = dateTimeAdjuster.getTimePoint().toLocalDate();
+		
+		while(tmpDate.isBefore(lastDayOfTheWeek)) {
+			tmpDate = tmpDate.plusDays(1);
+			InvalidDateTimeObj wholeWeekObj = new InvalidDateTimeObj();
+			
+			wholeWeekObj.setYear(tmpDate.getYear());
+			wholeWeekObj.setMonth(tmpDate.getMonthValue());
+			wholeWeekObj.setDate(tmpDate.getDayOfMonth());
+			wholeWeekObj.setDay(tmpDate.getDayOfWeek());
+			
+//			wholeWeekObj.setSpecialDate(AppConstants.NO_DATA_FOR_SPECIALDATE);
+//			wholeWeekObj.setPriority(Priority.dateWithIncorrectDay);
+			
+			afterListMgr.insertDtObj(wholeWeekObj);
+		}
+	}
+
+	private boolean adjustDateInfo(int date, DateTimeAdjuster dateTimeAdjuster, InvalidDateTimeObj timeObj, boolean addWholeWeek) {
+		
+		boolean wholeWeek = true;
+		
 		// 요일과 해당 주가 안 맞으면 데이터 추가!
 		// 해당주의 토요일을 저장할 adjuster;
 		LocalDate lastDayOfTheWeek = RecommendationManager.curTime.toLocalDate();
+		LocalDate firstDayOfTheWeek = RecommendationManager.curTime.toLocalDate();
 //		LocalDate lastDayOfTheWeek = LocalDate.now();
 		lastDayOfTheWeek = lastDayOfTheWeek.with(dateTimeAdjuster.getTimePoint().toLocalDate());
 		lastDayOfTheWeek = lastDayOfTheWeek.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
-		if(date > lastDayOfTheWeek.getDayOfMonth() || date < dateTimeAdjuster.getDate()) {
+		firstDayOfTheWeek = lastDayOfTheWeek.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+		
+		// 해당 주의 첫날, 마지막날과 비교해서 범위 밖이면
+		if(date > lastDayOfTheWeek.getDayOfMonth() || date < firstDayOfTheWeek.getDayOfMonth()) {
 			// 일단 해당 데이터에 우선순위 세팅.
 			timeObj.setPriority(Priority.dayWithIncorrectDate);
 			timeObj.setFocusToRepeat(null);
 			
 			// 요일 무시한 날짜데이터를 추가하기
-			InvalidDateTimeObj ignoreDayObj = new InvalidDateTimeObj();
-			ignoreDayObj.copyAllExceptForDayFrom(timeObj);
-			ignoreDayObj.setSpecialDate(AppConstants.NO_DATA_FOR_SPECIALDATE);
-			ignoreDayObj.setPriority(Priority.dateWithIncorrectDay);
-			
-			
-			afterListMgr.insertDtObj(ignoreDayObj);
+			if(addWholeWeek) {
+				wholeWeek = true;
+			}
+			else {
+				wholeWeek = false;
+			}
+//			InvalidDateTimeObj ignoreDayObj = new InvalidDateTimeObj();
+//			ignoreDayObj.copyAllExceptForDayFrom(timeObj);
+//			ignoreDayObj.setSpecialDate(AppConstants.NO_DATA_FOR_SPECIALDATE);
+//			ignoreDayObj.setPriority(Priority.dateWithIncorrectDay);
+//			
+//			
+//			afterListMgr.insertDtObj(ignoreDayObj);
 		}
 		else {
+			// 해당 날짜가 범위 내에 있으면
 			timeObj.setFocusToRepeat(null);
+			wholeWeek = false;
+			dateTimeAdjuster.setTimePoint(dateTimeAdjuster.getTimePoint().withDayOfMonth(date));
 		}
+		
+		return wholeWeek;
 	}
 
 	private void adjustDataByDay() {
