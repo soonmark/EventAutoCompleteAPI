@@ -55,7 +55,7 @@ public class PatternManager {
 		while (iter.hasNext()) {
 			String pattern = iter.next();
 			Pattern inputPattern = Pattern.compile(pattern);
-			Matcher matcher = inputPattern.matcher(inputText);
+			Matcher matcher = inputPattern.matcher(inputText.replace("\n", ""));
 
 			while (matcher.find()) {
 				logger.info("패턴 : " + pattern);

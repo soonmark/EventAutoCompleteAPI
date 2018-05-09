@@ -130,6 +130,7 @@ public class InvalidDateTimeObj {
 		}
 		this.setSpecialDate(origin.getSpecialDate());
 		this.setFocusOnDay(origin.isFocusOnDay());
+		this.setFocusOnAmPm(origin.isFocusOnAmPm());
 		this.setHasInfo(origin.getHasInfo());
 		this.setFocusToRepeat(origin.getFocusToRepeat());
 		this.setLeapYear(origin.isLeapYear());

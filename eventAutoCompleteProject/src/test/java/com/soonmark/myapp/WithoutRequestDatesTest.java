@@ -173,6 +173,21 @@ public class WithoutRequestDatesTest {
 		params.add(new Object[] { "31일에 불꽃놀이",                                                                               
 				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-31", ""), null, "2018-05-31 (목)"),
 						new EventDTO(new StringDateTimeDTO("2018-07-31", ""), null, "2018-07-31 (화)")) });
+		
+		// 2월 30일과 같이 일자가 부분 범위 이탈
+		params.add(new Object[] { "2월 30일",                                                                               
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-30", ""), null, "2018-05-30 (수)")) });
+
+		params.add(new Object[] { "2월 30일 1시",                                                                               
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 01:00"), null, "2018-05-30 (수) 오전 01:00"),
+						new EventDTO(new StringDateTimeDTO("2018-05-30", "오후 01:00"), null, "2018-05-30 (수) 오후 01:00")) });
+
+		// 5월 32일과 같이 일자가 완전 범위 이탈 - 스펙 논의
+		params.add(new Object[] { "2월 32일",                                                                               
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2019-02-28", ""), null, "2019-02-28 (목)")) });
+		
+		params.add(new Object[] { "5/32",                                                                               
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-31", ""), null, "2018-05-31 (목)")) });
 		                                                                                                                     
                                                                                                                              
 		// 월 시                                                                                                               
@@ -308,7 +323,8 @@ public class WithoutRequestDatesTest {
 		
 		// 특수날짜(이번주) 날짜 요일 시간
 		params.add(new Object[] { "이번주 3일 수요일 1시 30분",
-				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-23", "오후 01:30"), null, "2018-05-23 (수) 오후 01:30"))});
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-23", "오후 01:30"), null, "2018-05-23 (수) 오후 01:30"),
+						new EventDTO(new StringDateTimeDTO("2018-05-23", "오후 01:30"), null, "2018-05-23 (수) 오후 01:30"))});
 
 		// 특수날짜(이번주) 요일
 		params.add(new Object[] { "이번주 영화보기 금요일 조조",
@@ -465,8 +481,22 @@ public class WithoutRequestDatesTest {
 						new EventDTO(new StringDateTimeDTO("2018-05-26", "오후 01:00"), new StringDateTimeDTO("2018-06-03", "오후 04:00"),
 								"2018-05-26 (토) 오후 01:00 ~ 2018-06-03 (일) 오후 04:00"))});
 		
+		params.add(new Object[] { "26일 1시 ~2월 31일 4시",
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-26", "오전 01:00"), new StringDateTimeDTO("2018-05-31", "오전 04:00"),
+						"2018-05-26 (토) 오전 01:00 ~ 2018-05-31 (목) 오전 04:00"),
+						new EventDTO(new StringDateTimeDTO("2018-05-26", "오후 01:00"), new StringDateTimeDTO("2018-05-31", "오전 04:00"),
+								"2018-05-26 (토) 오후 01:00 ~ 2018-05-31 (목) 오전 04:00"),
+						new EventDTO(new StringDateTimeDTO("2018-05-26", "오전 01:00"), new StringDateTimeDTO("2018-05-31", "오후 04:00"),
+								"2018-05-26 (토) 오전 01:00 ~ 2018-05-31 (목) 오후 04:00"),
+						new EventDTO(new StringDateTimeDTO("2018-05-26", "오후 01:00"), new StringDateTimeDTO("2018-05-31", "오후 04:00"),
+								"2018-05-26 (토) 오후 01:00 ~ 2018-05-31 (목) 오후 04:00"))});
+		
 		params.add(new Object[] { "3일~2일까지",
 				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-06-03", ""), new StringDateTimeDTO("2018-07-02", ""), "2018-06-03 (일) ~ 2018-07-02 (월)"))});
+		
+		params.add(new Object[] { "2월 30일 1시 ~",                                                                               
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 01:00"), null, "2018-05-30 (수) 오전 01:00"),
+						new EventDTO(new StringDateTimeDTO("2018-05-30", "오후 01:00"), null, "2018-05-30 (수) 오후 01:00")) });
 
 		
 		// 예외처리

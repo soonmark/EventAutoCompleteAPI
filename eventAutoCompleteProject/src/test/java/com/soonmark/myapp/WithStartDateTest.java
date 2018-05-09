@@ -57,21 +57,21 @@ public class WithStartDateTest {
 	//
 	// Given
 	//
-	@Parameterized.Parameters(name = "{0} with startDate ({2})")
+	@Parameterized.Parameters(name = "\"{0}\" with startDate ({2})")
 	public static Collection<Object[]> testCases() {
 		Collection<Object[]> params = new ArrayList<Object[]>();
 
-//		LocalDate tmpDate = LocalDate.now();
 		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd a hh:mm");
 		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-		// 0
-		// 년 월 일
 		params.add(new Object[] {"15년 4월 9일", new DateTimeDTO(LocalDate.of(2018, 5, 30), LocalTime.of(11, 0)), LocalDateTime.of(2018, 5, 30, 11, 0).format(format),
 				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 11:00"), new StringDateTimeDTO("2015-04-09", ""), "2015-04-09 (목)")) });
 
 		params.add(new Object[] {"1일", new DateTimeDTO(LocalDate.of(2018, 5, 30), LocalTime.of(11, 0)), LocalDateTime.of(2018, 5, 30, 11, 0).format(format),
 				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 11:00"), new StringDateTimeDTO("2018-06-01", ""), "2018-05-30 (수) 오전 11:00 ~ 2018-06-01 (금)")) });
+		
+		params.add(new Object[] {"1일", new DateTimeDTO(LocalDate.of(2018, 5, 30), null), LocalDate.of(2018, 5, 30).format(dateFormat),
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-30", ""), new StringDateTimeDTO("2018-06-01", ""), "2018-05-30 (수) ~ 2018-06-01 (금)")) });
 		
 		params.add(new Object[] {"", new DateTimeDTO(LocalDate.of(2018, 5, 30), LocalTime.of(11, 0)), LocalDateTime.of(2018, 5, 30, 11, 0).format(format),
 				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 11:00"), new StringDateTimeDTO("2018-05-30", "오후 12:00"), "2018-05-30 (수) 오전 11:00 ~ 2018-05-30 (수) 오후 12:00"),

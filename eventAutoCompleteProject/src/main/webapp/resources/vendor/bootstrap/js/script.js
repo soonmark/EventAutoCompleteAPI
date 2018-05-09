@@ -52,8 +52,8 @@ function setKeyEvents() {
 		tmpStr = inputEvent.val();
 
 		// but 이전 입력값과 같으면 얼럿 안 나오게
-		if (tmpStr != prev)
-			checkInput();
+//		if (tmpStr != prev)
+		checkInput();
 	}); // end keyup
 
 	$(document).keydown(function(ev) {

@@ -128,4 +128,13 @@ public class DateTimeListMgrSet {
 		timeList.adjustForAmPmTime();
 	}
 
+	public boolean allListEmpty() {
+		if(getDateList().getDtMgrList().size() == 0 && getDayList().getDtMgrList().size() == 0
+				&& getSpecialDateList().getDtMgrList().size() == 0 && getTimeList().getDtMgrList().size() == 0) {
+			return true;
+		}
+		
+		return false;
+	}
+
 }

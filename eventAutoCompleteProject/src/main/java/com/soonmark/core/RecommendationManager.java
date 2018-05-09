@@ -97,7 +97,9 @@ public class RecommendationManager {
 		while (iter.hasNext()) {
 			PeriodManager periodManager = iter.next();
 			if(periodManager.getFrom() != null && periodManager.getTo() != null) {
-				recomNum = 1;
+				if(periodManager.getEndDateListMgr().allListEmpty() && periodManager.getStartDateListMgr().allListEmpty()){
+					recomNum = 1;
+				}
 			}
 			periodManager.getStartDateListMgr().getResultList().setFocusStart(true);
 			periodManager.getEndDateListMgr().getResultList().setFocusStart(false);
