@@ -109,6 +109,11 @@ public class WithStartDateTest {
 						new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 10:30"), null, "2018-05-30 (수) 오전 10:30"),
 						new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 11:00"), null, "2018-05-30 (수) 오전 11:00"),
 						new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 11:30"), null, "2018-05-30 (수) 오전 11:30")) });
+
+		params.add(new Object[] {"1시~3시", new DateTimeDTO(LocalDate.of(2018, 5, 30), null), LocalDate.of(2018, 5, 30).format(dateFormat),
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 01:00"), new StringDateTimeDTO("2018-05-30", "오전 03:00"), "2018-05-30 (수) 오전 01:00 ~ 2018-05-30 (수) 오전 03:00"),
+						new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 01:00"), new StringDateTimeDTO("2018-05-30", "오후 03:00"), "2018-05-30 (수) 오전 01:00 ~ 2018-05-30 (수) 오후 03:00"),
+						new EventDTO(new StringDateTimeDTO("2018-05-30", "오후 01:00"), new StringDateTimeDTO("2018-05-30", "오후 03:00"), "2018-05-30 (수) 오후 01:00 ~ 2018-05-30 (수) 오후 03:00")) });
 		
 		return params;
 	}

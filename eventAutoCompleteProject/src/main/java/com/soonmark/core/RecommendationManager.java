@@ -151,7 +151,6 @@ public class RecommendationManager {
 			while (iter2.hasNext()) {
 				InvalidEventObj first = iter2.next();
 				
-				// 무조건 startDate에 추천하도록 넣어놨기 때문에 이렇게 비교해야함.
 				// endDate랑 하도록 변경.
 				if(first.getStartDate() != null && first.getEndDate() == null
 						&& beingMerged.getStartDate() == null && beingMerged.getEndDate() != null) {
@@ -178,6 +177,8 @@ public class RecommendationManager {
 					evObjList.add(new InvalidEventObj(first.getStartDate(), beingMerged.getEndDate()));
 				}
 			}
+			
+			recomNum = evObjList.size();
 			if(evMgrList.size() == 0) {
 				evObjList.add(new InvalidEventObj(beingMerged.getStartDate(), beingMerged.getEndDate()));
 			}

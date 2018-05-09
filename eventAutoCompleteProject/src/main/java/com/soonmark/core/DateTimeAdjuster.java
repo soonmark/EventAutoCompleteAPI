@@ -131,9 +131,9 @@ public class DateTimeAdjuster {
 	}
 
 	public void setAllDate(InvalidDateTimeObj dtObj) {
-		timePoint.withYear(dtObj.getYear());
-		timePoint.withMonth(dtObj.getMonth());
-		timePoint.withDayOfMonth(dtObj.getDate());
+		timePoint = timePoint.withYear(dtObj.getYear());
+		timePoint = timePoint.withMonth(dtObj.getMonth());
+		timePoint = timePoint.withDayOfMonth(dtObj.getDate());
 	}
 	
 	public void setCloseDateOfTheDay(DayOfWeek val) {

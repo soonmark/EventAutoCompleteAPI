@@ -239,6 +239,8 @@ function remove(element){
 		startDate = "startDate";
 		endDate = "endDate";
 	}
+	
+	checkInput();
 }
 
 function biggerThan(target, element) {

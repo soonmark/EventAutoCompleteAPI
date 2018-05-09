@@ -67,10 +67,9 @@ public class DateTimeEstimator {
 			if (startDateExists) {
 				TimeStorage times = new TimeStorage();
 				if (inputEventObj.getStartDate().getLocalTime() == null) {
-					if(endDateExists && inputEventObj.getEndDate().getLocalTime() == null) {
-						
-					}
-					else if (sEstimatedDates.length > 0
+					if (endDateExists && inputEventObj.getEndDate().getLocalTime() == null) {
+
+					} else if (sEstimatedDates.length > 0
 							&& sEstimatedDates[0].getResultList().getEvMgrList().get(0).getEndDate() != null) {
 						//
 					} else {
@@ -143,7 +142,7 @@ public class DateTimeEstimator {
 						InvalidDateTimeObj startDtObj = new InvalidDateTimeObj();
 						InvalidEventObj evObj = new InvalidEventObj();
 						startDtObj.setDateTime(inputEventObj.getStartDate());
-						if(startDateExists && inputEventObj.getStartDate().getLocalTime() == null) {
+						if (startDateExists && inputEventObj.getStartDate().getLocalTime() == null) {
 							startDtObj.setHour(thisTime.getHour());
 							startDtObj.setMinute(thisTime.getMinute());
 						}
@@ -167,7 +166,7 @@ public class DateTimeEstimator {
 
 		if (isDateEmpty) {
 			setTimeToCloseFutureTime(inputEventObj, focusStart);
-			setPriorityForTimeWithoutDate();
+			setPriorityForTimeWithoutDate(focusStart);
 		} else {
 			// 월간 일수 차이에 대한 예외처리
 			if (isValidDates() == true) {
@@ -308,30 +307,57 @@ public class DateTimeEstimator {
 
 	}
 
-	private void setPriorityForTimeWithoutDate() {
-		int closestIdx = 0;
-		DateTimeAdjuster closest = new DateTimeAdjuster();
-		closest.setDate(resultList.getElement(closestIdx).getStartDate().getDate());
-		closest.setMonth(resultList.getElement(closestIdx).getStartDate().getMonth());
-		closest.setYear(resultList.getElement(closestIdx).getStartDate().getYear());
-		closest.setHour(resultList.getElement(closestIdx).getStartDate().getHour(), false);
-		closest.setMinute(resultList.getElement(closestIdx).getStartDate().getMinute());
-
-		for (int i = 1; i < resultList.getEvMgrList().size(); i++) {
-			DateTimeAdjuster cur = new DateTimeAdjuster();
-			cur.setDate(resultList.getElement(i).getStartDate().getDate());
-			cur.setMonth(resultList.getElement(i).getStartDate().getMonth());
-			cur.setYear(resultList.getElement(i).getStartDate().getYear());
-			cur.setHour(resultList.getElement(i).getStartDate().getHour(), false);
-			cur.setMinute(resultList.getElement(i).getStartDate().getMinute());
-
-			if (closest.getTimePoint().isAfter(cur.getTimePoint())) {
-				closest.setTimePoint(cur.getTimePoint());
-				closestIdx = i;
+	private void setPriorityForTimeWithoutDate(boolean focusStart) {
+		
+		if(focusStart) {
+			int closestIdx = 0;
+			DateTimeAdjuster closest = new DateTimeAdjuster();
+			closest.setDate(resultList.getElement(closestIdx).getStartDate().getDate());
+			closest.setMonth(resultList.getElement(closestIdx).getStartDate().getMonth());
+			closest.setYear(resultList.getElement(closestIdx).getStartDate().getYear());
+			closest.setHour(resultList.getElement(closestIdx).getStartDate().getHour(), false);
+			closest.setMinute(resultList.getElement(closestIdx).getStartDate().getMinute());
+			
+			for (int i = 1; i < resultList.getEvMgrList().size(); i++) {
+				DateTimeAdjuster cur = new DateTimeAdjuster();
+				cur.setDate(resultList.getElement(i).getStartDate().getDate());
+				cur.setMonth(resultList.getElement(i).getStartDate().getMonth());
+				cur.setYear(resultList.getElement(i).getStartDate().getYear());
+				cur.setHour(resultList.getElement(i).getStartDate().getHour(), false);
+				cur.setMinute(resultList.getElement(i).getStartDate().getMinute());
+				
+				if (closest.getTimePoint().isAfter(cur.getTimePoint())) {
+					closest.setTimePoint(cur.getTimePoint());
+					closestIdx = i;
+				}
 			}
+			resultList.getElement(closestIdx).getStartDate().setPriority(Priority.timeWithFirstEstimateDate);
+		}
+		else {
+			int closestIdx = 0;
+			DateTimeAdjuster closest = new DateTimeAdjuster();
+			closest.setDate(resultList.getElement(closestIdx).getEndDate().getDate());
+			closest.setMonth(resultList.getElement(closestIdx).getEndDate().getMonth());
+			closest.setYear(resultList.getElement(closestIdx).getEndDate().getYear());
+			closest.setHour(resultList.getElement(closestIdx).getEndDate().getHour(), false);
+			closest.setMinute(resultList.getElement(closestIdx).getEndDate().getMinute());
+			
+			for (int i = 1; i < resultList.getEvMgrList().size(); i++) {
+				DateTimeAdjuster cur = new DateTimeAdjuster();
+				cur.setDate(resultList.getElement(i).getEndDate().getDate());
+				cur.setMonth(resultList.getElement(i).getEndDate().getMonth());
+				cur.setYear(resultList.getElement(i).getEndDate().getYear());
+				cur.setHour(resultList.getElement(i).getEndDate().getHour(), false);
+				cur.setMinute(resultList.getElement(i).getEndDate().getMinute());
+				
+				if (closest.getTimePoint().isAfter(cur.getTimePoint())) {
+					closest.setTimePoint(cur.getTimePoint());
+					closestIdx = i;
+				}
+			}
+			resultList.getElement(closestIdx).getEndDate().setPriority(Priority.timeWithFirstEstimateDate);
 		}
 
-		resultList.getElement(closestIdx).getStartDate().setPriority(Priority.timeWithFirstEstimateDate);
 	}
 
 	private void setTimeToCloseFutureTime(InvalidEventObj inputEventObj, boolean focusStart) {
@@ -394,28 +420,32 @@ public class DateTimeEstimator {
 				else {
 					// 일정 시작 날짜만 있을 때
 					if (startDateExists && !endDateExists) {
-						// tmpCal의 년월일 세팅.
-						tmpCal.setAllDate(inputEventObj.getStartDate());
 
-						// 시간이 없을 때
-						if (inputEventObj.getStartDate().getLocalTime() == null) {
-							// 선택된 날짜로 세팅.
+							// tmpCal의 년월일 세팅.
+							tmpCal.setAllDate(inputEventObj.getStartDate());
 
-							startDtObj.setAllDate(tmpCal);
-							startDtObj.setHour(tmpCal.getHour());
-							startDtObj.setMinute(tmpCal.getMinute());
-							startDtObj.setPriority(timeList.getElement(i).getPriority());
-						}
-						// 일정 시작 날짜와 시간 모두 있을 때
-						else {
-							startDtObj.setDateTime(inputEventObj.getStartDate());
+							// 시간이 없을 때
+							if (inputEventObj.getStartDate().getLocalTime() == null && focusStart) {
+								// 선택된 날짜로 세팅.
 
-							endDtObj = new InvalidDateTimeObj();
-							endDtObj.setAllDate(inputEventObj.getStartDate());
-							endDtObj.setHour(tmpCal.getHour());
-							endDtObj.setMinute(tmpCal.getMinute());
-							endDtObj.setPriority(timeList.getElement(i).getPriority());
-						}
+								startDtObj.setAllDate(tmpCal);
+								startDtObj.setHour(tmpCal.getHour());
+								startDtObj.setMinute(tmpCal.getMinute());
+								startDtObj.setPriority(timeList.getElement(i).getPriority());
+							}
+							// 일정 시작 날짜와 시간 모두 있을 때
+							else {
+								if(!focusStart) {
+									startDtObj = null;
+								}else {
+									startDtObj.setDateTime(inputEventObj.getStartDate());
+								}
+								endDtObj = new InvalidDateTimeObj();
+								endDtObj.setAllDate(inputEventObj.getStartDate());
+								endDtObj.setHour(tmpCal.getHour());
+								endDtObj.setMinute(tmpCal.getMinute());
+								endDtObj.setPriority(timeList.getElement(i).getPriority());
+							}
 					} else if (!startDateExists && endDateExists) {
 
 					}
