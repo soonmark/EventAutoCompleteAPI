@@ -65,13 +65,22 @@ public class WithStartDateTest {
 		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 		params.add(new Object[] {"15년 4월 9일", new DateTimeDTO(LocalDate.of(2018, 5, 30), LocalTime.of(11, 0)), LocalDateTime.of(2018, 5, 30, 11, 0).format(format),
-				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 11:00"), new StringDateTimeDTO("2015-04-09", ""), "2015-04-09 (목)")) });
+				new ArrayList() });
 
 		params.add(new Object[] {"1일", new DateTimeDTO(LocalDate.of(2018, 5, 30), LocalTime.of(11, 0)), LocalDateTime.of(2018, 5, 30, 11, 0).format(format),
-				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 11:00"), new StringDateTimeDTO("2018-06-01", ""), "2018-05-30 (수) 오전 11:00 ~ 2018-06-01 (금)")) });
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 11:00"), new StringDateTimeDTO("2018-06-01", ""), "2018-05-30 (수) 오전 11:00 ~ 2018-06-01 (금)"),
+						new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 11:00"), new StringDateTimeDTO("2018-07-01", ""), "2018-05-30 (수) 오전 11:00 ~ 2018-07-01 (일)")) });
 		
 		params.add(new Object[] {"1일", new DateTimeDTO(LocalDate.of(2018, 5, 30), null), LocalDate.of(2018, 5, 30).format(dateFormat),
-				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-30", ""), new StringDateTimeDTO("2018-06-01", ""), "2018-05-30 (수) ~ 2018-06-01 (금)")) });
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-30", ""), new StringDateTimeDTO("2018-06-01", ""), "2018-05-30 (수) ~ 2018-06-01 (금)"),
+						new EventDTO(new StringDateTimeDTO("2018-05-30", ""), new StringDateTimeDTO("2018-07-01", ""), "2018-05-30 (수) ~ 2018-07-01 (일)")) });
+		
+		params.add(new Object[] {"1:00", new DateTimeDTO(LocalDate.of(2018, 5, 30), null), LocalDate.of(2018, 5, 30).format(dateFormat),
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 01:00"), null, "2018-05-30 (수) 오전 01:00"),
+						new EventDTO(new StringDateTimeDTO("2018-05-30", "오후 01:00"), null, "2018-05-30 (수) 오후 01:00")) });
+		
+		params.add(new Object[] {"15시 30분", new DateTimeDTO(LocalDate.of(2018, 5, 30), null), LocalDate.of(2018, 5, 30).format(dateFormat),
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-30", "오후 03:30"), null, "2018-05-30 (수) 오후 03:30")) });
 		
 		params.add(new Object[] {"", new DateTimeDTO(LocalDate.of(2018, 5, 30), LocalTime.of(11, 0)), LocalDateTime.of(2018, 5, 30, 11, 0).format(format),
 				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 11:00"), new StringDateTimeDTO("2018-05-30", "오후 12:00"), "2018-05-30 (수) 오전 11:00 ~ 2018-05-30 (수) 오후 12:00"),
@@ -86,17 +95,17 @@ public class WithStartDateTest {
 						new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 11:00"), new StringDateTimeDTO("2018-05-30", "오후 04:30"), "2018-05-30 (수) 오전 11:00 ~ 2018-05-30 (수) 오후 04:30")) });
 		
 		// 오늘이면 지금 시간보다 미래로 추천
-		params.add(new Object[] {"", new DateTimeDTO(LocalDate.of(2018, 5, 23), null), LocalDate.of(2018, 5, 23).format(dateFormat),
-				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-23", "오전 11:00"), null, "2018-05-23 (수) 오전 11:00"),
-						new EventDTO(new StringDateTimeDTO("2018-05-23", "오전 11:30"), null, "2018-05-23 (수) 오전 11:30"),
-						new EventDTO(new StringDateTimeDTO("2018-05-23", "오후 12:00"), null, "2018-05-23 (수) 오후 12:00"),
-						new EventDTO(new StringDateTimeDTO("2018-05-23", "오후 12:30"), null, "2018-05-23 (수) 오후 12:30"),
-						new EventDTO(new StringDateTimeDTO("2018-05-23", "오후 01:00"), null, "2018-05-23 (수) 오후 01:00"),
-						new EventDTO(new StringDateTimeDTO("2018-05-23", "오후 01:30"), null, "2018-05-23 (수) 오후 01:30"),
-						new EventDTO(new StringDateTimeDTO("2018-05-23", "오후 02:00"), null, "2018-05-23 (수) 오후 02:00"),
-						new EventDTO(new StringDateTimeDTO("2018-05-23", "오후 02:30"), null, "2018-05-23 (수) 오후 02:30"),
-						new EventDTO(new StringDateTimeDTO("2018-05-23", "오후 03:00"), null, "2018-05-23 (수) 오후 03:00"),
-						new EventDTO(new StringDateTimeDTO("2018-05-23", "오후 03:30"), null, "2018-05-23 (수) 오후 03:30")) });
+		params.add(new Object[] {"", new DateTimeDTO(LocalDate.of(2018, 5, 16), null), LocalDate.of(2018, 5, 16).format(dateFormat),
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 04:00"), null, "2018-05-16 (수) 오후 04:00"),
+						new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 04:30"), null, "2018-05-16 (수) 오후 04:30"),
+						new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 05:00"), null, "2018-05-16 (수) 오후 05:00"),
+						new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 05:30"), null, "2018-05-16 (수) 오후 05:30"),
+						new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 06:00"), null, "2018-05-16 (수) 오후 06:00"),
+						new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 06:30"), null, "2018-05-16 (수) 오후 06:30"),
+						new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 07:00"), null, "2018-05-16 (수) 오후 07:00"),
+						new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 07:30"), null, "2018-05-16 (수) 오후 07:30"),
+						new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 08:00"), null, "2018-05-16 (수) 오후 08:00"),
+						new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 08:30"), null, "2018-05-16 (수) 오후 08:30")) });
 		
 		params.add(new Object[] {"", new DateTimeDTO(LocalDate.of(2018, 5, 30), null), LocalDate.of(2018, 5, 30).format(dateFormat),
 				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 07:00"), null, "2018-05-30 (수) 오전 07:00"),
@@ -115,6 +124,15 @@ public class WithStartDateTest {
 						new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 01:00"), new StringDateTimeDTO("2018-05-30", "오후 03:00"), "2018-05-30 (수) 오전 01:00 ~ 2018-05-30 (수) 오후 03:00"),
 						new EventDTO(new StringDateTimeDTO("2018-05-30", "오후 01:00"), new StringDateTimeDTO("2018-05-30", "오후 03:00"), "2018-05-30 (수) 오후 01:00 ~ 2018-05-30 (수) 오후 03:00")) });
 		
+		params.add(new Object[] {"1시~3시", new DateTimeDTO(LocalDate.of(2018, 5, 30), LocalTime.of(11, 0)), LocalDateTime.of(2018, 5, 30, 11, 0).format(format),
+				new ArrayList() });
+		
+		params.add(new Object[] {"3시~1시", new DateTimeDTO(LocalDate.of(2018, 5, 30), null), LocalDate.of(2018, 5, 30).format(dateFormat),
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 03:00"), new StringDateTimeDTO("2018-05-30", "오후 01:00"), "2018-05-30 (수) 오전 03:00 ~ 2018-05-30 (수) 오후 01:00")) });
+		
+		params.add(new Object[] {"3/2", new DateTimeDTO(LocalDate.of(2019, 5, 30), null), LocalDate.of(2019, 5, 30).format(dateFormat),
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2019-05-30", ""), new StringDateTimeDTO("2020-03-02", ""), "2019-05-30 (목) ~ 2020-03-02 (월)")) });
+		
 		return params;
 	}
 	
@@ -130,9 +148,9 @@ public class WithStartDateTest {
 		//
 		// Then
 		//
-		assertThat(outputList.size(), is(expectedList.size()));
+		assertEquals( expectedList.size(), outputList.size());
 		for (int i = 0; i < outputList.size(); i++) {
-			assertEquals(outputList.get(i).toString(), expectedList.get(i).toString());
+			assertEquals(expectedList.get(i).toString(), outputList.get(i).toString());
 		}
 	}
 

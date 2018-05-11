@@ -272,6 +272,7 @@ public class DateTimeAdjuster {
 //					&& timePoint.getMonthValue() == LocalDateTime.now().getMonthValue()) {
 //				timePoint = timePoint.withDayOfMonth(LocalDateTime.now().getDayOfMonth());
 				if(checkTime) {
+					this.isHalfTime = true;
 					setCloseDateByTime(cal.getTimePoint());
 				}
 			}

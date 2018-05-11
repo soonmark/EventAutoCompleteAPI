@@ -1,6 +1,7 @@
 package com.soonmark.core;
 
 import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -218,6 +219,35 @@ class AscendingEvents implements Comparator<InvalidEventObj> {
 		}
 		else {
 			return o1.getEndDate().getPriority().compareTo(o2.getEndDate().getPriority());
+		}
+	}
+}
+
+class AscendingDateTimeEvents implements Comparator<InvalidEventObj> {
+	
+	@Override
+	public int compare(InvalidEventObj o1, InvalidEventObj o2) {
+		if(o1.getStartDate() != null && o2.getStartDate() != null) {
+			if(o1.getStartDate().getLocalTime() != null && o2.getStartDate().getLocalTime() != null) {
+				LocalDateTime o1Dt = LocalDateTime.of(o1.getStartDate().getLocalDate(), o1.getStartDate().getLocalTime());
+				LocalDateTime o2Dt = LocalDateTime.of(o2.getStartDate().getLocalDate(), o2.getStartDate().getLocalTime());
+				
+				return o1Dt.compareTo(o2Dt);
+			}
+			else {
+				return o1.getStartDate().getLocalDate().compareTo(o2.getStartDate().getLocalDate());
+			}
+		}
+		else {
+			if(o1.getEndDate().getLocalTime() != null && o2.getEndDate().getLocalTime() != null) {
+				LocalDateTime o1Dt = LocalDateTime.of(o1.getEndDate().getLocalDate(), o1.getEndDate().getLocalTime());
+				LocalDateTime o2Dt = LocalDateTime.of(o2.getEndDate().getLocalDate(), o2.getEndDate().getLocalTime());
+				
+				return o1Dt.compareTo(o2Dt);
+			}
+			else {
+				return o1.getEndDate().getLocalDate().compareTo(o2.getEndDate().getLocalDate());
+			}
 		}
 	}
 }

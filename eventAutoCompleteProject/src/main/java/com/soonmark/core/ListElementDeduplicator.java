@@ -1,5 +1,7 @@
 package com.soonmark.core;
 
+import java.util.List;
+
 import com.soonmark.domain.AppConstants;
 import com.soonmark.domain.DateTimeEn;
 import com.soonmark.domain.Priority;
@@ -178,6 +180,25 @@ public class ListElementDeduplicator {
 				afterListMgr.deleteDtObj(j);
 			} else {
 				j++;
+			}
+		}
+		
+		
+		// 일 없이 년, 월만 있는 경우 dateList에서 제거.
+		if(listType == TokenType.dates) {
+			clearDateListWithoutDate();
+		}
+	}
+	
+	private void clearDateListWithoutDate() {
+		List<InvalidDateTimeObj> dList = afterListMgr.getDtMgrList();
+		
+		for( int i = 0 ; i < dList.size() ;) {
+			if(dList.get(i).getDate() == AppConstants.NO_DATA) {
+				dList.remove(i);
+			}
+			else {
+				i++;
 			}
 		}
 	}
