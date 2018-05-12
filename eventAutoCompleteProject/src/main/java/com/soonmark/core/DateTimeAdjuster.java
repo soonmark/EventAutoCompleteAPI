@@ -18,7 +18,6 @@ public class DateTimeAdjuster {
 
 	public DateTimeAdjuster() {
 		timePoint = RecommendationManager.curTime;
-//		timePoint = LocalDateTime.now();
 	}
 
 	public LocalDateTime getTimePoint() {
@@ -51,6 +50,16 @@ public class DateTimeAdjuster {
 		}
 		return year;
 	}
+	
+	public void setDateTime(InvalidDateTimeObj obj) {
+		setAllDate(obj);
+		setTime(obj);
+	}
+	
+	public void setTime(InvalidDateTimeObj obj) {
+		setHour(obj.getHour(), false);
+		setMinute(obj.getMinute());
+	}
 
 	public void setByDateTimeEn(DateTimeEn dateTimeEn, int val) {
 		switch (dateTimeEn) {
@@ -73,7 +82,7 @@ public class DateTimeAdjuster {
 			break;
 		}
 	}
-
+	
 	public DayOfWeek getDay() {
 		return timePoint.getDayOfWeek();
 	}
@@ -236,7 +245,7 @@ public class DateTimeAdjuster {
 		}
 	}
 	
-	public void setCloseDate(DateTimeAdjuster cal, DateTimeEn focus, int plus, boolean checkTime, LocalDate ... sDate) {
+	public void setCloseDate(DateTimeAdjuster cal, DateTimeEn focus, int plus, boolean checkTime, LocalDate sDate) {
 		if (focus == DateTimeEn.year) {
 			plusYearsWithDate(cal.getTimePoint().toLocalDate(), plus);
 		} else if (focus == DateTimeEn.month) {
@@ -244,9 +253,9 @@ public class DateTimeAdjuster {
 			if (timePoint.getYear() == RecommendationManager.curTime.getYear()) {
 				// 오늘보다 이전이라면
 				if(timePoint.toLocalDate().isBefore(RecommendationManager.curTime.toLocalDate())) {
-					if(sDate.length > 0) {
+					if(sDate != null) {
 						timePoint = timePoint.with(
-								plusFromMonthsWithDate(timePoint.toLocalDate(), sDate[0]));
+								plusFromMonthsWithDate(timePoint.toLocalDate(), sDate));
 					}
 					else {
 						// timPoint의 월을 오늘 이후의 월로 세팅.
@@ -255,10 +264,10 @@ public class DateTimeAdjuster {
 					}
 				}
 			}
-			else if(sDate.length > 0 && timePoint.getYear() == sDate[0].getYear()) {
-				if(timePoint.toLocalDate().isBefore(sDate[0])) {
+			else if(sDate != null && timePoint.getYear() == sDate.getYear()) {
+				if(timePoint.toLocalDate().isBefore(sDate)) {
 					timePoint = timePoint.with(
-							plusFromMonthsWithDate(timePoint.toLocalDate(), sDate[0]));
+							plusFromMonthsWithDate(timePoint.toLocalDate(), sDate));
 				}
 			}
 			// 년도가 다른 경우에도 수행
@@ -268,9 +277,6 @@ public class DateTimeAdjuster {
 			if (timePoint.getYear() == RecommendationManager.curTime.getYear()
 					&& timePoint.getMonthValue() == RecommendationManager.curTime.getMonthValue()) {
 				timePoint = timePoint.withDayOfMonth(RecommendationManager.curTime.getDayOfMonth());
-//			if (timePoint.getYear() == LocalDateTime.now().getYear()
-//					&& timePoint.getMonthValue() == LocalDateTime.now().getMonthValue()) {
-//				timePoint = timePoint.withDayOfMonth(LocalDateTime.now().getDayOfMonth());
 				if(checkTime) {
 					this.isHalfTime = true;
 					setCloseDateByTime(cal.getTimePoint());

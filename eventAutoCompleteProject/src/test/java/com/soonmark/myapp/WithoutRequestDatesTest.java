@@ -1,9 +1,10 @@
 package com.soonmark.myapp;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,6 +17,7 @@ import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.soonmark.domain.StringDateTimeDTO;
+import com.soonmark.domain.DateTimeDTO;
 import com.soonmark.domain.EventDTO;
 import com.soonmark.service.RecommendationService;
 
@@ -57,10 +59,6 @@ public class WithoutRequestDatesTest {
 	public static Collection<Object[]> testCases() {
 		Collection<Object[]> params = new ArrayList<Object[]>();
 
-//		LocalDateTime now = LocalDateTime.of(2018, 5, 4, 12, 2);
-//		String nowDate = now.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-//		String nowTime = now.toLocalTime().format(DateTimeFormatter.ofPattern("a hh:mm"));
-
 		// 년 월 일
 		
 		params.add(new Object[] {"15년 4월 9일",
@@ -94,9 +92,9 @@ public class WithoutRequestDatesTest {
 				Arrays.asList(new EventDTO(new StringDateTimeDTO("2010-10-09", ""), null, "2010-10-09 (토)")) });
 
 		// 년 월
-		params.add(new Object[] { "벚꽃달인 18년 4월 계획짜기", new ArrayList() });
+		params.add(new Object[] { "벚꽃달인 18년 4월 계획짜기", new ArrayList<Object>() });
 
-		params.add(new Object[] { "내 생일 94년 6월 중", new ArrayList() });
+		params.add(new Object[] { "내 생일 94년 6월 중", new ArrayList<Object>() });
 
 		// 년 일
 		params.add(new Object[] { "2000년 21일에 여행갔었음.",
@@ -115,18 +113,22 @@ public class WithoutRequestDatesTest {
 				Arrays.asList(new EventDTO(new StringDateTimeDTO("2019-01-01", ""), null, "2019-01-01 (화)")) });
                                                                                           
 		// 년                                                                              
-		params.add(new Object[] { "15년", new ArrayList() });
+		params.add(new Object[] { "15년", new ArrayList<Object>() });
                                                                                           
-		params.add(new Object[] { "07년에 중학교 졸업", new ArrayList() });
+		params.add(new Object[] { "07년에 중학교 졸업", new ArrayList<Object>() });
                                                                                           
 		// 월                                                                              
-		params.add(new Object[] { "2월에 졸업식", new ArrayList() });
+		params.add(new Object[] { "2월에 졸업식", new ArrayList<Object>() });
 		                                                                                  
-		params.add(new Object[] { "5월에 꽃구경", new ArrayList() });
+		params.add(new Object[] { "5월에 꽃구경", new ArrayList<Object>() });
 
-		params.add(new Object[] { "겨울 12월에는 빙어낚시", new ArrayList() });
+		params.add(new Object[] { "겨울 12월에는 빙어낚시", new ArrayList<Object>() });
 
 		// 일                                                                              
+		params.add(new Object[] {"1일",
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-06-01", ""), null, "2018-06-01 (금)"),
+						new EventDTO(new StringDateTimeDTO("2018-07-01", ""), null, "2018-07-01 (일)")) });
+		
 		params.add(new Object[] { "9일",                                                   
 				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-06-09", ""), null, "2018-06-09 (토)"),
 						new EventDTO(new StringDateTimeDTO("2018-07-09", ""), null, "2018-07-09 (월)")) });
@@ -162,9 +164,9 @@ public class WithoutRequestDatesTest {
 						new EventDTO(new StringDateTimeDTO("2018-05-30", "오후 01:00"), null, "2018-05-30 (수) 오후 01:00")) });
 
 		// 5월 32일과 같이 일자가 완전 범위 이탈 - 스펙 논의
-		params.add(new Object[] { "2월 32일", new ArrayList() });
+		params.add(new Object[] { "2월 32일", new ArrayList<Object>() });
 		
-		params.add(new Object[] { "5/32", new ArrayList() });
+		params.add(new Object[] { "5/32", new ArrayList<Object>() });
 		                                                                                                                     
                                                                                                                              
 		// 월 시                                                                                                               
@@ -422,6 +424,14 @@ public class WithoutRequestDatesTest {
 						new EventDTO(new StringDateTimeDTO("2018-05-17", "오전 11:00"), null, "2018-05-17 (목) 오전 11:00"),
 						new EventDTO(new StringDateTimeDTO("2018-05-17", "오전 11:30"), null, "2018-05-17 (목) 오전 11:30")) });
 
+		params.add(new Object[] { "2023/1",
+				new ArrayList<Object>() });
+		
+		params.add(new Object[] { "2013/1",
+				new ArrayList<Object>() });
+		
+		
+
 // 텍스트 기니까 고려 x
 //		params.add(new Object[] { "오늘 제주 4.3 추모 행사",
 //				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-23", ""), null, "2018-05-23 (수)"))});
@@ -491,7 +501,7 @@ public class WithoutRequestDatesTest {
 		
 		// 예외처리
 		
-		params.add(new Object[] { "3~2일까지", new ArrayList()});
+		params.add(new Object[] { "3~2일까지", new ArrayList<Object>()});
 		params.add(new Object[] { "6-2~4",
 				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-06-02", ""), null, "2018-06-02 (토)"))});
 		

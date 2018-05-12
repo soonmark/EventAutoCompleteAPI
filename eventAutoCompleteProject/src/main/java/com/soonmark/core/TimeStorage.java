@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.soonmark.domain.DateTimeEn;
@@ -90,7 +89,6 @@ public class TimeStorage {
 		for(int i = 0 ; i < dtList.size() ;) {
 			// 오늘에서 내일로 넘어가는 12시보다 늦으면 제거
 			if(dtList.get(i).isAfter(LocalTime.of(0, 0).atDate(LocalDate.now().plusDays(1)))) {
-//				dtList.remove(i);
 				timeList.remove(i);
 			}
 			else {

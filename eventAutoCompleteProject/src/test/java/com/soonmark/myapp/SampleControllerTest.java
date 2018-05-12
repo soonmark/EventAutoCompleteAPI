@@ -1,12 +1,5 @@
 package com.soonmark.myapp;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
-import java.time.DayOfWeek;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.inject.Inject;
 
 import org.junit.Before;
@@ -22,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.soonmark.domain.StringDateTimeDTO;
 import com.soonmark.service.RecommendationService;
 
 @RunWith(SpringJUnit4ClassRunner.class)

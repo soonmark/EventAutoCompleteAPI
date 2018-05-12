@@ -1,15 +1,9 @@
 package com.soonmark.core;
 
-import java.util.List;
-
-import com.soonmark.domain.AppConstants;
 import com.soonmark.domain.TokenType;
 
 public class DateTimeListMgrSet {
 	
-	// 앞으로 추천할 날짜 리스트
-//	private DateTimeListManager periodList;
-
 	// 앞으로 추천할 날짜 리스트
 	private DateTimeListManager dateList;
 	
@@ -26,21 +20,12 @@ public class DateTimeListMgrSet {
 	private EventListManager resultList;
 
 	public DateTimeListMgrSet() {
-//		periodList = new DateTimeListManager(TokenType.period);
 		dateList = new DateTimeListManager(TokenType.dates);
 		specialDateList = new DateTimeListManager(TokenType.special);
 		dayList = new DateTimeListManager(TokenType.days);
 		timeList = new DateTimeListManager(TokenType.times);
 		resultList = new EventListManager();
 	}
-	
-//	public DateTimeListManager getPeriodList() {
-//		return periodList;
-//	}
-//	
-//	public void setPeriodList(DateTimeListManager periodList) {
-//		this.periodList = periodList;
-//	}
 
 	public DateTimeListManager getDateList() {
 		return dateList;
@@ -90,8 +75,6 @@ public class DateTimeListMgrSet {
 	public DateTimeListManager getDTListByTokType(TokenType tokenType) {
 		DateTimeListManager list;
 		switch (tokenType) {
-//		case period:
-//			list = periodList;
 		case dates:
 			list = dateList;
 			break;

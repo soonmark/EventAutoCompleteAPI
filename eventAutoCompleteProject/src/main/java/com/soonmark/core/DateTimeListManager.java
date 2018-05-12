@@ -23,26 +23,6 @@ public class DateTimeListManager {
 		dtObjList = new ArrayList<InvalidDateTimeObj>();
 		this.listType = listType;
 	}
-	
-//	public List<EventDTO> getEventDTOList() {
-//		List<EventDTO> newList = new ArrayList<EventDTO>();
-//		
-//		Iterator<InvalidDateTimeObj> iter = dtObjList.iterator();
-//		while (iter.hasNext()) {
-//			newList.add(iter.next().toEventDTO());
-//		}
-//		return newList;
-//	}
-
-//		public List<DateTimeDTO> getDtDTOList() {
-//		List<DateTimeDTO> newList = new ArrayList<DateTimeDTO>();
-//
-//		Iterator<DateTimeLogicalObject> iter = dtObjList.iterator();
-//		while (iter.hasNext()) {
-//			newList.add(iter.next().toDTO());
-//		}
-//		return newList;
-//	}
 
 	public List<InvalidDateTimeObj> getDtMgrList() {
 		return dtObjList;

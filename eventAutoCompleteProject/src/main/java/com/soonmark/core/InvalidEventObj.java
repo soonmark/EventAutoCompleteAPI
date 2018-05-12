@@ -56,6 +56,15 @@ public class InvalidEventObj {
 
 		return eventDTO;
 	}
+	
+	public InvalidDateTimeObj getStartOrEnd(boolean isStartDate) {
+		if(isStartDate) {
+			return startDate;
+		}
+		else {
+			return endDate;
+		}
+	}
 
 	private boolean isAllDayEvent() {
 		DateTimeDTO start = null;

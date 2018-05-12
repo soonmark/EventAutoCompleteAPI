@@ -1,6 +1,5 @@
 package com.soonmark.myapp;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
 import java.time.LocalDate;
@@ -17,8 +16,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.datetime.DateFormatter;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContextManager;
 
@@ -65,7 +62,7 @@ public class WithStartDateTest {
 		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 		params.add(new Object[] {"15년 4월 9일", new DateTimeDTO(LocalDate.of(2018, 5, 30), LocalTime.of(11, 0)), LocalDateTime.of(2018, 5, 30, 11, 0).format(format),
-				new ArrayList() });
+				new ArrayList<Object>() });
 
 		params.add(new Object[] {"1일", new DateTimeDTO(LocalDate.of(2018, 5, 30), LocalTime.of(11, 0)), LocalDateTime.of(2018, 5, 30, 11, 0).format(format),
 				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 11:00"), new StringDateTimeDTO("2018-06-01", ""), "2018-05-30 (수) 오전 11:00 ~ 2018-06-01 (금)"),
@@ -125,7 +122,7 @@ public class WithStartDateTest {
 						new EventDTO(new StringDateTimeDTO("2018-05-30", "오후 01:00"), new StringDateTimeDTO("2018-05-30", "오후 03:00"), "2018-05-30 (수) 오후 01:00 ~ 2018-05-30 (수) 오후 03:00")) });
 		
 		params.add(new Object[] {"1시~3시", new DateTimeDTO(LocalDate.of(2018, 5, 30), LocalTime.of(11, 0)), LocalDateTime.of(2018, 5, 30, 11, 0).format(format),
-				new ArrayList() });
+				new ArrayList<Object>() });
 		
 		params.add(new Object[] {"3시~1시", new DateTimeDTO(LocalDate.of(2018, 5, 30), null), LocalDate.of(2018, 5, 30).format(dateFormat),
 				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 03:00"), new StringDateTimeDTO("2018-05-30", "오후 01:00"), "2018-05-30 (수) 오전 03:00 ~ 2018-05-30 (수) 오후 01:00")) });

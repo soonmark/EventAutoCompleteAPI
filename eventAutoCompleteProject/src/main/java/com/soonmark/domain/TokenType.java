@@ -1,7 +1,6 @@
 package com.soonmark.domain;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.util.regex.Matcher;
 
 import com.soonmark.core.InvalidDateTimeObj;

@@ -34,7 +34,7 @@ public class RecommendationManager {
 
 	String inputText;
 
-	InvalidEventObj inputEventObj ;
+	InvalidEventObj inputEventObj;
 
 	// 리스트에 보여줄 추천 날짜 개수
 	int recomNum;
@@ -73,11 +73,11 @@ public class RecommendationManager {
 	public List<EventDTO> getRecommendations(String inputText, DateTimeDTO startDate, DateTimeDTO endDate)
 			throws JsonParseException, JsonMappingException, IOException {
 		recomNum = 2;
-		
+
 		// 현재 시간 저장.
 		curTime = LocalDateTime.of(2018, 5, 16, 16, 0);
-//		curTime = LocalDateTime.now();
-		
+		// curTime = LocalDateTime.now();
+
 		focusingRecurNum = 2;
 		dateTimeListManagerSet = new DateTimeListMgrSet();
 		periodManagerList = new ArrayList<PeriodManager>();
@@ -98,28 +98,28 @@ public class RecommendationManager {
 		Iterator<PeriodManager> iter = periodManagerList.iterator();
 		while (iter.hasNext()) {
 			PeriodManager periodManager = iter.next();
-			if(periodManager.getFrom() != null && periodManager.getTo() != null) {
-				if(periodManager.getEndDateListMgr().allListEmpty() && periodManager.getStartDateListMgr().allListEmpty()){
+			if (periodManager.getFrom() != null && periodManager.getTo() != null) {
+				if (periodManager.getEndDateListMgr().allListEmpty()
+						&& periodManager.getStartDateListMgr().allListEmpty()) {
 					recomNum = 1;
 				}
 			}
 			periodManager.getStartDateListMgr().getResultList().setFocusStart(true);
 			periodManager.getEndDateListMgr().getResultList().setFocusStart(false);
-			
+
 			// 시작날짜 추천리스트 생성
-			RecommendProcess(periodManager.getStartDateListMgr());
+			RecommendProcess(periodManager.getStartDateListMgr(), AppConstants.NO_DATA_TO_CONSIDER);
 			// 종료날짜 추천리스트 생성
 			RecommendProcess(periodManager.getEndDateListMgr(), periodManager.getStartDateListMgr());
 
-			
 			// 시작날짜에 대한 추천리스트 + 종료날짜에 대한 추천리스트 합치기
 			evObjList = MergeRecomListBy(periodManager.getStartDateListMgr().getResultList().getEvMgrList(),
-										periodManager.getEndDateListMgr().getResultList().getEvMgrList());
+					periodManager.getEndDateListMgr().getResultList().getEvMgrList());
 		}
-		
+
 		// 최종 리스트에서 뽑을 개수 제외하고 다 지움.
 		removeAllAfterRecomNum(evObjList);
-		
+
 		// 시간 순으로 정렬.
 		sortByTime(evObjList);
 
@@ -136,132 +136,119 @@ public class RecommendationManager {
 
 	private void removeAllAfterRecomNum(List<InvalidEventObj> evObjList) {
 		// 2개만 남기고 다 지우기
-		for (int i = recomNum; i < evObjList.size() ;) {
+		for (int i = recomNum; i < evObjList.size();) {
 			evObjList.remove(i);
 		}
 	}
 
 	private void initInputEvent(DateTimeDTO startDate, DateTimeDTO endDate) {
+		boolean isInputStartFull = false;
+		boolean isInputEndFull = false;
+
 		inputEventObj = new InvalidEventObj();
-		if(startDate != null) {
+		if (startDate != null) {
 			inputEventObj.setStartDate(startDate.toInvalidDateTimeObj());
+			if (startDate.getTime() != null) {
+				isInputStartFull = true;
+			}
 		}
-		if(endDate != null) {
+		if (endDate != null) {
 			inputEventObj.setEndDate(endDate.toInvalidDateTimeObj());
+			if (endDate.getTime() != null) {
+				isInputEndFull = true;
+			}
+		}
+
+		if (isInputStartFull && isInputEndFull) {
+			clearInputEvent(inputEventObj);
 		}
 	}
-	
+
+	private void clearInputEvent(InvalidEventObj inputEventObj) {
+		inputEventObj.setStartDate(null);
+		inputEventObj.setEndDate(null);
+	}
+
 	private List<InvalidEventObj> MergeRecomListBy(List<InvalidEventObj> evMgrList, List<InvalidEventObj> evMgrList2) {
 		List<InvalidEventObj> evObjList = new ArrayList<InvalidEventObj>();
-		
+
 		Iterator<InvalidEventObj> iter3 = evMgrList2.iterator();
-		while(iter3.hasNext()) {
+		while (iter3.hasNext()) {
 			InvalidEventObj beingMerged = iter3.next();
 			Iterator<InvalidEventObj> iter2 = evMgrList.iterator();
 			while (iter2.hasNext()) {
 				InvalidEventObj first = iter2.next();
-				
+
 				// endDate랑 하도록 변경.
-				if(first.getStartDate() != null && first.getEndDate() == null
-						&& beingMerged.getStartDate() == null && beingMerged.getEndDate() != null) {
+				if (first.getStartDate() != null && /*first.getEndDate() == null && beingMerged.getStartDate() == null
+						&& */beingMerged.getEndDate() != null) {
 					try {
-						LocalDateTime r = LocalDateTime.of(first.getStartDate().getLocalDate(), first.getStartDate().getLocalTime());
-						LocalDateTime b = LocalDateTime.of(beingMerged.getEndDate().getLocalDate(), beingMerged.getEndDate().getLocalTime());
-						
-						if(!r.isAfter(b)) {
+						LocalDateTime r = LocalDateTime.of(first.getStartDate().getLocalDate(),
+								first.getStartDate().getLocalTime());
+						LocalDateTime b = LocalDateTime.of(beingMerged.getEndDate().getLocalDate(),
+								beingMerged.getEndDate().getLocalTime());
+
+						if (!r.isAfter(b)) {
 							evObjList.add(new InvalidEventObj(first.getStartDate(), beingMerged.getEndDate()));
 						}
-					}
-					catch(NullPointerException e) {
+					} catch (NullPointerException e) {
 						LocalDate r = first.getStartDate().getLocalDate();
 						LocalDate b = beingMerged.getEndDate().getLocalDate();
 
-						if(!r.isAfter(b)) {
+						if (!r.isAfter(b)) {
 							evObjList.add(new InvalidEventObj(first.getStartDate(), beingMerged.getEndDate()));
 						}
 					}
-				}
-				else if(((first.getStartDate() == null && beingMerged.getStartDate() == null) ||
-							(first.getStartDate() != null && beingMerged.getStartDate() != null)
-							&& (first.getStartDate().getLocalDate().isEqual(beingMerged.getStartDate().getLocalDate())
-									&& first.getStartDate().getHour() == beingMerged.getStartDate().getHour()
-									&& first.getStartDate().getMinute() == beingMerged.getStartDate().getMinute()
-								)
-						)
-						&& ((first.getEndDate() == null && beingMerged.getEndDate() == null) ||
-								(first.getEndDate() != null && beingMerged.getEndDate() != null)
-								&& (first.getEndDate().getLocalDate().isEqual(beingMerged.getEndDate().getLocalDate())
+				} else if (((first.getStartDate() == null && beingMerged.getStartDate() == null)
+						|| (first.getStartDate() != null && beingMerged.getStartDate() != null) && (first.getStartDate()
+								.getLocalDate().isEqual(beingMerged.getStartDate().getLocalDate())
+								&& first.getStartDate().getHour() == beingMerged.getStartDate().getHour()
+								&& first.getStartDate().getMinute() == beingMerged.getStartDate().getMinute()))
+						&& ((first.getEndDate() == null && beingMerged.getEndDate() == null)
+								|| (first.getEndDate() != null && beingMerged.getEndDate() != null) && (first
+										.getEndDate().getLocalDate().isEqual(beingMerged.getEndDate().getLocalDate())
 										&& first.getEndDate().getHour() == beingMerged.getEndDate().getHour()
-										&& first.getEndDate().getMinute() == beingMerged.getEndDate().getMinute()
-									)
-							)
-						)
-						{
+										&& first.getEndDate().getMinute() == beingMerged.getEndDate().getMinute()))) {
 					evObjList.add(new InvalidEventObj(first.getStartDate(), beingMerged.getEndDate()));
 				}
 			}
-			
+
 			recomNum = evObjList.size();
-			if(evMgrList.size() == 0) {
+			if (evMgrList.size() == 0) {
 				evObjList.add(new InvalidEventObj(beingMerged.getStartDate(), beingMerged.getEndDate()));
 			}
 		}
-		if(evMgrList2.size() == 0) {
+		if (evMgrList2.size() == 0) {
 			Iterator<InvalidEventObj> iter2 = evMgrList.iterator();
 			while (iter2.hasNext()) {
 				InvalidEventObj first = iter2.next();
 				// endDate가 startDate 보다 빠르면
-//				if(first.getStartDate() != null && first.getEndDate() != null) {
-//					if(first.getStartDate().getLocalTime() != null && first.getEndDate().getLocalTime() != null) {
-//						LocalDateTime sdt = LocalDateTime.of(first.getStartDate().getLocalDate(), first.getStartDate().getLocalTime());
-//						LocalDateTime edt = LocalDateTime.of(first.getEndDate().getLocalDate(), first.getEndDate().getLocalTime());
-//						if(sdt.isAfter(edt)) {
-//							evObjList.add(new InvalidEventObj(first.getEndDate(), null));
-//						}
-//					}
-//					else {
-//						if(first.getStartDate().getLocalDate() != null && first.getEndDate().getLocalDate() != null) {
-//							if(first.getStartDate().getLocalDate().isAfter(first.getEndDate().getLocalDate())) {
-//								evObjList.add(new InvalidEventObj(first.getEndDate(), null));
-//							}
-//						}
-//						else {
-//							evObjList.add(new InvalidEventObj(first.getStartDate(), first.getEndDate()));
-//						}
-//					}
-//				}
-//				else {
-//				}
-//				if(first.getStartDate() != null && first.getEndDate() != null) {
-//					if(first.getStartDate().getLocalTime() != null && first.getEndDate().getLocalTime() != null) {
-//						LocalDateTime sdt = LocalDateTime.of(first.getStartDate().getLocalDate(), first.getStartDate().getLocalTime());
-//						LocalDateTime edt = LocalDateTime.of(first.getEndDate().getLocalDate(), first.getEndDate().getLocalTime());
-//						if(sdt.isAfter(edt)) {
-//							evObjList.add(new InvalidEventObj(first.getEndDate(), null));
-//						}
-//						else {
-//							evObjList.add(new InvalidEventObj(first.getStartDate(), first.getEndDate()));
-//						}
-//					}
-//					else {
-//						if(first.getStartDate().getLocalDate().isAfter(first.getEndDate().getLocalDate())) {
-//							evObjList.add(new InvalidEventObj(first.getEndDate(), null));
-//						}
-//						else {
-//							evObjList.add(new InvalidEventObj(first.getStartDate(), first.getEndDate()));
-//						}
-//					}
-//				}
-//				else {
-//				}
-				evObjList.add(new InvalidEventObj(first.getStartDate(), first.getEndDate()));
+				if (first.getStartDate() != null && first.getEndDate() != null) {
+					if (first.getStartDate().getLocalTime() != null && first.getEndDate().getLocalTime() != null) {
+						LocalDateTime sdt = LocalDateTime.of(first.getStartDate().getLocalDate(),
+								first.getStartDate().getLocalTime());
+						LocalDateTime edt = LocalDateTime.of(first.getEndDate().getLocalDate(),
+								first.getEndDate().getLocalTime());
+						// 시작시간이 종료시간보다 빠르면 skip
+						if (!sdt.isAfter(edt)) {
+							evObjList.add(new InvalidEventObj(first.getStartDate(), first.getEndDate()));
+						}
+					} else {
+						// 시작시간이 종료시간보다 빠르면 skip
+						if (!first.getStartDate().getLocalDate().isAfter(first.getEndDate().getLocalDate())) {
+							evObjList.add(new InvalidEventObj(first.getStartDate(), first.getEndDate()));
+						}
+					}
+				} else {
+					evObjList.add(new InvalidEventObj(first.getStartDate(), first.getEndDate()));
+				}
 			}
 		}
-		
+
 		return evObjList;
 	}
 
-	private void RecommendProcess(DateTimeListMgrSet dateTimeListMgr, DateTimeListMgrSet ... sEstimatedDates) {
+	private void RecommendProcess(DateTimeListMgrSet dateTimeListMgr, DateTimeListMgrSet sEstimatedDates) {
 		// 기본 날짜 병합
 		dateTimeListMgr.deduplicateElements(TokenType.dates);
 		dateTimeListMgr.deduplicateElements(TokenType.days);
@@ -273,39 +260,30 @@ public class RecommendationManager {
 		dateTimeListMgr.adjustForAmPmTime();
 
 		// 기간, 날짜, 시간 조정
-		EventListManager mergedListMgr = dateTimeListMgr.mergeList(TokenType.period,
-				TokenType.dates, TokenType.times);
-		
-		if(sEstimatedDates.length > 0) {
-			createRecommendations(dateTimeListMgr, mergedListMgr, sEstimatedDates[0]);
-		}
-		else {
-			createRecommendations(dateTimeListMgr, mergedListMgr);
-		}
+		EventListManager mergedListMgr = dateTimeListMgr.mergeList(TokenType.period, TokenType.dates, TokenType.times);
+
+		createRecommendations(dateTimeListMgr, mergedListMgr, sEstimatedDates);
 	}
 
-	private void createRecommendations(DateTimeListMgrSet dateListMgr, EventListManager mergedListMgr, DateTimeListMgrSet ... sEstimatedDates) {
+	private void createRecommendations(DateTimeListMgrSet dateListMgr, EventListManager mergedListMgr,
+			DateTimeListMgrSet sEstimatedDates) {
 		// 빈 토큰 채우기
-		if(sEstimatedDates.length > 0) {
-			fillEmptyDatas(dateListMgr, mergedListMgr, sEstimatedDates[0]);
-		}
-		else {
-			fillEmptyDatas(dateListMgr, mergedListMgr);
-		}
+		fillEmptyDatas(dateListMgr, mergedListMgr, sEstimatedDates);
 
 		// 우선순위대로 정렬
 		sortByPriority(dateListMgr);
 
-//		// 추천수 이상의 노드는 삭제
-//		removeAllAfterRecomNum(dateListMgr);
+		// // 추천수 이상의 노드는 삭제
+		// removeAllAfterRecomNum(dateListMgr);
 	}
 
-//	private void removeAllAfterRecomNum(DateTimeListMgrSet startDateListMgr) {
-//		// 2개만 남기고 다 지우기
-//		for (int i = recomNum; i < startDateListMgr.getResultList().getEventDTOList().size();) {
-//			startDateListMgr.getResultList().deleteDtObj(i);
-//		}
-//	}
+	// private void removeAllAfterRecomNum(DateTimeListMgrSet startDateListMgr) {
+	// // 2개만 남기고 다 지우기
+	// for (int i = recomNum; i <
+	// startDateListMgr.getResultList().getEventDTOList().size();) {
+	// startDateListMgr.getResultList().deleteDtObj(i);
+	// }
+	// }
 
 	private void sortByPriority(DateTimeListMgrSet startDateListMgr) {
 		for (int i = 0; i < startDateListMgr.getResultList().getEvMgrList().size(); i++) {
@@ -313,19 +291,12 @@ public class RecommendationManager {
 		}
 	}
 
-	private void fillEmptyDatas(DateTimeListMgrSet dateListMgr, EventListManager mergedListMgr, DateTimeListMgrSet ... sEstimatedDates) {
-		if(sEstimatedDates.length > 0) {
-		dateListMgr
-				.setResultList(new DateTimeEstimator(dateListMgr.getTimeList(), dateListMgr.getDateList())
-						.fillEmptyDatas(inputEventObj, dateListMgr.getResultList().isFocusStart(), sEstimatedDates[0]));
-		}
-		else {
-			dateListMgr
-			.setResultList(new DateTimeEstimator(dateListMgr.getTimeList(), dateListMgr.getDateList())
-					.fillEmptyDatas(inputEventObj, dateListMgr.getResultList().isFocusStart()));
-		}
-		
-		if(dateListMgr.getResultList().getEvMgrList().size() > 2) {
+	private void fillEmptyDatas(DateTimeListMgrSet dateListMgr, EventListManager mergedListMgr,
+			DateTimeListMgrSet sEstimatedDates) {
+		dateListMgr.setResultList(new DateTimeEstimator(dateListMgr.getTimeList(), dateListMgr.getDateList())
+				.fillEmptyDatas(inputEventObj, dateListMgr.getResultList().isFocusStart(), sEstimatedDates));
+
+		if (dateListMgr.getResultList().getEvMgrList().size() > 2) {
 			recomNum = dateListMgr.getResultList().getEvMgrList().size();
 		}
 	}

@@ -137,6 +137,13 @@ public class InvalidDateTimeObj {
 		this.setPriority(origin.getPriority());
 	}
 	
+	public boolean hasNoTime() {
+		if(getLocalTime() == null) {
+			return true;
+		}
+		return false;
+	}
+	
 	public boolean isLeapYear() {
 		return isLeapYear;
 	}

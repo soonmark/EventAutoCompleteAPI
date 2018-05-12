@@ -192,7 +192,7 @@ public class ListMerger {
 		// 해당주의 토요일을 저장할 adjuster;
 		LocalDate lastDayOfTheWeek = RecommendationManager.curTime.toLocalDate();
 		LocalDate firstDayOfTheWeek = RecommendationManager.curTime.toLocalDate();
-//		LocalDate lastDayOfTheWeek = LocalDate.now();
+
 		lastDayOfTheWeek = lastDayOfTheWeek.with(dateTimeAdjuster.getTimePoint().toLocalDate());
 		lastDayOfTheWeek = lastDayOfTheWeek.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
 		firstDayOfTheWeek = lastDayOfTheWeek.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
@@ -210,13 +210,6 @@ public class ListMerger {
 			else {
 				wholeWeek = false;
 			}
-//			InvalidDateTimeObj ignoreDayObj = new InvalidDateTimeObj();
-//			ignoreDayObj.copyAllExceptForDayFrom(timeObj);
-//			ignoreDayObj.setSpecialDate(AppConstants.NO_DATA_FOR_SPECIALDATE);
-//			ignoreDayObj.setPriority(Priority.dateWithIncorrectDay);
-//			
-//			
-//			afterListMgr.insertDtObj(ignoreDayObj);
 		}
 		else {
 			// 해당 날짜가 범위 내에 있으면
