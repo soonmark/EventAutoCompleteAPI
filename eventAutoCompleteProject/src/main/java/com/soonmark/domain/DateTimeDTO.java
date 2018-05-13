@@ -10,15 +10,24 @@ import com.soonmark.core.InvalidDateTimeObj;
 public class DateTimeDTO {
 	private LocalDate date;
 	private LocalTime time;
+	private boolean noMin;
 
 	public DateTimeDTO() {
 		this.date = null;
 		this.time = null;
+		noMin = false;
 	}
 	
 	public DateTimeDTO(LocalDate date, LocalTime time) {
 		this.date = date;
 		this.time = time;
+		noMin = false;
+	}
+	
+	public DateTimeDTO(LocalDate date, LocalTime time, boolean noMin) {
+		this.date = date;
+		this.time = time;
+		this.noMin = noMin;
 	}
 
 	public LocalDate getDate() {
@@ -48,7 +57,12 @@ public class DateTimeDTO {
 		}
 		if(time != null) {
 			obj.setHour(time.getHour());
-			obj.setMinute(time.getMinute());
+			if(noMin) {
+				obj.setMinute(-1);
+			}
+			else {
+				obj.setMinute(time.getMinute());
+			}
 			noData = false;
 		}
 		if(noData) {

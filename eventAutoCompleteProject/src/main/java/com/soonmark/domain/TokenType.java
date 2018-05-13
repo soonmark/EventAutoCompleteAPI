@@ -87,8 +87,8 @@ public enum TokenType {
 					dtObj.setMinute(Integer.parseInt(matcher.group("minute")));
 					dtObj.setHasInfo(DateTimeEn.minute.ordinal(), true);
 				} catch (IllegalArgumentException e) {
-					dtObj.setMinute(0);
-					dtObj.setHasInfo(DateTimeEn.minute.ordinal(), true);
+//					dtObj.setMinute(0);
+//					dtObj.setHasInfo(DateTimeEn.minute.ordinal(), true);
 				}
 			} catch(IllegalArgumentException e) {
 //				if(dtObj.getAmpm() == DateTimeEn.am) {

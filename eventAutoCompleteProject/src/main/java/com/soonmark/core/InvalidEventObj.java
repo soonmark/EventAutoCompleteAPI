@@ -1,8 +1,13 @@
 package com.soonmark.core;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.format.TextStyle;
 import java.util.Locale;
 
+import com.soonmark.domain.AppConstants;
 import com.soonmark.domain.DateTimeDTO;
 import com.soonmark.domain.EventDTO;
 import com.soonmark.domain.StringDateTimeDTO;
@@ -89,27 +94,51 @@ public class InvalidEventObj {
 
 		return false;
 	}
+	
+	private String changeStringDateFormat(String origin) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		LocalDate localDate = LocalDate.parse(origin, formatter);
+		
+		return localDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+	}
+
+	private String changeStringTimeFormat(String origin) {
+		LocalTime localTime;
+		try {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("a hh:mm");
+		localTime = LocalTime.parse(origin, formatter);
+		}catch(DateTimeParseException e) {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("a hh:-");
+			localTime = LocalTime.parse(origin, formatter);
+		}
+
+		if(localTime.getMinute() == 0) {
+			return localTime.format(DateTimeFormatter.ofPattern("a h시"));
+		}
+		return localTime.format(DateTimeFormatter.ofPattern("a h시 m분"));
+	}
 
 	private String createDisplayNameBy(StringDateTimeDTO startDateTime, StringDateTimeDTO endDateTime,
 			boolean isAllDayEvent) {
 		String displayName = "";
 		if (startDateTime != null) {
 			if (startDateTime.getDate() != null) {
-				displayName += startDateTime.getDate() + " ("
+				
+				displayName += changeStringDateFormat(startDateTime.getDate()) + " ("
 						+ startDateTime.toDateTimeDTO().getDate().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREA) + ")";
 			}
 			if (startDateTime.getTime() != null && !startDateTime.getTime().equals("")) {
-				displayName += " " + startDateTime.getTime();
+				displayName += " " + changeStringTimeFormat(startDateTime.getTime());
 			}
 		}
 		if (endDateTime != null) {
 			displayName += " ~ ";
 			if (endDateTime.getDate() != null) {
-				displayName += endDateTime.getDate()
+				displayName += changeStringDateFormat(endDateTime.getDate())
 						+ " (" + endDateTime.toDateTimeDTO().getDate().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREA) + ")";
 			}
 			if (endDateTime.getTime() != null && !endDateTime.getTime().equals("")) {
-				displayName += " " + endDateTime.getTime();
+				displayName += " " + changeStringTimeFormat(endDateTime.getTime());
 			}
 		}
 		if (isAllDayEvent) {

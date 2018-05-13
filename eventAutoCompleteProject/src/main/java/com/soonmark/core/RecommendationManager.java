@@ -3,6 +3,7 @@ package com.soonmark.core;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -27,7 +28,7 @@ public class RecommendationManager {
 
 	// 패턴 관리 객체
 	private PatternManager patternManager;
-
+	
 	// 각 날짜, 요일, 시간, 특수 리스트 매니저 셋
 	private DateTimeListMgrSet dateTimeListManagerSet;
 	private List<PeriodManager> periodManagerList;
@@ -135,10 +136,10 @@ public class RecommendationManager {
 	}
 
 	private void removeAllAfterRecomNum(List<InvalidEventObj> evObjList) {
-		// 2개만 남기고 다 지우기
-		for (int i = recomNum; i < evObjList.size();) {
-			evObjList.remove(i);
-		}
+//		// 2개만 남기고 다 지우기
+//		for (int i = recomNum; i < evObjList.size();) {
+//			evObjList.remove(i);
+//		}
 	}
 
 	private void initInputEvent(DateTimeDTO startDate, DateTimeDTO endDate) {
@@ -182,16 +183,34 @@ public class RecommendationManager {
 				// endDate랑 하도록 변경.
 				if (first.getStartDate() != null && /*first.getEndDate() == null && beingMerged.getStartDate() == null
 						&& */beingMerged.getEndDate() != null) {
-					try {
-						LocalDateTime r = LocalDateTime.of(first.getStartDate().getLocalDate(),
-								first.getStartDate().getLocalTime());
-						LocalDateTime b = LocalDateTime.of(beingMerged.getEndDate().getLocalDate(),
-								beingMerged.getEndDate().getLocalTime());
+					if(!first.getStartDate().hasNoTime() || !beingMerged.getEndDate().hasNoTime()) {
+						LocalDateTime r;
+						LocalDateTime b;
+						if(first.getStartDate().getMinute() == AppConstants.NO_DATA) {
+							r = LocalDateTime.of(first.getStartDate().getLocalDate(),
+									LocalTime.of(first.getStartDate().getHour(), 0));
+						}else {
+							r = LocalDateTime.of(first.getStartDate().getLocalDate(),
+									first.getStartDate().getLocalTime());
+						}
+						if(beingMerged.getEndDate().getMinute() == AppConstants.NO_DATA) {
+							b = LocalDateTime.of(beingMerged.getEndDate().getLocalDate(),
+									LocalTime.of(beingMerged.getEndDate().getHour(), 0));
+						}else {
+							b = LocalDateTime.of(beingMerged.getEndDate().getLocalDate(),
+									beingMerged.getEndDate().getLocalTime());
+						}
 
 						if (!r.isAfter(b)) {
-							evObjList.add(new InvalidEventObj(first.getStartDate(), beingMerged.getEndDate()));
+							if(inputEventObj.getStartDate() != null && !inputEventObj.getStartDate().hasNoTime()
+									&& (inputEventObj.getStartDate().getHour() != first.getStartDate().getHour()
+									|| inputEventObj.getStartDate().getMinute() != first.getStartDate().getMinute())) {
+							}
+							else {
+								evObjList.add(new InvalidEventObj(first.getStartDate(), beingMerged.getEndDate()));
+							}
 						}
-					} catch (NullPointerException e) {
+					} else {
 						LocalDate r = first.getStartDate().getLocalDate();
 						LocalDate b = beingMerged.getEndDate().getLocalDate();
 
@@ -213,9 +232,11 @@ public class RecommendationManager {
 				}
 			}
 
-			recomNum = evObjList.size();
 			if (evMgrList.size() == 0) {
-				evObjList.add(new InvalidEventObj(beingMerged.getStartDate(), beingMerged.getEndDate()));
+				recomNum = evObjList.size();
+				if(beingMerged.getStartDate() != null) {
+					evObjList.add(new InvalidEventObj(beingMerged.getStartDate(), beingMerged.getEndDate()));
+				}
 			}
 		}
 		if (evMgrList2.size() == 0) {
@@ -224,11 +245,27 @@ public class RecommendationManager {
 				InvalidEventObj first = iter2.next();
 				// endDate가 startDate 보다 빠르면
 				if (first.getStartDate() != null && first.getEndDate() != null) {
-					if (first.getStartDate().getLocalTime() != null && first.getEndDate().getLocalTime() != null) {
-						LocalDateTime sdt = LocalDateTime.of(first.getStartDate().getLocalDate(),
-								first.getStartDate().getLocalTime());
-						LocalDateTime edt = LocalDateTime.of(first.getEndDate().getLocalDate(),
-								first.getEndDate().getLocalTime());
+					if (!first.getStartDate().hasNoTime() && !first.getEndDate().hasNoTime()) {
+						
+						LocalDateTime sdt ;
+						LocalDateTime edt ;
+						
+						if(first.getStartDate().getMinute() != AppConstants.NO_DATA) {
+							sdt = LocalDateTime.of(first.getStartDate().getLocalDate(),
+									first.getStartDate().getLocalTime());
+						}
+						else {
+							sdt = LocalDateTime.of(first.getStartDate().getLocalDate(),
+									LocalTime.of(first.getStartDate().getHour(), 0));
+						}
+						if(first.getEndDate().getMinute() != AppConstants.NO_DATA) {
+							edt = LocalDateTime.of(first.getEndDate().getLocalDate(),
+									first.getEndDate().getLocalTime());
+						}
+						else {
+							edt = LocalDateTime.of(first.getEndDate().getLocalDate(),
+									LocalTime.of(first.getEndDate().getHour(), 0));
+						}
 						// 시작시간이 종료시간보다 빠르면 skip
 						if (!sdt.isAfter(edt)) {
 							evObjList.add(new InvalidEventObj(first.getStartDate(), first.getEndDate()));

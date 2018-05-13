@@ -52,16 +52,31 @@ public class StringDateTimeDTO {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("a hh:mm");
 			localTime = LocalTime.parse(this.time, formatter);
 		}catch(DateTimeParseException exc) {
+			try {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("a hh:-");
+			localTime = LocalTime.parse(this.time, formatter);
+			} catch(DateTimeParseException ex) {
+				
+			}
 		}
 		return localTime;
 	}
 	
 	public DateTimeDTO toDateTimeDTO() {
-		DateTimeDTO dateTimeDTO = new DateTimeDTO(this.toLocalDate(), this.toLocalTime());
+		DateTimeDTO dateTimeDTO = new DateTimeDTO(this.toLocalDate(), this.toLocalTime(), this.noMin());
 
 		return dateTimeDTO;
 	}
 	
+	private boolean noMin() {
+		try {
+			LocalTime.parse(this.time, DateTimeFormatter.ofPattern("a hh:-"));
+			return true;
+		}catch(DateTimeParseException exc) {
+			return false;
+		}
+	}
+
 	@Override
 	public String toString() {
 		String jsonString = "";

@@ -208,7 +208,7 @@ class AscendingDateTimeEvents implements Comparator<InvalidEventObj> {
 	@Override
 	public int compare(InvalidEventObj o1, InvalidEventObj o2) {
 		if(o1.getStartDate() != null && o2.getStartDate() != null) {
-			if(o1.getStartDate().getLocalTime() != null && o2.getStartDate().getLocalTime() != null) {
+			if(!o1.getStartDate().hasNoTime() && !o2.getStartDate().hasNoTime()) {
 				LocalDateTime o1Dt = LocalDateTime.of(o1.getStartDate().getLocalDate(), o1.getStartDate().getLocalTime());
 				LocalDateTime o2Dt = LocalDateTime.of(o2.getStartDate().getLocalDate(), o2.getStartDate().getLocalTime());
 				

@@ -13,4 +13,5 @@ public class AppConstants {
 	public static final String NO_DATA_FOR_SPECIALDATE = "-1";
 	public static final DateTimeEn NO_DATA_FOR_AMPM = null;
 	public static final DateTimeListMgrSet NO_DATA_TO_CONSIDER = null;
+	public static final int DEFAULT_RECOM_TIMES = 10;
 }

@@ -138,7 +138,7 @@ public class InvalidDateTimeObj {
 	}
 	
 	public boolean hasNoTime() {
-		if(getLocalTime() == null) {
+		if(hour == AppConstants.NO_DATA) {
 			return true;
 		}
 		return false;
@@ -163,10 +163,18 @@ public class InvalidDateTimeObj {
 		}
 		
 		String formattedTime = "";
-		if(isAllDayEvent == false && hour != -1) {
-			LocalTime localTime = LocalTime.of(hour,  minute);
+		if(isAllDayEvent == false && hour != AppConstants.NO_DATA) {
+			LocalTime localTime ;
+			DateTimeFormatter formatter;
+			if(minute != AppConstants.NO_DATA) {
+				localTime = LocalTime.of(hour,  minute);
+				formatter = DateTimeFormatter.ofPattern("a hh:mm");
+			}
+			else {
+				localTime = LocalTime.of(hour,  0);
+				formatter = DateTimeFormatter.ofPattern("a hh:-");
+			}
 			
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("a hh:mm");
 			formattedTime = localTime.format(formatter);
 		}
 		
@@ -428,10 +436,18 @@ public class InvalidDateTimeObj {
 		DateTimeDTO dtDTO = new DateTimeDTO(localDate, localTime);
 
 		return dtDTO;
-	}
 
+	}
 	public LocalTime getLocalTime() {
-		return this.toDtDTO().getTime();
+		LocalTime localTime = null;
+		if(hour != AppConstants.NO_DATA) {
+			int tmpmin = minute;
+			if(tmpmin == AppConstants.NO_DATA) {
+				tmpmin = 0;
+			}
+			localTime = LocalTime.of(hour, tmpmin);
+		}
+		return localTime;
 	}
 	public LocalDate getLocalDate() {
 		return this.toDtDTO().getDate();

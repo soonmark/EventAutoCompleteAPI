@@ -136,7 +136,12 @@ public class DateTimeAdjuster {
 	}
 
 	public void setMinute(int val) {
-		timePoint = timePoint.withMinute(val);
+		if(val == AppConstants.NO_DATA) {
+			timePoint = timePoint.withMinute(0);
+		}
+		else {
+			timePoint = timePoint.withMinute(val);
+		}
 	}
 
 	public void setAllDate(InvalidDateTimeObj dtObj) {

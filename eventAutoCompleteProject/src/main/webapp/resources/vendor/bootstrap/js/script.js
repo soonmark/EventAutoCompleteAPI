@@ -257,10 +257,32 @@ function biggerThan(target, element) {
 	return targetIsBigger;
 }
 
+function noMinInTime(target, element) {
+	var result = true;
+	
+	var targetSTime = $(target).find('.start-date').find(".info").find("#time").text();
+	var targetETime = $(target).find('.end-date').find(".info").find("#time").text();
+	
+	var elementSTime = $(element).find('.startDate').find(".info").find("#time").text();
+	var elementETime = $(element).find('.endDate').find(".info").find("#time").text();
+	
+	
+	if(((targetSTime.includes("분") ) && !elementSTime.includes("분"))
+			|| ((targetETime.includes("분") ) && !elementETime.includes("분"))){
+		result = false;
+	}
+//	
+//	if(((targetSTime.includes("분") || targetSTime.includes("정각")) && !elementSTime.includes("분"))
+//			|| ((targetETime.includes("분") || targetETime.includes("정각")) && !elementETime.includes("분"))){
+//		result = false;
+//	}
+	
+	return result;
+}
+
 // 리스트 중에서 하나 클릭했을 때 이벤트
 $(document).on({
 	click : function(ev) {
-		/* $('.changedText').text("선택한 날짜 : " + $(this).text()); */
 		
 		var updated = false;
 
@@ -269,7 +291,8 @@ $(document).on({
 			addEventDate(ev);
 			updated = true;
 		} else {
-			if (biggerThan(ev.target, '.newly-added, .event-date')) {
+			if (biggerThan(ev.target, '.newly-added, .event-date')
+					|| noMinInTime(ev.target, '.newly-added, .event-date')) {
 				$('.newly-added, .event-date').remove();
 				addEventDate(ev);
 				updated = true;
