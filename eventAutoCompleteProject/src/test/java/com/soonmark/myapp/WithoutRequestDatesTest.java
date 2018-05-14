@@ -521,6 +521,18 @@ public class WithoutRequestDatesTest {
 		params.add(new Object[] { "2013/1",
 				new ArrayList<Object>() });
 		
+		params.add(new Object[] { "6/3",
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-06-03", ""), null, "2018/06/03 (일)"))});
+		
+		params.add(new Object[] { "6/32",
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-06-03", ""), null, "2018/06/03 (일)"))});
+		
+		params.add(new Object[] { "6/5",
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-06-05", ""), null, "2018/06/05 (화)"))});
+		
+		params.add(new Object[] { "6/52",
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-06-05", ""), null, "2018/06/05 (화)"))});
+		
 		
 
 // 텍스트 기니까 고려 x
