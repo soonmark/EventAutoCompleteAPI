@@ -6,6 +6,8 @@ import java.util.List;
 public class PatternStorage {
 	// 기간 패턴
 	List<String> periodPatterns = new ArrayList<String>();
+	// during 패턴
+	List<String> duringPatterns = new ArrayList<String>();
 	// 년월일 패턴
 	List<String> datePatterns = new ArrayList<String>();
 	// 요일 패턴
@@ -16,27 +18,60 @@ public class PatternStorage {
 	// 시간 패턴
 	List<String> timePatterns = new ArrayList<String>();
 	
+	List<String> dateTimeCommonPatterns = new ArrayList<String>();
+	
 	PatternStorage(){
 		initPatterns();
 	}
 
 	public void initPatterns() {
 		initPeriodPatterns();
+		initDuringPatterns();
 		initDatePatterns();
 		initTimePatterns();
 		initDayPatterns();
 		initSpecialDatePatterns();
+		initDateTimeCommonPatterns();
+	}
+
+	private void initDateTimeCommonPatterns() {
+		dateTimeCommonPatterns.add("^(.*)(?<date>[0-9][0-9])(.*)$"); // 19 (일)
+		dateTimeCommonPatterns.add("^(.*)(?<month>[0-2][0-9])(?<date>[0-9][0-9])(.*)$"); // 1201 (월일)
+		dateTimeCommonPatterns.add("^(.*)(?<year>[0-2][0-9])(?<month>[0-2][0-9])(?<date>[0-9][0-9])(.*)$"); // 181201 (년월일)
+		dateTimeCommonPatterns.add("^(.*)(?<year>[0-2][0-9][0-9][0-9])(?<month>[0-2][0-9])(?<date>[0-9][0-9])(.*)$"); // 20181201 (년월일)
+		
+		dateTimeCommonPatterns.add("^(.*)(?<hour>[0-2][0-9])(?<minute>[0-9][0-9])(.*)$"); // 1210 (시분)
+		dateTimeCommonPatterns.add("^(.*)(?<hour>[0-2][0-9])(.*)$"); // 12 (시)
+		dateTimeCommonPatterns.add("^(.*)(?<minute>[0-2][0-9])(.*)$"); // 10 (분)
+	}
+
+	private void initDuringPatterns() {
+		// 월
+		duringPatterns.add("^(.*)(?<month>[1-2][0-9]|3[0-1])개월(.*)$"); // 19개월
+		duringPatterns.add("^(|.*[^1-3])(?<month>[1-9])개월(.*)$"); // 1개월
+
+		duringPatterns.add("^(.*)(?<month>[1-2][0-9]|3[0-1])달(.*)$"); // 19달
+		duringPatterns.add("^(|.*[^1-3])(?<month>[1-9])달(.*)$"); // 1달
+
+		// 일
+		duringPatterns.add("^(.*)(?<date>[1-2][0-9]|3[0-1])일(.*)$"); // 19일
+		duringPatterns.add("^(|.*[^1-3])(?<date>[1-9])일(.*)$"); // 1일
+
+		// 시간
+		duringPatterns.add("^(.*)(?<hour>[0-9][0-9])시간(.*)$"); // 12시간
+		duringPatterns.add("^(|.*[^0-9])(?<hour>[0-9])시간(.*)$"); // 7시간
 	}
 
 	private void initPeriodPatterns() {
 		periodPatterns.add("(?<period>(?<from>.*?)부터(?<to>.*?)까지)");	// 부터 까지
+		periodPatterns.add("(?<period>(?<from>.*?)부터(?<during>.*?)동안)");	// 부터 동안
 		periodPatterns.add("^(?<from>.*?)~(?<to>.*?)$");	// 날짜시간 ~ 날짜시간
 //		periodPatterns.add("(?<from>)-(<?to>)");	// 날짜시간 - 날짜시간
 
 		periodPatterns.add("^(?<from>.*?)부터(?<to>.*?)$");	// 부터
 		periodPatterns.add("(?<to>.*?)까지");	// 까지
 
-		periodPatterns.add("(?<during>.*?)동안");	// 3시간동안
+		periodPatterns.add("(?<period>(?<during>.*?)동안)");	// 3시간동안
 	}
 
 	public void initDatePatterns() {
@@ -122,6 +157,7 @@ public class PatternStorage {
 	public void initDayPatterns() {
 		// 요일 패턴
 		dayPatterns.add("(?<day>월|화|수|목|금|토|일)요일"); // 월요일
+		dayPatterns.add("(?<day>월|화|수|목|금|토|일)요"); // 월요
 	}
 
 	public void initSpecialDatePatterns() {
@@ -173,5 +209,17 @@ public class PatternStorage {
 	
 	public void setTimePatterns(List<String> timePatterns) {
 		this.timePatterns = timePatterns;
+	}
+
+	public List<String> getDuringPatterns() {
+		return duringPatterns;
+	}
+
+	public List<String> getDateTimeCommonPatterns() {
+		return dateTimeCommonPatterns;
+	}
+
+	public void setDateTimeCommonPatterns(List<String> dateTimeCommonPatterns) {
+		this.dateTimeCommonPatterns = dateTimeCommonPatterns;
 	}
 }

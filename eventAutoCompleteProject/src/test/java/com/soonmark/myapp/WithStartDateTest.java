@@ -66,6 +66,9 @@ public class WithStartDateTest {
 
 		params.add(new Object[] {"15년 4월 9일", new DateTimeDTO(LocalDate.of(2018, 5, 30), LocalTime.of(11, 0), false), LocalDateTime.of(2018, 5, 30, 11, 0).format(format), false,
 				new ArrayList<Object>() });
+		
+		params.add(new Object[] {"15분", new DateTimeDTO(LocalDate.of(2018, 5, 30), LocalTime.of(11, 0), true), LocalDateTime.of(2018, 5, 30, 11, 0).format(format), true,
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 11:15"), null, "2018/05/30 (수) 오전 11시 15분")) });
 
 		params.add(new Object[] {"1일", new DateTimeDTO(LocalDate.of(2018, 5, 30), LocalTime.of(11, 0), false), LocalDateTime.of(2018, 5, 30, 11, 0).format(format), false,
 				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 11:00"), new StringDateTimeDTO("2018-06-01", ""), "2018/05/30 (수) 오전 11시 ~ 2018/06/01 (금)"),
@@ -245,7 +248,24 @@ public class WithStartDateTest {
 		
 		params.add(new Object[] {"3/2", new DateTimeDTO(LocalDate.of(2019, 5, 30), null), LocalDate.of(2019, 5, 30).format(dateFormat), false,
 				Arrays.asList(new EventDTO(new StringDateTimeDTO("2019-05-30", ""), new StringDateTimeDTO("2020-03-02", ""), "2019/05/30 (목) ~ 2020/03/02 (월)")) });
-
+		
+		
+		// 기간 - 동안
+		params.add(new Object[] { "2시간동안", new DateTimeDTO(LocalDate.of(2018, 6, 2), LocalTime.of(11, 0), true), LocalDateTime.of(2018, 6, 2, 11, 0).format(format), true,
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-06-02", "오전 11:00"), new StringDateTimeDTO("2018-06-02", "오후 01:00"), "2018/06/02 (토) 오전 11시 ~ 2018/06/02 (토) 오후 1시")) });
+	
+		params.add(new Object[] { "2시간동안", new DateTimeDTO(LocalDate.of(2018, 6, 2), LocalTime.of(11, 0)), LocalDateTime.of(2018, 6, 2, 11, 0).format(format), false,
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-06-02", "오전 11:00"), new StringDateTimeDTO("2018-06-02", "오후 01:00"), "2018/06/02 (토) 오전 11시 ~ 2018/06/02 (토) 오후 1시")) });
+		
+		params.add(new Object[] { "2시간 동안", new DateTimeDTO(LocalDate.of(2018, 6, 2), LocalTime.of(11, 0)), LocalDateTime.of(2018, 6, 2, 11, 0).format(format), false,
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-06-02", "오전 11:00"), new StringDateTimeDTO("2018-06-02", "오후 01:00"), "2018/06/02 (토) 오전 11시 ~ 2018/06/02 (토) 오후 1시")) });
+		
+		params.add(new Object[] { "3일 동안", new DateTimeDTO(LocalDate.of(2018, 6, 2), LocalTime.of(11, 0), true), LocalDateTime.of(2018, 6, 2, 11, 0).format(format), true,
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-06-02", "오전 11:00"), new StringDateTimeDTO("2018-06-05", ""), "2018/06/02 (토) 오전 11시 ~ 2018/06/05 (화)")) });
+		
+		params.add(new Object[] { "3일 동안", new DateTimeDTO(LocalDate.of(2018, 6, 2), LocalTime.of(11, 0), false), LocalDateTime.of(2018, 6, 2, 11, 0).format(format), false,
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-06-02", "오전 11:00"), new StringDateTimeDTO("2018-06-05", ""), "2018/06/02 (토) 오전 11시 ~ 2018/06/05 (화)")) });
+		
 		
 		return params;
 	}

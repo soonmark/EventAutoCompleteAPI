@@ -95,11 +95,11 @@ public class RecommendationManager {
 		// 패턴 매칭
 		// 기간 패턴 매칭은 부터, 까지가 한 세트 있으면 바로 끝.
 		patternManager.matchToPatterns(inputText, periodManagerList);
-
+		
 		Iterator<PeriodManager> iter = periodManagerList.iterator();
 		while (iter.hasNext()) {
 			PeriodManager periodManager = iter.next();
-
+			
 			// 이미 객체로 생성되어있는 자리의 값을 채우려고 하는 경우 각 date, time, 등등의 리스트 초기화
 			deleteDatasIfAlreadyCreated(periodManager);
 
@@ -113,9 +113,16 @@ public class RecommendationManager {
 			periodManager.getEndDateListMgr().getResultList().setFocusStart(false);
 
 			// 시작날짜 추천리스트 생성
-			RecommendProcess(periodManager.getStartDateListMgr(), AppConstants.NO_DATA_TO_CONSIDER);
-			// 종료날짜 추천리스트 생성
-			RecommendProcess(periodManager.getEndDateListMgr(), periodManager.getStartDateListMgr());
+			RecommendProcess(periodManager.getStartDateListMgr(), AppConstants.NO_DATA_TO_CONSIDER, periodManager.getDuring());
+			
+			// '동안'이 있으면 시작 날짜 추천리스트에 더해서 result만들기
+			if(periodManager.duringExists() ) {
+				periodManager.getStartDateListMgr().addDuringDatas(periodManager.getDuring());
+			}
+			else {
+				// 종료날짜 추천리스트 생성 - 동안패턴도 고려
+				RecommendProcess(periodManager.getEndDateListMgr(), periodManager.getStartDateListMgr(), null);
+			}
 
 			// 시작날짜에 대한 추천리스트 + 종료날짜에 대한 추천리스트 합치기
 			evObjList = MergeRecomListBy(periodManager.getStartDateListMgr().getResultList().getEvMgrList(),
@@ -296,6 +303,9 @@ public class RecommendationManager {
 						} else {
 							b = LocalDateTime.of(beingMerged.getEndDate().getLocalDate(),
 									beingMerged.getEndDate().getLocalTime());
+							if (first.getStartDate().getMinute() == AppConstants.NO_DATA) {
+								first.getStartDate().setMinute(0);
+							}
 						}
 
 						if (!r.isAfter(b)) {
@@ -380,7 +390,7 @@ public class RecommendationManager {
 		return evObjList;
 	}
 
-	private void RecommendProcess(DateTimeListMgrSet dateTimeListMgr, DateTimeListMgrSet sEstimatedDates) {
+	private void RecommendProcess(DateTimeListMgrSet dateTimeListMgr, DateTimeListMgrSet sEstimatedDates, During during) {
 		// 기본 날짜 병합
 		dateTimeListMgr.deduplicateElements(TokenType.dates);
 		dateTimeListMgr.deduplicateElements(TokenType.days);
@@ -394,13 +404,13 @@ public class RecommendationManager {
 		// 기간, 날짜, 시간 조정
 		EventListManager mergedListMgr = dateTimeListMgr.mergeList(TokenType.period, TokenType.dates, TokenType.times);
 
-		createRecommendations(dateTimeListMgr, mergedListMgr, sEstimatedDates);
+		createRecommendations(dateTimeListMgr, mergedListMgr, sEstimatedDates, during);
 	}
 
 	private void createRecommendations(DateTimeListMgrSet dateListMgr, EventListManager mergedListMgr,
-			DateTimeListMgrSet sEstimatedDates) {
+			DateTimeListMgrSet sEstimatedDates, During during) {
 		// 빈 토큰 채우기
-		fillEmptyDatas(dateListMgr, mergedListMgr, sEstimatedDates);
+		fillEmptyDatas(dateListMgr, mergedListMgr, sEstimatedDates, during);
 
 		// 우선순위대로 정렬
 		sortByPriority(dateListMgr);
@@ -424,9 +434,9 @@ public class RecommendationManager {
 	}
 
 	private void fillEmptyDatas(DateTimeListMgrSet dateListMgr, EventListManager mergedListMgr,
-			DateTimeListMgrSet sEstimatedDates) {
+			DateTimeListMgrSet sEstimatedDates, During during) {
 		dateListMgr.setResultList(new DateTimeEstimator(dateListMgr.getTimeList(), dateListMgr.getDateList())
-				.fillEmptyDatas(inputEventObj, dateListMgr.getResultList().isFocusStart(), sEstimatedDates));
+				.fillEmptyDatas(inputEventObj, dateListMgr.getResultList().isFocusStart(), sEstimatedDates, during));
 
 		if (dateListMgr.getResultList().getEvMgrList().size() > 2) {
 			recomNum = dateListMgr.getResultList().getEvMgrList().size();

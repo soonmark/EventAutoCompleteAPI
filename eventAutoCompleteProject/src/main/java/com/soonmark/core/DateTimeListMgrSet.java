@@ -1,5 +1,10 @@
 package com.soonmark.core;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
+import com.soonmark.domain.AppConstants;
 import com.soonmark.domain.TokenType;
 
 public class DateTimeListMgrSet {
@@ -131,6 +136,61 @@ public class DateTimeListMgrSet {
 		}
 		
 		return false;
+	}
+
+	public void addDuringDatas(During during) {
+		for(int i = 0 ; i < resultList.getEvMgrList().size() ; i++) {
+			LocalDateTime estimateDateTime = null;
+			boolean noTime = true;
+			if(resultList.getElement(i).getStartDate() != null) {
+				estimateDateTime = LocalDateTime.of(resultList.getElement(i).getStartDate().getLocalDate(), LocalTime.of(0,0));
+				if(!resultList.getElement(i).getStartDate().hasNoTime()) {
+					estimateDateTime = estimateDateTime.with(resultList.getElement(i).getStartDate().getLocalTime());
+					noTime = false;
+				}
+			}
+			else {
+				return;
+			}
+			switch(during.getType()) {
+			case month:
+				estimateDateTime = estimateDateTime.plusMonths(during.getValue());
+				noTime = true;
+				break;
+			case date:
+				estimateDateTime = estimateDateTime.plusDays(during.getValue());
+				noTime = true;
+				break;
+			case hour:
+				if(!noTime)
+					estimateDateTime = estimateDateTime.plusHours(during.getValue());
+				else
+					return;
+				break;
+			case minute:
+				if(!noTime)
+					estimateDateTime = estimateDateTime.plusMinutes(during.getValue());
+				else
+					return;
+				break;
+			default:
+				break;
+			}
+			
+			if(resultList.getElement(i).getEndDate() == null) {
+				resultList.getElement(i).setEndDate(new InvalidDateTimeObj());
+			}
+			resultList.getElement(i).getEndDate().setDate(estimateDateTime.getDayOfMonth());
+			resultList.getElement(i).getEndDate().setMonth(estimateDateTime.getMonthValue());
+			resultList.getElement(i).getEndDate().setYear(estimateDateTime.getYear());
+			if(!noTime) {
+				resultList.getElement(i).getEndDate().setHour(estimateDateTime.getHour());
+				resultList.getElement(i).getEndDate().setMinute(estimateDateTime.getMinute());
+				if(resultList.getElement(i).getStartDate().getMinute() == AppConstants.NO_DATA) {
+					resultList.getElement(i).getStartDate().setMinute(0);
+				}
+			}
+		}
 	}
 
 }

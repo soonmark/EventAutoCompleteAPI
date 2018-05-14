@@ -1,5 +1,7 @@
 package com.soonmark.core;
 
+import com.soonmark.domain.AppConstants;
+
 public class PeriodManager {
 
 	private DateTimeListMgrSet startDateListMgr;
@@ -7,7 +9,7 @@ public class PeriodManager {
 	
 	private String from;
 	private String to;
-	private String during;
+	private During during;
 	
 	public PeriodManager(String from, String to) {
 		this.from = from;
@@ -15,9 +17,11 @@ public class PeriodManager {
 		this.startDateListMgr = new DateTimeListMgrSet();
 		this.endDateListMgr = new DateTimeListMgrSet();
 	}
-	
-	public PeriodManager(String during) {
-		this.during = during;
+
+	public PeriodManager(String from, String to, String during) {
+		this.from = from;
+		this.to = to;
+		this.during = new During(during);
 		this.startDateListMgr = new DateTimeListMgrSet();
 		this.endDateListMgr = new DateTimeListMgrSet();
 	}
@@ -52,5 +56,19 @@ public class PeriodManager {
 
 	public void setTo(String to) {
 		this.to = to;
+	}
+
+	public During getDuring() {
+		return during;
+	}
+
+	public boolean duringExists() {
+		During d = getDuring();
+		if(d != null) {
+			if(d.getValue() != AppConstants.NO_DATA) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

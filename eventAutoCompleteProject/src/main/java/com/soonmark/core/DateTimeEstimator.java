@@ -59,7 +59,7 @@ public class DateTimeEstimator {
 	}
 
 	public EventListManager fillEmptyDatas(InvalidEventObj inputEventObj, boolean focusStart,
-			DateTimeListMgrSet sEstimatedDates) {
+			DateTimeListMgrSet sEstimatedDates, During during) {
 
 		// focusingnRecurNum 세팅
 		setFocusingRecurNum();
@@ -75,7 +75,7 @@ public class DateTimeEstimator {
 			timeList.deleteDtObj(0);
 			dateList.deleteDtObj(0);
 
-			estimateDateTimeBy(inputEventObj, focusStart, sEstimatedDates);
+			estimateDateTimeBy(inputEventObj, focusStart, sEstimatedDates, during);
 
 			// 오늘 날짜 + 시간이 있으면 지난 시간은 지우기
 			deleteTodayPastTime(focusStart);
@@ -112,34 +112,38 @@ public class DateTimeEstimator {
 	}
 
 	private void estimateDateTimeBy(InvalidEventObj inputEventObj, boolean focusStart,
-			DateTimeListMgrSet sEstimatedDates) {
+			DateTimeListMgrSet sEstimatedDates, During during) {
 		// 시작날짜가 있으면 시작시간 세팅.
 		if (inputStartDateExists) {
-			setStartTimes(inputEventObj, sEstimatedDates);
+			setStartTimes(inputEventObj, sEstimatedDates, during);
 		}
 		// 종료날짜가 있으면 종료시간 세팅.
 		if (inputEndDateExists) {
 			if (sEstimatedDates == AppConstants.NO_DATA_TO_CONSIDER) {
 				if (inputEventObj.getEndDate().hasNoTime()
 						|| inputEventObj.getEndDate().getMinute() == AppConstants.NO_DATA) {
-					setEndTimes(inputEventObj, false, sEstimatedDates);
+					setEndTimes(inputEventObj, false, sEstimatedDates, during);
 				}
 			}
 		}
 	}
 
 	private void setEndTimes(InvalidEventObj inputEventObj, boolean ignoreStartTime,
-			DateTimeListMgrSet sEstimatedDates) {
+			DateTimeListMgrSet sEstimatedDates, During during) {
 
 		if (!ignoreStartTime) {
 			// endDate에 분이 없으면 분 리스트 추천
 			if (!inputEventObj.getEndDate().hasNoTime()) {
-				setMinuteList(inputEventObj, false);
+				setMinuteList(inputEventObj, false, during);
 				return;
 			}
 		}
-
+		
 		int stdsize = getStoredTimeListByCurTime(inputEventObj.getStartDate()).size();
+		if(during != null) {
+			stdsize = 1;
+		}
+
 		// 시간 추가
 		for (int i = 0; i < stdsize; i++) {
 			LocalTime curPosTime = getStoredTimeListByCurTime(inputEventObj.getStartDate()).get(i);
@@ -159,10 +163,13 @@ public class DateTimeEstimator {
 				// 시작 시간 1시간 뒤부터 1시간 간격으로 10개로 추천
 				DateTimeAdjuster adjuster = new DateTimeAdjuster();
 				adjuster.setTimePoint(LocalDateTime.of(startDtObj.getLocalDate(), startDtObj.getLocalTime()));
-				adjuster.plusHour(1 + i);
+				if(during == null || during.getType() == DateTimeEn.hour) {
+					adjuster.plusHour(1 + i);
+					endDtObj.setHour(adjuster.getHour());
+				}
 
 				endDtObj.setAllDate(adjuster);
-				endDtObj.setHour(adjuster.getHour());
+				
 				// endDtObj.setMinute(adjuster.getMinute());
 			} else {
 				endDtObj.setAllDate(inputEventObj.getEndDate());
@@ -186,7 +193,7 @@ public class DateTimeEstimator {
 		}
 	}
 
-	private void setStartTimes(InvalidEventObj inputEventObj, DateTimeListMgrSet sEstimatedDates) {
+	private void setStartTimes(InvalidEventObj inputEventObj, DateTimeListMgrSet sEstimatedDates, During during) {
 		// 생성된 객체에 시간이 없는 경우
 		if (inputEventObj.getStartDate().hasNoTime()) {
 			// 1/1~1/2 와 같이 생성 객체가 시간이 없는 기간일 경우
@@ -241,9 +248,9 @@ public class DateTimeEstimator {
 				//
 			} else {
 				if (inputTimeWithoutMinute(inputEventObj)) {
-					setMinuteList(inputEventObj, true);
+					setMinuteList(inputEventObj, true, during);
 				} else {
-					setEndTimes(inputEventObj, true, sEstimatedDates);
+					setEndTimes(inputEventObj, true, sEstimatedDates, during);
 				}
 			}
 		} else if (inputEndDateExists) {
@@ -251,7 +258,7 @@ public class DateTimeEstimator {
 
 	}
 
-	private void setMinuteList(InvalidEventObj inputEventObj, boolean focusStart) {
+	private void setMinuteList(InvalidEventObj inputEventObj, boolean focusStart, During during) {
 		TimeStorage times = new TimeStorage();
 
 		// 시간(분) 추가
@@ -275,6 +282,10 @@ public class DateTimeEstimator {
 
 			InvalidEventObj evObj = new InvalidEventObj(startDtObj, endDtObj);
 			resultList.insertDtObj(evObj);
+			
+			if(during != null && i == 0) {
+				break;
+			}
 		}
 	}
 
@@ -477,6 +488,7 @@ public class DateTimeEstimator {
 							}
 							startDtObj.setPriority(timeList.getElement(i).getPriority());
 							startDtObj.setFocusOnAmPm(timeList.getElement(i).isFocusOnAmPm());
+							prevObj.copyAllExceptForDayFrom(startDtObj);
 						} else {
 							endDtObj = startDtObj;
 							startDtObj = null;
@@ -485,9 +497,14 @@ public class DateTimeEstimator {
 							endDtObj.setMinute(tmpCal.getMinute());
 							endDtObj.setPriority(timeList.getElement(i).getPriority());
 							endDtObj.setFocusOnAmPm(timeList.getElement(i).isFocusOnAmPm());
+							prevObj.copyAllExceptForDayFrom(endDtObj);
+							
+							if(i > 0) {
+								focusingRecurNum = 1;
+								continue;
+							}
 						}
 
-						prevObj.copyAllExceptForDayFrom(startDtObj);
 					}
 					// 미리 선택된 날짜시간 정보가 있으면
 					else {

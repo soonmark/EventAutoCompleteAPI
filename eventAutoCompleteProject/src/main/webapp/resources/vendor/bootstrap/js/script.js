@@ -258,24 +258,18 @@ function biggerThan(target, element) {
 }
 
 function noMinInTime(target, element) {
-	var result = true;
+	var result = false;
 	
-	var targetSTime = $(target).find('.start-date').find(".info").find("#time").text();
-	var targetETime = $(target).find('.end-date').find(".info").find("#time").text();
+	var targetSTime = $(target).find('.start-date').find("#time").text();
+	var targetETime = $(target).find('.end-date').find("#time").text();
 	
-	var elementSTime = $(element).find('.startDate').find(".info").find("#time").text();
-	var elementETime = $(element).find('.endDate').find(".info").find("#time").text();
+	var elementSTime = $(element).find('.startDate').find("#time").text();
+	var elementETime = $(element).find('.endDate').find("#time").text();
 	
-	
-	if(((targetSTime.includes("분") ) && !elementSTime.includes("분"))
-			|| ((targetETime.includes("분") ) && !elementETime.includes("분"))){
-		result = false;
+	if((!targetSTime.includes("-") && elementSTime.includes("-"))
+			|| (!targetETime.includes("-") && elementETime.includes("-"))){
+		result = true;
 	}
-//	
-//	if(((targetSTime.includes("분") || targetSTime.includes("정각")) && !elementSTime.includes("분"))
-//			|| ((targetETime.includes("분") || targetETime.includes("정각")) && !elementETime.includes("분"))){
-//		result = false;
-//	}
 	
 	return result;
 }
@@ -283,7 +277,6 @@ function noMinInTime(target, element) {
 // 리스트 중에서 하나 클릭했을 때 이벤트
 $(document).on({
 	click : function(ev) {
-		
 		var updated = false;
 
 		// 일시 추가
@@ -359,11 +352,19 @@ function checkInput() {
 		dataType : 'json',
 		data : requestData,
 		success : function(data) {
+			// response로 빈 리스트가 왔을 때
+			if($(data).length == 0 && $('.newly-added, .event-date').length > 0){
+				if(!($('.newly-added, .event-date').find('.startDate').find('#time').length > 0
+						&& $('.newly-added, .event-date').find('.endDate').find('#time').length > 0
+						&& !$('.newly-added, .event-date').find('.startDate').find('#time').text().includes('-') &&
+							!$('.newly-added, .event-date').find('.endDate').find('#time').text().includes('-'))){
+					return;
+				}
+			}
 			var str = "";
-			$(data)
-					.each(
+			$(data).each(
 							function(idx, dataEach) {
-
+							
 								if (dataEach.startDate.date == INVALID_INPUT_CHARACTER) {
 									alert("., /, -, : 외의 기호는 입력이 불가능합니다.");
 								} else {
@@ -373,7 +374,6 @@ function checkInput() {
 
 									infoStr += "<div class=\"start-date\">";
 									if (dataEach.startDate.date != NO_DATA) {
-										/* str += dataEach.startDate.date + " "; */
 										infoStr += "<div class=\"info\" id=\"date\">"
 												+ dataEach.startDate.date
 												+ "</div>";
@@ -381,56 +381,27 @@ function checkInput() {
 												dataEach.startDate.date);
 										var days = [ "일요일", "월요일", "화요일",
 												"수요일", "목요일", "금요일", "토요일" ];
-										/* str += days[day.getDay()] + " "; */
 									}
-									// if (dataEach.allDayEvent == true) {
-									// /* str += "종일";*/
-									// /*
-									// * infoStr += "<div class=\"info\"
-									// * id=\"allDayEvent\">" +
-									// * dataEach.allDayEvent + "</div>";
-									// */
-									// } else {
 									if (dataEach.startDate.time != NO_DATA) {
-										/* str += dataEach.startDate.time; */
 										infoStr += "<div class=\"info\" id=\"time\">"
 												+ dataEach.startDate.time
 												+ "</div>";
 									}
-									// }
 									infoStr += "</div>";
 
 									// endDate 추가
 									infoStr += "<div class=\"end-date\">";
 									if (dataEach.endDate != null) {
 										if (dataEach.endDate.date != NO_DATA) {
-											/* str += dataEach.endDate.date + " "; */
 											infoStr += "<div class=\"info\" id=\"date\">"
 													+ dataEach.endDate.date
 													+ "</div>";
-											/*
-											 * var day = new Date(
-											 * dataEach.endDate.date); var days = [
-											 * "일요일", "월요일", "화요일", "수요일",
-											 * "목요일", "금요일", "토요일" ]; str +=
-											 * days[day.getDay()] + " ";
-											 */
 										}
-										// if (dataEach.allDayEvent == true) {
-										// /* str += "종일";*/
-										// /*
-										// * infoStr += "<div class=\"info\"
-										// * id=\"allDayEvent\">" +
-										// * dataEach.allDayEvent + "</div>";
-										// */
-										// } else {
 										if (dataEach.endDate.time != NO_DATA) {
-											/* str += dataEach.endDate.time; */
 											infoStr += "<div class=\"info\" id=\"time\">"
 													+ dataEach.endDate.time
 													+ "</div>";
 										}
-										// }
 										infoStr += "</div>";
 									}
 									str += infoStr + "</li>";
@@ -438,15 +409,12 @@ function checkInput() {
 
 							});
 
-			/* str += "<div class=\"parsedText\">" + data.parsedText + "</div>"; */
-
 			if (str == "") {
 				$('.list-group').removeClass('autoEvent');
 			} else {
 				$('.list-group').addClass('autoEvent');
 			}
 			$(".list-group").html(str);
-			/* $('.inputText').text("입력한 일정 : " + tmpStr); */
 			console.log("성공");
 
 			$(document).on({
