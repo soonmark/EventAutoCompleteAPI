@@ -128,14 +128,36 @@ public class WithFullRequestTest {
 		
 		params.add(new Object[] {"", new DateTimeDTO(LocalDate.of(2018, 5, 26), LocalTime.of(13, 0)), LocalDateTime.of(2018, 5, 26, 13, 0).format(format),
 				new DateTimeDTO(LocalDate.of(2018, 6, 3), LocalTime.of(4, 0), true), LocalDateTime.of(2018, 6, 3, 4, 0).format(format),
-				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-26", "오후 01:00"), new StringDateTimeDTO("2018-06-03", "오전 04:00"), "2018/05/26 (토) 오후 1시 ~ 2018/05/16 (수) 오전 4시" ),
-						new EventDTO(new StringDateTimeDTO("2018-05-26", "오후 01:00"), new StringDateTimeDTO("2018-06-03", "오전 04:10"), "2018/05/26 (토) 오후 1시 ~ 2018/05/16 (수) 오전 4시 10분" ),
-						new EventDTO(new StringDateTimeDTO("2018-05-26", "오후 01:00"), new StringDateTimeDTO("2018-06-03", "오전 04:20"), "2018/05/26 (토) 오후 1시 ~ 2018/05/16 (수) 오전 4시 20분" ),
-						new EventDTO(new StringDateTimeDTO("2018-05-26", "오후 01:00"), new StringDateTimeDTO("2018-06-03", "오전 04:30"), "2018/05/26 (토) 오후 1시 ~ 2018/05/16 (수) 오전 4시 30분" ),
-						new EventDTO(new StringDateTimeDTO("2018-05-26", "오후 01:00"), new StringDateTimeDTO("2018-06-03", "오전 04:40"), "2018/05/26 (토) 오후 1시 ~ 2018/05/16 (수) 오전 4시 40분" ),
-						new EventDTO(new StringDateTimeDTO("2018-05-26", "오후 01:00"), new StringDateTimeDTO("2018-06-03", "오전 04:50"), "2018/05/26 (토) 오후 1시 ~ 2018/05/16 (수) 오전 4시 50분" )) });
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-26", "오후 01:00"), new StringDateTimeDTO("2018-06-03", "오전 04:00"), "2018/05/26 (토) 오후 1시 ~ 2018/06/03 (일) 오전 4시" ),
+						new EventDTO(new StringDateTimeDTO("2018-05-26", "오후 01:00"), new StringDateTimeDTO("2018-06-03", "오전 04:10"), "2018/05/26 (토) 오후 1시 ~ 2018/06/03 (일) 오전 4시 10분" ),
+						new EventDTO(new StringDateTimeDTO("2018-05-26", "오후 01:00"), new StringDateTimeDTO("2018-06-03", "오전 04:20"), "2018/05/26 (토) 오후 1시 ~ 2018/06/03 (일) 오전 4시 20분" ),
+						new EventDTO(new StringDateTimeDTO("2018-05-26", "오후 01:00"), new StringDateTimeDTO("2018-06-03", "오전 04:30"), "2018/05/26 (토) 오후 1시 ~ 2018/06/03 (일) 오전 4시 30분" ),
+						new EventDTO(new StringDateTimeDTO("2018-05-26", "오후 01:00"), new StringDateTimeDTO("2018-06-03", "오전 04:40"), "2018/05/26 (토) 오후 1시 ~ 2018/06/03 (일) 오전 4시 40분" ),
+						new EventDTO(new StringDateTimeDTO("2018-05-26", "오후 01:00"), new StringDateTimeDTO("2018-06-03", "오전 04:50"), "2018/05/26 (토) 오후 1시 ~ 2018/06/03 (일) 오전 4시 50분" )) });
 		
-
+		params.add(new Object[] {"", new DateTimeDTO(LocalDate.of(2018, 5, 16), LocalTime.of(13, 0)), LocalDateTime.of(2018, 5, 16, 13, 0).format(format),
+				new DateTimeDTO(LocalDate.of(2018, 5, 16), LocalTime.of(18, 0), true), LocalDateTime.of(2018, 5, 16, 18, 0).format(format),
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 01:00"), new StringDateTimeDTO("2018-05-16", "오후 06:00"), "2018/05/16 (수) 오후 1시 ~ 2018/05/16 (수) 오후 6시" ),
+						new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 01:00"), new StringDateTimeDTO("2018-05-16", "오후 06:10"), "2018/05/16 (수) 오후 1시 ~ 2018/05/16 (수) 오후 6시 10분" ),
+						new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 01:00"), new StringDateTimeDTO("2018-05-16", "오후 06:20"), "2018/05/16 (수) 오후 1시 ~ 2018/05/16 (수) 오후 6시 20분" ),
+						new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 01:00"), new StringDateTimeDTO("2018-05-16", "오후 06:30"), "2018/05/16 (수) 오후 1시 ~ 2018/05/16 (수) 오후 6시 30분" ),
+						new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 01:00"), new StringDateTimeDTO("2018-05-16", "오후 06:40"), "2018/05/16 (수) 오후 1시 ~ 2018/05/16 (수) 오후 6시 40분" ),
+						new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 01:00"), new StringDateTimeDTO("2018-05-16", "오후 06:50"), "2018/05/16 (수) 오후 1시 ~ 2018/05/16 (수) 오후 6시 50분" )) });
+		
+		
+		params.add(new Object[] {"", new DateTimeDTO(LocalDate.of(2018, 5, 30), LocalTime.of(11, 0)), LocalDateTime.of(2018, 5, 30, 11, 0).format(format),
+				new DateTimeDTO(LocalDate.of(2018, 5, 31), null), LocalDate.of(2018, 5, 31).format(dateFormat),
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 11:00"), new StringDateTimeDTO("2018-05-31", "오전 07:-"), "2018/05/30 (수) 오전 11시 ~ 2018/05/31 (목) 오전 7시"),
+						new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 11:00"), new StringDateTimeDTO("2018-05-31", "오전 08:-"), "2018/05/30 (수) 오전 11시 ~ 2018/05/31 (목) 오전 8시"),
+						new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 11:00"), new StringDateTimeDTO("2018-05-31", "오전 09:-"), "2018/05/30 (수) 오전 11시 ~ 2018/05/31 (목) 오전 9시"),
+						new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 11:00"), new StringDateTimeDTO("2018-05-31", "오전 10:-"), "2018/05/30 (수) 오전 11시 ~ 2018/05/31 (목) 오전 10시"),
+						new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 11:00"), new StringDateTimeDTO("2018-05-31", "오전 11:-"), "2018/05/30 (수) 오전 11시 ~ 2018/05/31 (목) 오전 11시"),
+						new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 11:00"), new StringDateTimeDTO("2018-05-31", "오후 12:-"), "2018/05/30 (수) 오전 11시 ~ 2018/05/31 (목) 오후 12시"),
+						new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 11:00"), new StringDateTimeDTO("2018-05-31", "오후 01:-"), "2018/05/30 (수) 오전 11시 ~ 2018/05/31 (목) 오후 1시"),
+						new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 11:00"), new StringDateTimeDTO("2018-05-31", "오후 02:-"), "2018/05/30 (수) 오전 11시 ~ 2018/05/31 (목) 오후 2시"),
+						new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 11:00"), new StringDateTimeDTO("2018-05-31", "오후 03:-"), "2018/05/30 (수) 오전 11시 ~ 2018/05/31 (목) 오후 3시"),
+						new EventDTO(new StringDateTimeDTO("2018-05-30", "오전 11:00"), new StringDateTimeDTO("2018-05-31", "오후 04:-"), "2018/05/30 (수) 오전 11시 ~ 2018/05/31 (목) 오후 4시")) });
+		
 		return params;
 	}
 	

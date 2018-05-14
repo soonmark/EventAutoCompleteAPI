@@ -123,5 +123,14 @@ public class DateTimeListMgrSet {
 		
 		return false;
 	}
+	
+	public boolean relatedToDateListEmpty() {
+		if(getDateList().getDtMgrList().size() == 0 && getDayList().getDtMgrList().size() == 0
+				&& getSpecialDateList().getDtMgrList().size() == 0) {
+			return true;
+		}
+		
+		return false;
+	}
 
 }

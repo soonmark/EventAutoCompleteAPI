@@ -28,7 +28,7 @@ public class RecommendationManager {
 
 	// 패턴 관리 객체
 	private PatternManager patternManager;
-	
+
 	// 각 날짜, 요일, 시간, 특수 리스트 매니저 셋
 	private DateTimeListMgrSet dateTimeListManagerSet;
 	private List<PeriodManager> periodManagerList;
@@ -99,6 +99,10 @@ public class RecommendationManager {
 		Iterator<PeriodManager> iter = periodManagerList.iterator();
 		while (iter.hasNext()) {
 			PeriodManager periodManager = iter.next();
+
+			// 이미 객체로 생성되어있는 자리의 값을 채우려고 하는 경우 각 date, time, 등등의 리스트 초기화
+			deleteDatasIfAlreadyCreated(periodManager);
+
 			if (periodManager.getFrom() != null && periodManager.getTo() != null) {
 				if (periodManager.getEndDateListMgr().allListEmpty()
 						&& periodManager.getStartDateListMgr().allListEmpty()) {
@@ -130,16 +134,107 @@ public class RecommendationManager {
 		return dateTimeListManagerSet.getResultList().getEventDTOList();
 	}
 
+	private void deleteDatasIfAlreadyCreated(PeriodManager periodManager) {
+		boolean endExists = false;
+		boolean endTimeExists = false;
+		if (inputEventObj.getEndDate() != null) {
+			endExists = true;
+			if (!inputEventObj.getEndDate().hasNoTime()) {
+				endTimeExists = true;
+			}
+		}
+		// 이미 선택된 시작날짜가 있는데
+		if (inputEventObj.getStartDate() != null) {
+			if (inputEventObj.getStartDate().hasNoTime()) {
+				if(endTimeExists) {
+					// 입력 받은 것이 ..
+					if (!periodManager.getStartDateListMgr().relatedToDateListEmpty() && !periodManager.getEndDateListMgr().allListEmpty()) {
+						allClear(periodManager);
+					}
+					else {
+						
+					}
+				}
+				else if(endExists) {
+					// 입력 받은 것이 ..
+					if (!periodManager.getStartDateListMgr().relatedToDateListEmpty() && !periodManager.getEndDateListMgr().relatedToDateListEmpty()) {
+						allClear(periodManager);
+					}
+					else {
+						
+					}
+				}
+			}
+			else {
+				if(endTimeExists) {
+					// 입력 받은 것이 ..
+					if (!periodManager.getStartDateListMgr().allListEmpty() && !periodManager.getEndDateListMgr().allListEmpty()) {
+						allClear(periodManager);
+					}
+					else {
+						
+					}
+				}
+				else if(endExists) {
+					// 입력 받은 것이 ..
+					if (!periodManager.getStartDateListMgr().relatedToDateListEmpty() && !periodManager.getEndDateListMgr().allListEmpty()) {
+						allClear(periodManager);
+					}
+					else {
+						
+					}
+				}
+				
+				
+				// 입력 받은 것이 ..
+				if (!periodManager.getStartDateListMgr().allListEmpty() && !periodManager.getEndDateListMgr().allListEmpty()) {
+					allClear(periodManager);
+				}
+//				if(inputEventObj.getStartDate().getMinute() == AppConstants.NO_DATA) {
+//					// 입력 받은 것이 ..
+//					if (!periodManager.getStartDateListMgr().getTimeList().getDtMgrList().isEmpty() && !periodManager.getEndDateListMgr().allListEmpty()) {
+//						allClear(periodManager);
+//					}
+//					else {
+//						
+//					}
+//				}
+//				// 생성된 객체의 분이 존재할 때
+//				else {
+//
+//				}
+			}
+		}
+		// 선택된 시작날짜 없을 때
+		else {
+			
+		}
+
+	}
+
+	private void allClear(PeriodManager periodManager) {
+		periodManager.getStartDateListMgr().getDateList().clearList();
+		periodManager.getStartDateListMgr().getDayList().clearList();
+		periodManager.getStartDateListMgr().getSpecialDateList().clearList();
+		periodManager.getStartDateListMgr().getTimeList().clearList();
+		
+		periodManager.getEndDateListMgr().getDateList().clearList();
+		periodManager.getEndDateListMgr().getDayList().clearList();
+		periodManager.getEndDateListMgr().getSpecialDateList().clearList();
+		periodManager.getEndDateListMgr().getTimeList().clearList();
+		
+	}
+
 	private void sortByTime(List<InvalidEventObj> evObjList) {
 		AscendingDateTimeEvents ascending = new AscendingDateTimeEvents();
 		Collections.sort(evObjList, ascending);
 	}
 
 	private void removeAllAfterRecomNum(List<InvalidEventObj> evObjList) {
-//		// 2개만 남기고 다 지우기
-//		for (int i = recomNum; i < evObjList.size();) {
-//			evObjList.remove(i);
-//		}
+//		 // 2개만 남기고 다 지우기
+//		 for (int i = recomNum; i < evObjList.size();) {
+//		 evObjList.remove(i);
+//		 }
 	}
 
 	private void initInputEvent(DateTimeDTO startDate, DateTimeDTO endDate) {
@@ -149,13 +244,13 @@ public class RecommendationManager {
 		inputEventObj = new InvalidEventObj();
 		if (startDate != null) {
 			inputEventObj.setStartDate(startDate.toInvalidDateTimeObj());
-			if (startDate.getTime() != null) {
+			if (startDate.getTime() != null && startDate.isNoMin()) {
 				isInputStartFull = true;
 			}
 		}
 		if (endDate != null) {
 			inputEventObj.setEndDate(endDate.toInvalidDateTimeObj());
-			if (endDate.getTime() != null) {
+			if (endDate.getTime() != null && endDate.isNoMin()) {
 				isInputEndFull = true;
 			}
 		}
@@ -181,32 +276,34 @@ public class RecommendationManager {
 				InvalidEventObj first = iter2.next();
 
 				// endDate랑 하도록 변경.
-				if (first.getStartDate() != null && /*first.getEndDate() == null && beingMerged.getStartDate() == null
-						&& */beingMerged.getEndDate() != null) {
-					if(!first.getStartDate().hasNoTime() || !beingMerged.getEndDate().hasNoTime()) {
+				if (first.getStartDate() != null
+						&& /*
+							 * first.getEndDate() == null && beingMerged.getStartDate() == null &&
+							 */beingMerged.getEndDate() != null) {
+					if (!first.getStartDate().hasNoTime() || !beingMerged.getEndDate().hasNoTime()) {
 						LocalDateTime r;
 						LocalDateTime b;
-						if(first.getStartDate().getMinute() == AppConstants.NO_DATA) {
+						if (first.getStartDate().getMinute() == AppConstants.NO_DATA) {
 							r = LocalDateTime.of(first.getStartDate().getLocalDate(),
 									LocalTime.of(first.getStartDate().getHour(), 0));
-						}else {
+						} else {
 							r = LocalDateTime.of(first.getStartDate().getLocalDate(),
 									first.getStartDate().getLocalTime());
 						}
-						if(beingMerged.getEndDate().getMinute() == AppConstants.NO_DATA) {
+						if (beingMerged.getEndDate().getMinute() == AppConstants.NO_DATA) {
 							b = LocalDateTime.of(beingMerged.getEndDate().getLocalDate(),
 									LocalTime.of(beingMerged.getEndDate().getHour(), 0));
-						}else {
+						} else {
 							b = LocalDateTime.of(beingMerged.getEndDate().getLocalDate(),
 									beingMerged.getEndDate().getLocalTime());
 						}
 
 						if (!r.isAfter(b)) {
-							if(inputEventObj.getStartDate() != null && !inputEventObj.getStartDate().hasNoTime()
+							if (inputEventObj.getStartDate() != null && !inputEventObj.getStartDate().hasNoTime()
 									&& (inputEventObj.getStartDate().getHour() != first.getStartDate().getHour()
-									|| inputEventObj.getStartDate().getMinute() != first.getStartDate().getMinute())) {
-							}
-							else {
+											|| inputEventObj.getStartDate().getMinute() != first.getStartDate()
+													.getMinute())) {
+							} else {
 								evObjList.add(new InvalidEventObj(first.getStartDate(), beingMerged.getEndDate()));
 							}
 						}
@@ -234,7 +331,7 @@ public class RecommendationManager {
 
 			if (evMgrList.size() == 0) {
 				recomNum = evObjList.size();
-				if(beingMerged.getStartDate() != null) {
+				if (beingMerged.getStartDate() != null) {
 					evObjList.add(new InvalidEventObj(beingMerged.getStartDate(), beingMerged.getEndDate()));
 				}
 			}
@@ -246,23 +343,21 @@ public class RecommendationManager {
 				// endDate가 startDate 보다 빠르면
 				if (first.getStartDate() != null && first.getEndDate() != null) {
 					if (!first.getStartDate().hasNoTime() && !first.getEndDate().hasNoTime()) {
-						
-						LocalDateTime sdt ;
-						LocalDateTime edt ;
-						
-						if(first.getStartDate().getMinute() != AppConstants.NO_DATA) {
+
+						LocalDateTime sdt;
+						LocalDateTime edt;
+
+						if (first.getStartDate().getMinute() != AppConstants.NO_DATA) {
 							sdt = LocalDateTime.of(first.getStartDate().getLocalDate(),
 									first.getStartDate().getLocalTime());
-						}
-						else {
+						} else {
 							sdt = LocalDateTime.of(first.getStartDate().getLocalDate(),
 									LocalTime.of(first.getStartDate().getHour(), 0));
 						}
-						if(first.getEndDate().getMinute() != AppConstants.NO_DATA) {
+						if (first.getEndDate().getMinute() != AppConstants.NO_DATA) {
 							edt = LocalDateTime.of(first.getEndDate().getLocalDate(),
 									first.getEndDate().getLocalTime());
-						}
-						else {
+						} else {
 							edt = LocalDateTime.of(first.getEndDate().getLocalDate(),
 									LocalTime.of(first.getEndDate().getHour(), 0));
 						}

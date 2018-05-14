@@ -2,6 +2,7 @@ package com.soonmark.core;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -72,6 +73,7 @@ public class DateTimeListManager {
 		}
 		return isEmpty;
 	}
+	
 
 	boolean isListEmpty(List<InvalidDateTimeObj> list) {
 		boolean isEmpty = false;
@@ -212,7 +214,20 @@ class AscendingDateTimeEvents implements Comparator<InvalidEventObj> {
 				LocalDateTime o1Dt = LocalDateTime.of(o1.getStartDate().getLocalDate(), o1.getStartDate().getLocalTime());
 				LocalDateTime o2Dt = LocalDateTime.of(o2.getStartDate().getLocalDate(), o2.getStartDate().getLocalTime());
 				
+				if(o1Dt.isEqual(o2Dt)) {
+					if(o1.getEndDate() != null && o2.getEndDate() != null) {
+						if(!o1.getEndDate().hasNoTime() && !o2.getEndDate().hasNoTime()) {
+							o1Dt = LocalDateTime.of(o1.getEndDate().getLocalDate(), o1.getEndDate().getLocalTime());
+							o2Dt = LocalDateTime.of(o2.getEndDate().getLocalDate(), o2.getEndDate().getLocalTime());
+						}
+						else {
+							o1Dt = LocalDateTime.of(o1.getEndDate().getLocalDate(), LocalTime.of(0, 0));
+							o2Dt = LocalDateTime.of(o2.getEndDate().getLocalDate(), LocalTime.of(0, 0));
+						}
+					}
+				}
 				return o1Dt.compareTo(o2Dt);
+				
 			}
 			else {
 				return o1.getStartDate().getLocalDate().compareTo(o2.getStartDate().getLocalDate());

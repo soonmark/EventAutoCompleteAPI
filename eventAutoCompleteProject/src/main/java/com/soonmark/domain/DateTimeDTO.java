@@ -46,6 +46,10 @@ public class DateTimeDTO {
 		this.time = time;
 	}
 	
+	public boolean isNoMin() {
+		return noMin;
+	}
+	
 	public InvalidDateTimeObj toInvalidDateTimeObj() {
 		InvalidDateTimeObj obj = new InvalidDateTimeObj();
 		boolean noData = true;

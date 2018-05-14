@@ -13,8 +13,8 @@ import com.soonmark.domain.EventDTO;
 import com.soonmark.domain.StringDateTimeDTO;
 
 public class InvalidEventObj {
-	InvalidDateTimeObj startDate;
-	InvalidDateTimeObj endDate;
+	private InvalidDateTimeObj startDate;
+	private InvalidDateTimeObj endDate;
 
 	public InvalidEventObj() {
 		this.startDate = null;

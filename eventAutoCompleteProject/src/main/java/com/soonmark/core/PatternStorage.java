@@ -128,7 +128,7 @@ public class PatternStorage {
 		// 그 외 특이 패턴
 		specialDatePatterns.add("(?<today>오늘)"); // 오늘
 		specialDatePatterns.add("(?<tomorrow>내일)"); // 내일
-		specialDatePatterns.add("(?<dayAfterTomorrow>모레)$"); // 모레
+		specialDatePatterns.add("(?<dayAfterTomorrow>모레)"); // 모레
 
 		specialDatePatterns.add("(?<thisWeek>이번주)"); // 이번주
 		specialDatePatterns.add("^(|.*[^다])(?<nextWeek>다음주)(.*)$"); // 다음주
