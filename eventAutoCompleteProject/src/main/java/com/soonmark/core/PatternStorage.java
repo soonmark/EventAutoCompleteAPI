@@ -35,14 +35,14 @@ public class PatternStorage {
 	}
 
 	private void initDateTimeCommonPatterns() {
-		dateTimeCommonPatterns.add("^(.*)(?<date>[0-9][0-9])(.*)$"); // 19 (일)
-		dateTimeCommonPatterns.add("^(.*)(?<month>[0-2][0-9])(?<date>[0-9][0-9])(.*)$"); // 1201 (월일)
-		dateTimeCommonPatterns.add("^(.*)(?<year>[0-2][0-9])(?<month>[0-2][0-9])(?<date>[0-9][0-9])(.*)$"); // 181201 (년월일)
-		dateTimeCommonPatterns.add("^(.*)(?<year>[0-2][0-9][0-9][0-9])(?<month>[0-2][0-9])(?<date>[0-9][0-9])(.*)$"); // 20181201 (년월일)
-		
-		dateTimeCommonPatterns.add("^(.*)(?<hour>[0-2][0-9])(?<minute>[0-9][0-9])(.*)$"); // 1210 (시분)
-		dateTimeCommonPatterns.add("^(.*)(?<hour>[0-2][0-9])(.*)$"); // 12 (시)
-		dateTimeCommonPatterns.add("^(.*)(?<minute>[0-2][0-9])(.*)$"); // 10 (분)
+//		dateTimeCommonPatterns.add("^(.*)(?<date>[0-9][0-9])(.*)$"); // 19 (일)
+//		dateTimeCommonPatterns.add("^(.*)(?<month>[0-2][0-9])(?<date>[0-9][0-9])(.*)$"); // 1201 (월일)
+//		dateTimeCommonPatterns.add("^(.*)(?<year>[0-2][0-9])(?<month>[0-2][0-9])(?<date>[0-9][0-9])(.*)$"); // 181201 (년월일)
+//		dateTimeCommonPatterns.add("^(.*)(?<year>[0-2][0-9][0-9][0-9])(?<month>[0-2][0-9])(?<date>[0-9][0-9])(.*)$"); // 20181201 (년월일)
+//		
+//		dateTimeCommonPatterns.add("^(.*)(?<hour>[0-2][0-9])(?<minute>[0-9][0-9])(.*)$"); // 1210 (시분)
+//		dateTimeCommonPatterns.add("^(.*)(?<hour>[0-2][0-9])(.*)$"); // 12 (시)
+//		dateTimeCommonPatterns.add("^(.*)(?<minute>[0-2][0-9])(.*)$"); // 10 (분)
 	}
 
 	private void initDuringPatterns() {
@@ -150,8 +150,12 @@ public class PatternStorage {
 		timePatterns.add("^(|.*[^1-2])(?<hour>[1-9])시 (?<minute>[0-5][0-9])분(.*)$"); // 7시 30분
 		timePatterns.add("^(|.*[^1-2])(?<hour>[1-9])시 (?<minute>[0-9])분(.*)$"); // 7시 3분
 		// 분 정보 없는 시간
-		timePatterns.add("^(.*)(?<hour>1[0-9]|2[0-3])시([^분]*)$"); // 12시
-		timePatterns.add("^(|.*[^1-2])(?<hour>[1-9])시([^분]*)$"); // 7시
+		timePatterns.add("^(.*)(?<hour>1[0-9]|2[0-3])시(.*)$"); // 12시
+		timePatterns.add("^(|.*[^1-2])(?<hour>[1-9])시(.*)$"); // 7시
+		
+		// 분 정보만 있는 시간
+//		timePatterns.add("^(.*)(?<minute>1[0-9]|2[0-3])분(.*)$"); // 12분
+//		timePatterns.add("^(|.*[^1-2])(?<minute>[1-9])분(.*)$"); // 7분
 	}
 
 	public void initDayPatterns() {

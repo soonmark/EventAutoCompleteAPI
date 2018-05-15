@@ -4,8 +4,8 @@ import com.soonmark.domain.AppConstants;
 
 public class PeriodManager {
 
-	private DateTimeListMgrSet startDateListMgr;
-	private DateTimeListMgrSet endDateListMgr;
+	private DateTimeListMgrSet fromDTListMgr;
+	private DateTimeListMgrSet toDTListMgr;
 	
 	private String from;
 	private String to;
@@ -14,32 +14,32 @@ public class PeriodManager {
 	public PeriodManager(String from, String to) {
 		this.from = from;
 		this.to = to;
-		this.startDateListMgr = new DateTimeListMgrSet();
-		this.endDateListMgr = new DateTimeListMgrSet();
+		this.fromDTListMgr = new DateTimeListMgrSet();
+		this.toDTListMgr = new DateTimeListMgrSet();
 	}
 
 	public PeriodManager(String from, String to, String during) {
 		this.from = from;
 		this.to = to;
 		this.during = new During(during);
-		this.startDateListMgr = new DateTimeListMgrSet();
-		this.endDateListMgr = new DateTimeListMgrSet();
+		this.fromDTListMgr = new DateTimeListMgrSet();
+		this.toDTListMgr = new DateTimeListMgrSet();
 	}
 
 	public DateTimeListMgrSet getStartDateListMgr() {
-		return startDateListMgr;
+		return fromDTListMgr;
 	}
 
 	public void setStartDateListMgr(DateTimeListMgrSet startDateListMgr) {
-		this.startDateListMgr = startDateListMgr;
+		this.fromDTListMgr = startDateListMgr;
 	}
 
 	public DateTimeListMgrSet getEndDateListMgr() {
-		return endDateListMgr;
+		return toDTListMgr;
 	}
 
 	public void setEndDateListMgr(DateTimeListMgrSet endDateListMgr) {
-		this.endDateListMgr = endDateListMgr;
+		this.toDTListMgr = endDateListMgr;
 	}
 
 	public String getFrom() {

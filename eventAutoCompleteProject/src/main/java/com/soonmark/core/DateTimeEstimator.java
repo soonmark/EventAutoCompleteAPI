@@ -230,6 +230,15 @@ public class DateTimeEstimator {
 					InvalidDateTimeObj startDtObj = new InvalidDateTimeObj();
 
 					startDtObj.setAllDate(inputEventObj.getStartDate());
+
+					if(during != null && during.getType().getTypeNum() == TokenType.dates.ordinal()) {
+						evObj.setStartDate(startDtObj);
+
+						resultList.insertDtObj(evObj);
+						
+						break;
+					}
+					
 					startDtObj.setHour(curPosTime.getHour());
 					// startDtObj.setMinute(AppConstatn);
 

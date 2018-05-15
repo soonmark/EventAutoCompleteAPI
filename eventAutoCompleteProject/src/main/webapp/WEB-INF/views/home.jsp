@@ -70,21 +70,23 @@ body {
 
 	<!-- Page Content -->
 	<div class="jumbotron text-center topConts">
-		<h2>일정</h2>
-		<div class="article">
-			<ul class="list_eventDates">
-				<li class="list-float-left input"><textarea id="inputEvent"
-						autocomplete="off" name="inputEvent" rows="1" tabindex="1"></textarea>
-				</li>
-			</ul>
-			<div class="atcp"><!-- hideAtcp -->
-				<ul class="list-group">
-				</ul>
+		<h4>일정 등록</h4>
+			<span class="event_tit">일정</span>
+			<div class="event_domain">
+				<div class="article">
+					<ul class="list_eventDates">
+						<li class="list-float-left input"><textarea id="inputEvent"
+								autocomplete="off" name="inputEvent" rows="1" tabindex="1"></textarea>
+						</li>
+					</ul>
+					<div class="atcp"><!-- hideAtcp -->
+						<ul class="list-group">
+						</ul>
+					</div>
+				</div>
 			</div>
-		</div>
-
-		<button type="button"
-			class="btn btn-success wider-width btn-lg disabled button">추가</button>
+<!-- 		<button type="button"
+			class="btn btn-success wider-width btn-lg disabled button">추가</button> -->
 	</div>
 	<div class="container"></div>
 

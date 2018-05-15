@@ -20,7 +20,7 @@ public class PatternManager {
 		patternStorage = new PatternStorage();
 	}
 
-	public void matchToPatterns(String inputText, DateTimeListMgrSet dateTimeListManager) {
+	public void matchToDateTimePatterns(String inputText, DateTimeListMgrSet dateTimeListManager) {
 		for (TokenType tokType : TokenType.values()) {
 			matchToOnePatternType(inputText, tokType, dateTimeListManager);
 		}
@@ -88,10 +88,10 @@ public class PatternManager {
 			PeriodManager period = iter.next();
 			if (hasPeriod) {
 				if (period.getFrom() != null) {
-					matchToPatterns(period.getFrom(), period.getStartDateListMgr());
+					matchToDateTimePatterns(period.getFrom(), period.getStartDateListMgr());
 				}
 				if (period.getTo() != null) {
-					matchToPatterns(period.getTo(), period.getEndDateListMgr());
+					matchToDateTimePatterns(period.getTo(), period.getEndDateListMgr());
 				}
 				if (period.getDuring() != null) {
 					matchToDuringPatterns(period.getDuring());
@@ -103,7 +103,7 @@ public class PatternManager {
 		if (periodManager.size() == 0) {
 			PeriodManager period = new PeriodManager(inputText, null);
 			periodManager.add(period);
-			matchToPatterns(period.getFrom(), period.getStartDateListMgr());
+			matchToDateTimePatterns(period.getFrom(), period.getStartDateListMgr());
 		}
 	}
 

@@ -85,7 +85,7 @@ public class RecommendationManager {
 
 		this.inputText = inputText;
 		// 객체로부터 미리 period 세팅 해두기.
-		initInputEvent(startDate, endDate);
+		initInputEventObjBy(startDate, endDate);
 
 		logger.info("입력받은 일정 : " + inputText);
 
@@ -244,7 +244,7 @@ public class RecommendationManager {
 //		 }
 	}
 
-	private void initInputEvent(DateTimeDTO startDate, DateTimeDTO endDate) {
+	private void initInputEventObjBy(DateTimeDTO startDate, DateTimeDTO endDate) {
 		boolean isInputStartFull = false;
 		boolean isInputEndFull = false;
 
@@ -402,15 +402,15 @@ public class RecommendationManager {
 		dateTimeListMgr.adjustForAmPmTime();
 
 		// 기간, 날짜, 시간 조정
-		EventListManager mergedListMgr = dateTimeListMgr.mergeList(TokenType.period, TokenType.dates, TokenType.times);
+//		EventListManager mergedListMgr = dateTimeListMgr.mergeList(TokenType.period, TokenType.dates, TokenType.times);
 
-		createRecommendations(dateTimeListMgr, mergedListMgr, sEstimatedDates, during);
+		createRecommendations(dateTimeListMgr, /*mergedListMgr, */sEstimatedDates, during);
 	}
 
-	private void createRecommendations(DateTimeListMgrSet dateListMgr, EventListManager mergedListMgr,
+	private void createRecommendations(DateTimeListMgrSet dateListMgr,/* EventListManager mergedListMgr,*/
 			DateTimeListMgrSet sEstimatedDates, During during) {
 		// 빈 토큰 채우기
-		fillEmptyDatas(dateListMgr, mergedListMgr, sEstimatedDates, during);
+		fillEmptyDatas(dateListMgr, /*mergedListMgr, */sEstimatedDates, during);
 
 		// 우선순위대로 정렬
 		sortByPriority(dateListMgr);
@@ -433,8 +433,7 @@ public class RecommendationManager {
 		}
 	}
 
-	private void fillEmptyDatas(DateTimeListMgrSet dateListMgr, EventListManager mergedListMgr,
-			DateTimeListMgrSet sEstimatedDates, During during) {
+	private void fillEmptyDatas(DateTimeListMgrSet dateListMgr, DateTimeListMgrSet sEstimatedDates, During during) {
 		dateListMgr.setResultList(new DateTimeEstimator(dateListMgr.getTimeList(), dateListMgr.getDateList())
 				.fillEmptyDatas(inputEventObj, dateListMgr.getResultList().isFocusStart(), sEstimatedDates, during));
 
