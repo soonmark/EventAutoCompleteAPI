@@ -76,8 +76,8 @@ public class RecommendationManager {
 		recomNum = 2;
 
 		// 현재 시간 저장.
-		curTime = LocalDateTime.of(2018, 5, 16, 16, 0);
-		// curTime = LocalDateTime.now();
+//		curTime = LocalDateTime.of(2018, 5, 16, 16, 0);
+		 curTime = LocalDateTime.now();
 
 		focusingRecurNum = 2;
 		dateTimeListManagerSet = new DateTimeListMgrSet();
