@@ -110,7 +110,12 @@ public enum TokenType {
 		@Override
 		public void setDtObjInfo(InvalidDateTimeObj dtObj, Matcher matcher) {
 		}
-	};
+	}/*, commonDateTime(6) {
+		@Override
+		public void setDtObjInfo(InvalidDateTimeObj dtObj, Matcher matcher) {
+			
+		}
+	}*/;
 	
 	int tokenType;
 	TokenType(int type){

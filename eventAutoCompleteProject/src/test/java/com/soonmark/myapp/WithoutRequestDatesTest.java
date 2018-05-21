@@ -645,30 +645,30 @@ public class WithoutRequestDatesTest {
 				new ArrayList<Object>() });
 		
 		// 숫자나열 패턴
-//		params.add(new Object[] { "12",                                                                               
-//				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-06-12", ""), null, "2018/06/12 (화)"),
-//						new EventDTO(new StringDateTimeDTO("2018-05-17", "오전 12:-"), null, "2018/05/17 (목) 오전 12시"),
-//						new EventDTO(new StringDateTimeDTO("2018-05-17", "오후 12:-"), null, "2018/05/17 (목) 오후 12시"))});
-//		
-//		params.add(new Object[] { "1213",                                                                               
-//				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-12-13", ""), null, "2018/12/13 (목)"),
-//						new EventDTO(new StringDateTimeDTO("2018-05-17", "오전 12:13"), null, "2018/05/17 (목) 오전 12시 13분"),
-//						new EventDTO(new StringDateTimeDTO("2018-05-17", "오후 12:13"), null, "2018/05/17 (목) 오후 12시 13분"))});
-//
-//		params.add(new Object[] { "180914",                                                                               
-//				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-09-14", ""), null, "2018/09/14 (목)"))});
-//
-//		params.add(new Object[] { "1813",                                                                               
-//				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 06:13"), null, "2018/05/16 (수) 오후 6시 13분"))});
-//		
-//		params.add(new Object[] { "18131",                                                                               
-//				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 06:13"), null, "2018/05/16 (수) 오후 6시 13분"))});
-//		
-//		params.add(new Object[] { "181314",                                                                               
-//				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 06:13"), null, "2018/05/16 (수) 오후 6시 13분"),
-//						new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 06:13"), null, "2018/05/16 (수) 오후 6시 13분"),
-//						new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 06:13"), null, "2018/05/16 (수) 오후 6시 13분"),
-//						new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 06:13"), null, "2018/05/16 (수) 오후 6시 13분"))});
+		params.add(new Object[] { "12",                                                                               
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-06-12", ""), null, "2018/06/12 (화)"),
+						new EventDTO(new StringDateTimeDTO("2018-05-17", "오전 12:-"), null, "2018/05/17 (목) 오전 12시"),
+						new EventDTO(new StringDateTimeDTO("2018-05-17", "오후 12:-"), null, "2018/05/17 (목) 오후 12시"))});
+		
+		params.add(new Object[] { "1213",                                                                               
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-12-13", ""), null, "2018/12/13 (목)"),
+						new EventDTO(new StringDateTimeDTO("2018-05-17", "오전 12:13"), null, "2018/05/17 (목) 오전 12시 13분"),
+						new EventDTO(new StringDateTimeDTO("2018-05-17", "오후 12:13"), null, "2018/05/17 (목) 오후 12시 13분"))});
+
+		params.add(new Object[] { "180914",                                                                               
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-09-14", ""), null, "2018/09/14 (목)"))});
+
+		params.add(new Object[] { "1813",                                                                               
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 06:13"), null, "2018/05/16 (수) 오후 6시 13분"))});
+		
+		params.add(new Object[] { "18131",                                                                               
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 06:13"), null, "2018/05/16 (수) 오후 6시 13분"))});
+		
+		params.add(new Object[] { "181314",                                                                               
+				Arrays.asList(new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 06:13"), null, "2018/05/16 (수) 오후 6시 13분"),
+						new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 06:13"), null, "2018/05/16 (수) 오후 6시 13분"),
+						new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 06:13"), null, "2018/05/16 (수) 오후 6시 13분"),
+						new EventDTO(new StringDateTimeDTO("2018-05-16", "오후 06:13"), null, "2018/05/16 (수) 오후 6시 13분"))});
 		
 		
 		

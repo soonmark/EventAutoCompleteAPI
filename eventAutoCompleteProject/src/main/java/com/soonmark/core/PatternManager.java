@@ -81,8 +81,8 @@ public class PatternManager {
 
 	public void matchToPatterns(String inputText, List<PeriodManager> periodManager) {
 		// 패턴 찾으면 인덱스 저장하고 list add
-		boolean hasPeriod = matchToPeriodPatterns(inputText, periodManager);
 
+		boolean hasPeriod = matchToPeriodPatterns(inputText, periodManager);
 		Iterator<PeriodManager> iter = periodManager.iterator();
 		while (iter.hasNext()) {
 			PeriodManager period = iter.next();
@@ -108,6 +108,7 @@ public class PatternManager {
 	}
 
 	private void matchToDuringPatterns(During during) {
+		
 		Iterator<String> iter = patternStorage.getDuringPatterns().iterator();
 
 		while (iter.hasNext()) {
