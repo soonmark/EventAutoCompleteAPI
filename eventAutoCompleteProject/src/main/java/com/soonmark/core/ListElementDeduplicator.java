@@ -12,6 +12,7 @@ public class ListElementDeduplicator {
 	TokenType listType;
 
 	ListElementDeduplicator() {
+		
 	}
 
 	public void mergeProcess(DateTimeListManager dtObjListMgr, TokenType listType) {
@@ -80,7 +81,7 @@ public class ListElementDeduplicator {
 		}
 	}
 
-	private void gatherPartialsTo(DateTimeListManager tmpList) {
+	public void gatherPartialsTo(DateTimeListManager tmpList) {
 		// tmpList 인덱스
 		int j = 0;
 		for (int i = 0; i < afterListMgr.getDtMgrList().size(); i++) {

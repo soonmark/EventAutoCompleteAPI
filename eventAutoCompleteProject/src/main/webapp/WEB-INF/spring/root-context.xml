@@ -11,5 +11,6 @@
 	<context:component-scan base-package="com.soonmark.domain"/>
 	<context:component-scan base-package="com.soonmark.core"/>
 	<bean name="recommendationManager" class="com.soonmark.core.RecommendationManager"/>
+	<bean name="listElementDeduplicator" class="com.soonmark.core.ListElementDeduplicator"/>
 	
 </beans>
